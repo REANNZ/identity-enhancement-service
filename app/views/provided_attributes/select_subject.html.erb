@@ -31,8 +31,8 @@
           <%- end -%>
         </td>
         <td class="action-buttons right aligned">
-          <%- unless object.complete? || object.invitations.none? -%>
-            <%- invitation = object.invitations.first -%>
+          <%- unless object.complete? || object.invitation.nil? -%>
+            <%- invitation = object.invitation -%>
             <%- if permitted?("provider:#{invitation.provider_id}:invitations:create") -%>
               <%= button_tag(type: 'button', class: 'tiny basic blue help') do -%>
                 Invitation Status

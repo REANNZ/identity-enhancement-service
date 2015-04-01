@@ -7,7 +7,7 @@ class Subject < ActiveRecord::Base
   has_many :subject_role_assignments, dependent: :destroy
   has_many :roles, through: :subject_role_assignments
   has_many :provided_attributes, dependent: :destroy
-  has_many :invitations, dependent: :nullify
+  has_one :invitation, dependent: :nullify
 
   valhammer
 
@@ -37,6 +37,7 @@ class Subject < ActiveRecord::Base
       merge_attributes(other)
 
       other.audit_comment = "Merged into Subject #{id}"
+      other.association(:invitation).reset
       other.destroy!
     end
   end
