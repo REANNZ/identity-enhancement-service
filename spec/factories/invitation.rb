@@ -4,8 +4,8 @@ FactoryGirl.define do
     association :subject, :incomplete
 
     identifier { SecureRandom.urlsafe_base64(19) }
-    name { Faker::Name.name }
-    mail { Faker::Internet.email(name) }
+    name { subject.name }
+    mail { subject.mail }
     expires { 1.year.from_now.to_s(:db) }
     last_sent_at { Time.now.to_s(:db) }
   end
