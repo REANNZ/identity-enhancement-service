@@ -43,22 +43,22 @@ class Provider < ActiveRecord::Base
   end
 
   DEFAULT_ROLES = {
-    api_ro: %w(api:attributes:read),
-    api_rw: %w(
+    'API Read Only' => %w(api:attributes:read),
+    'API Read/Write' => %w(
       api:attributes:*
       providers:PROVIDER_ID:attributes:create
     ),
-    web_ro: %w(
+    'Web UI Read Only' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
     ),
-    web_rw: %w(
+    'Web UI Read/Write' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
       providers:PROVIDER_ID:invitations:*
       providers:PROVIDER_ID:attributes:*
     ),
-    admin: %w(
+    'Administrator' => %w(
       providers:PROVIDER_ID:*
     )
   }
