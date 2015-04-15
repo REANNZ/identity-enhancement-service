@@ -9,6 +9,7 @@ guard :rspec, cmd: 'bundle exec rspec' do
   watch('spec/rails_helper.rb') { 'spec' }
   watch(%r{spec/factories(/.+)\.rb})  { 'spec' }
 
+  watch(/^bin\/(.+)(\.rb)?$/) { |m| "spec/bin/#{m[1]}_spec.rb" }
   watch(/^app\/(.+)\.rb$/) { |m| "spec/#{m[1]}_spec.rb" }
   watch(/^app\/(.*)(\.erb|\.haml|\.slim)$/) do |m|
     "spec/#{m[1]}#{m[2]}_spec.rb"

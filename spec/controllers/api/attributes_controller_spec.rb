@@ -269,6 +269,22 @@ module API
           it_behaves_like 'attribute creation failure',
                           /Subject name was not provided/
         end
+
+        context 'specifying the expiry' do
+          let(:expires) { 8.weeks.from_now.to_date }
+
+          let(:subject_params) do
+            {
+              name: object.name, mail: object.mail, expires: expires.iso8601
+            }
+          end
+
+          it_behaves_like 'invitation of new subject'
+
+          it 'expires the invitation when expected' do
+            expect(Invitation.last.expires).to eq(expires)
+          end
+        end
       end
     end
   end

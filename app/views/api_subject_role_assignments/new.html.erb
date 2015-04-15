@@ -12,31 +12,35 @@
 
 <h3 class="ui header"><%= @role.name %></h3>
 
-<table class="ui basic compact table">
-  <thead>
-    <tr>
-      <th>X.509 CN</th>
-      <th>Description</th>
-      <th/>
-    </tr>
-  </thead>
-  <tbody>
-    <%- @api_subjects.each do |api_subject| -%>
+<%- if @api_subjects.present? %>
+  <table class="ui striped compact table">
+    <thead>
       <tr>
-        <td><%= api_subject.x509_cn %></td>
-        <td><%= api_subject.description %></td>
-        <td>
-          <%= form_for([@provider, @role, @assoc], url: provider_role_api_members_path(@provider, @role),
-                                                   html: { class: 'inline' }) do |f| -%>
-
-            <%= button_tag(name: 'api_subject_role_assignment[api_subject_id]',
-                           value: api_subject.id, class: 'tiny green icon') do -%>
-              <%= icon_tag('checkmark') %>
-              Grant
-            <%- end -%>
-          <%- end -%>
-        </td>
+        <th>X.509 CN</th>
+        <th>Description</th>
+        <th/>
       </tr>
-    <%- end -%>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <%- @api_subjects.each do |api_subject| -%>
+        <tr>
+          <td><%= api_subject.x509_cn %></td>
+          <td><%= api_subject.description %></td>
+          <td class="right aligned">
+            <%= form_for([@provider, @role, @assoc], url: provider_role_api_members_path(@provider, @role),
+                                                     html: { class: 'inline' }) do |f| -%>
+
+              <%= button_tag(name: 'api_subject_role_assignment[api_subject_id]',
+                             value: api_subject.id, class: 'tiny green icon') do -%>
+                <%= icon_tag('checkmark') %>
+                Grant
+              <%- end -%>
+            <%- end -%>
+          </td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
+<%- else %>
+  <p>All available API accounts are already a member of this role.
+<%- end %>

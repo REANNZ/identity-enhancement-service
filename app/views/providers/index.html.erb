@@ -13,7 +13,7 @@
       <tr>
         <td><%= provider.name %></td>
         <td><%= provider.identifier %></td>
-        <td class="action-buttons">
+        <td class="action-buttons right aligned">
           <%- if permitted?("providers:#{provider.id}:read") -%>
             <%= button_link_to(provider, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>

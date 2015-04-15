@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/environment.rb'
+
+class RemoveExpiredData
+  def self.perform
+    Invitation.available.find_each do |invitation|
+      next unless invitation.expired?
+
+      subject = invitation.subject
+
+      $stderr.puts("Removing placeholder Subject #{subject.id} " \
+                   "(name=`#{subject.name}` mail=`#{subject.mail}`)")
+
+      subject.audit_comment =
+        'Removed placeholder subject for expired invitation'
+      subject.destroy!
+    end
+  end
+end
+
+RemoveExpiredData.perform if $PROGRAM_NAME == __FILE__

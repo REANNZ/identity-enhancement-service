@@ -42,9 +42,7 @@
 <%- end -%>
 
 <%= validate_form('#attribute-form', :available_attribute) do -%>
-  <%= validate_field(:name, empty: 'Please enter a name',
-                            attribute_name: 'Name must be eduPersonEntitlement') %>
-  <%= validate_field(:value, empty: 'Please enter a value',
-                             attribute_value: 'Value must conform to documented style') %>
-  <%= validate_field(:description, empty: 'Please enter a description') %>
+  <%= auto_validate(@attribute, :name, :value, :description) %>
+  <%= validate_field(:name, attribute_name: 'Name must be eduPersonEntitlement') %>
+  <%= validate_field(:value, attribute_value: 'Value must conform to documented style') %>
 <%- end -%>

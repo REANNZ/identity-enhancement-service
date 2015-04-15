@@ -74,7 +74,8 @@ RSpec.feature 'Modifying Providers', js: true do
         click_button button
       end
 
-      expect(page).to have_css('.ui.error.message', text: 'Please enter a name')
+      expect(page).to have_css('.ui.error.message',
+                               text: 'Please enter a value for name')
     end
 
     scenario 'rejects a blank identifier' do
@@ -84,7 +85,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter an identifier')
+                               text: 'Please enter a value for identifier')
     end
 
     scenario 'rejects a long identifier' do
@@ -94,7 +95,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'identifier must be 40 characters maximum')
+                               text: 'enter a shorter value for identifier')
     end
 
     scenario 'rejects an invalid identifier' do
@@ -114,7 +115,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a description')
+                               text: 'Please enter a value for description')
     end
   end
 

@@ -14,7 +14,7 @@
     created.
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact table">
+  <table class="ui striped compact table">
     <thead>
       <tr>
         <th>X.509 CN</th>
@@ -35,7 +35,7 @@
               <%= icon_tag('yellow warning sign') %> No
             <%- end -%>
           </td>
-          <td>
+          <td class="right aligned">
             <%= button_link_to([:edit, @provider, api_subject], class: 'tiny icon') do -%>
               <%= icon_tag('edit') %>
               Edit

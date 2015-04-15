@@ -22,5 +22,23 @@ RSpec.describe DashboardController, type: :controller do
     it 'sets the provided attributes' do
       expect(assigns[:provided_attributes]).to include(attribute)
     end
+
+    context 'with api only roles' do
+      let(:api_role) do
+        create(:role, provider: role.provider).tap do |role|
+          create(:permission, value: 'api:attributes:read', role: role)
+          create(:subject_role_assignment, role: role, subject: user)
+        end
+      end
+
+      it 'is assigned the api_role' do
+        expect(user.roles).to include(api_role)
+      end
+
+      it 'builds a filtered provider map' do
+        expect(assigns[:provider_roles])
+          .not_to include(api_role.provider => [api_role])
+      end
+    end
   end
 end

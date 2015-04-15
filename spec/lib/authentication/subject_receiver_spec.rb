@@ -19,6 +19,28 @@ module Authentication
       end
     end
 
+    context '#finish' do
+      context 'with an invitation code' do
+        let!(:invitation) { create(:invitation) }
+        let(:env) { { 'rack.session' => { invite: invitation.identifier } } }
+
+        it 'redirects to the invitation complete page' do
+          response = [302, { 'Location' => '/invitations/complete' }, []]
+          expect(subject.finish(env)).to eq(response)
+        end
+
+        it 'clears the invite code' do
+          expect { subject.finish(env) }
+            .to change { env['rack.session'] }.to be_empty
+        end
+      end
+
+      it 'redirects to the dashboard' do
+        response = [302, { 'Location' => '/dashboard' }, []]
+        expect(subject.finish(env)).to eq(response)
+      end
+    end
+
     context '#subject' do
       let(:attrs) do
         attributes_for(:subject)
@@ -55,9 +77,9 @@ module Authentication
         let!(:object) { create(:subject, attrs.merge(complete: false)) }
 
         it 'updates the attributes' do
-          attrs = attributes_for(:subject).slice(:name, :mail, :shared_token)
-          subject.subject(env, attrs)
-          expect(object.reload).to have_attributes(attrs)
+          new = attributes_for(:subject).slice(:name, :mail)
+          subject.subject(env, attrs.merge(new))
+          expect(object.reload).to have_attributes(new)
         end
 
         it 'returns the existing subject' do
@@ -82,6 +104,48 @@ module Authentication
 
         it 'marks the subject as complete' do
           expect(subject.subject(env, attrs)).to be_complete
+        end
+
+        context 'matched only by shared token' do
+          let!(:object) do
+            create(:subject, attrs.merge(complete: false, targeted_id: nil))
+          end
+
+          it 'updates the attributes' do
+            subject.subject(env, attrs)
+            expect(object.reload).to have_attributes(attrs.slice(:targeted_id))
+          end
+        end
+
+        context 'with a mismatched targeted id' do
+          def run
+            subject.subject(env, attrs.merge(targeted_id: 'wrong'))
+          end
+
+          it 'fails to provision the subject' do
+            expect { run }.to raise_error
+          end
+        end
+
+        context 'matched only by targeted id' do
+          let!(:object) do
+            create(:subject, attrs.merge(complete: false, shared_token: nil))
+          end
+
+          it 'updates the attributes' do
+            subject.subject(env, attrs)
+            expect(object.reload).to have_attributes(attrs.slice(:shared_token))
+          end
+        end
+
+        context 'with a mismatched shared token' do
+          def run
+            subject.subject(env, attrs.merge(shared_token: 'wrong'))
+          end
+
+          it 'fails to provision the subject' do
+            expect { run }.to raise_error
+          end
         end
       end
 
@@ -121,6 +185,21 @@ module Authentication
         it 'records the subject as the user in the audit record' do
           obj = subject.subject(env, attrs)
           expect(obj.audits.last.user).to eq(obj)
+        end
+
+        context 'when a merge is required' do
+          let!(:object) { create(:subject, attrs.merge(complete: false)) }
+
+          it 'deletes the invited subject' do
+            expect { subject.subject(env, attrs) }
+              .to change(Subject, :count).by(-1)
+          end
+
+          it 'reassigns the invitation' do
+            expect { subject.subject(env, attrs) }
+              .to change { invitation.reload.subject }
+              .to(object)
+          end
         end
 
         context 'when the invitation fails to save' do

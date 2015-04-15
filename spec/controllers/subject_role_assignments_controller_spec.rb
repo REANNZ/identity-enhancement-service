@@ -73,21 +73,25 @@ RSpec.describe SubjectRoleAssignmentsController, type: :controller do
         delete :destroy, base_params.merge(id: assoc.id)
       end
 
-      let!(:assoc) { create(:subject_role_assignment, role: role) }
       subject { -> { run } }
-      it { is_expected.to have_assigned(:provider, provider) }
-      it { is_expected.to have_assigned(:role, role) }
-      it { is_expected.to have_assigned(:assoc, assoc) }
-      it { is_expected.to change(model_class, :count).by(-1) }
 
-      context 'the response' do
-        before { run }
-        subject { response }
+      context 'as an administrator' do
+        let!(:assoc) { create(:subject_role_assignment, role: role) }
+        it { is_expected.to have_assigned(:provider, provider) }
+        it { is_expected.to have_assigned(:role, role) }
+        it { is_expected.to have_assigned(:assoc, assoc) }
+        it { is_expected.to change(model_class, :count).by(-1) }
 
-        it { is_expected.to redirect_to(provider_role_path(provider, role)) }
+        context 'the response' do
+          before { run }
+          subject { response }
+
+          it { is_expected.to redirect_to(provider_role_path(provider, role)) }
+        end
       end
 
-      context 'as a non-admin' do
+      context 'as a non-administrator' do
+        let!(:assoc) { create(:subject_role_assignment, role: role) }
         let(:user) { create(:subject) }
         it { is_expected.not_to change(model_class, :count) }
 
@@ -95,6 +99,24 @@ RSpec.describe SubjectRoleAssignmentsController, type: :controller do
           before { run }
           subject { response }
           it { is_expected.to have_http_status(:forbidden) }
+        end
+      end
+
+      context 'as an administrator removing their own role membership' do
+        let!(:assoc) do
+          create(:subject_role_assignment, role: role, subject: user)
+        end
+        it { is_expected.not_to change(model_class, :count) }
+
+        context 'the response' do
+          before { run }
+          subject { response }
+          it { is_expected.to redirect_to(provider_role_path(provider, role)) }
+
+          it 'has a flash error message' do
+            expect(flash[:error])
+              .to eq('Administrators cannot revoke their own membership')
+          end
         end
       end
     end

@@ -1,0 +1,12 @@
+You have been invited to AAF Identity Enhancement, so that your identity
+can be verified to provide access to more research services.
+
+Please visit the following link to accept the invite and get started:
+
+<%{url}>
+
+If not accepted, this invitation will expire on %{expires}, and data about
+you will be removed from the system.
+
+Regards,<br/>
+AAF Team

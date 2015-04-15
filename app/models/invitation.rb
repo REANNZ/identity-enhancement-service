@@ -1,17 +1,24 @@
 class Invitation < ActiveRecord::Base
+  include Lipstick::AutoValidation
+
   audited comment_required: true
 
   belongs_to :provider
   belongs_to :subject
 
-  validates :provider, :subject, :name, :mail, :expires, presence: true
-  validates :identifier, presence: true, format: { with: /\A[\w-]+\z/ },
-                         uniqueness: true
+  valhammer
 
-  scope :current, -> { where(arel_table[:expires].gt(Time.now)) }
-  scope :available, -> { current.where(used: false) }
+  validates :identifier, format: /\A[\w-]+\z/
+  validate :must_not_be_preexpired
+
+  scope :available, -> { where(used: false) }
 
   def expired?
-    expires < Time.now
+    !used? && expires && expires < Time.now
+  end
+
+  def must_not_be_preexpired
+    return if persisted?
+    errors.add(:expires, 'must be in the future') if expired?
   end
 end

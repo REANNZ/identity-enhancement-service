@@ -4,7 +4,8 @@ class ProvidedAttribute < ActiveRecord::Base
   belongs_to :permitted_attribute
   belongs_to :subject
 
-  validates :permitted_attribute, :subject, :name, :value, presence: true
+  valhammer
+
   validates :permitted_attribute, uniqueness: { scope: :subject }
   validate :must_match_permitted_attribute
 

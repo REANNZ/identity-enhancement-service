@@ -46,9 +46,10 @@ RSpec.describe Provider, type: :model do
   context '#invite' do
     let(:user) { create(:subject) }
     let(:provider) { create(:provider) }
+    let(:expires) { (1 + rand(10)).weeks.from_now }
 
     def run
-      provider.invite(user)
+      provider.invite(user, expires)
     end
 
     it 'creates the invitation' do
@@ -65,7 +66,7 @@ RSpec.describe Provider, type: :model do
     it 'sets the expiry' do
       Timecop.freeze do
         run
-        expect(user.invitations.last.expires.to_i).to eq(1.month.from_now.to_i)
+        expect(user.invitations.last.expires.to_i).to eq(expires.to_i)
       end
     end
 

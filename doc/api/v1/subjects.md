@@ -74,6 +74,7 @@ There are 3 keys way to identify a subject within an API request:
 | shared_token | string  | auEduPersonSharedToken for the identity whose attributes the client wishes to modify | Yes |
 | name | string | The name for the target identity whose attributes the client wishes to modify | Yes |
 | mail | string | The email address for the target identity whose attributes the client wishes to modify | Yes |
+| expires | string | The expiry date of the invitation, as a YYYY-mm-dd formatted date. |
 | allow_create | boolean | If a shared_token, name and mail attribute is provided in the request and an existing identity for the shared_token is not present within IdE should a full record (including attribute manipulation for this request) be created | Yes |
 
 #### attribute
@@ -121,7 +122,27 @@ Specification via mail and name:
   {
     "name":      "eduPersonEntitlement",
     "value":      "urn:mace:aaf.edu.au:ide:researcher:2",
-    "_destroy": true  }]
+    "_destroy":   true
+  }]
+}
+```
+
+Specification with invitation expiry time:
+
+```
+{
+  "subject": {
+    "mail": "john.doe@example.com",
+    "name": "John Doe",
+    "expires": "2018-01-01'
+  },
+  "provider": {
+    "identifier": "urn:mace:aaf.edu.au:ide:providers:provider1"
+  },
+  "attributes": [{
+    "name":      "eduPersonEntitlement",
+    "value":      "urn:mace:aaf.edu.au:ide:researcher:1"
+  }]
 }
 ```
 

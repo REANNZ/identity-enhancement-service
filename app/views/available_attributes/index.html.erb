@@ -7,7 +7,7 @@
 
 <%= page_header('Available Attributes') %>
 
-<table class="ui basic compact table">
+<table class="ui striped compact table">
   <thead>
     <tr>
       <th>Name</th>
@@ -22,7 +22,7 @@
         <td><%= attribute.name %></td>
         <td><%= attribute.value %></td>
         <td><%= attribute.description %></td>
-        <td class="action-buttons">
+        <td class="action-buttons right aligned">
           <%- if permitted?('admin:attributes:read') -%>
             <%= button_link_to(attribute, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>

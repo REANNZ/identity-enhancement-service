@@ -45,6 +45,17 @@ RSpec.describe ProvidedAttributesController, type: :controller do
     end
   end
 
+  context 'get :select_subject' do
+    let!(:object) { create(:subject) }
+
+    before { get :select_subject, provider_id: provider.id }
+
+    it { is_expected.to have_http_status(:ok) }
+    it { is_expected.to render_template('provided_attributes/select_subject') }
+    it { is_expected.to have_assigned(:provider, provider) }
+    it { is_expected.to have_assigned(:objects, include(object)) }
+  end
+
   context 'get :new' do
     let!(:other_permitted) { create(:permitted_attribute, provider: provider) }
 
@@ -61,6 +72,15 @@ RSpec.describe ProvidedAttributesController, type: :controller do
 
     it 'excludes the attribute already provided' do
       expect(assigns[:permitted_attributes]).not_to include(permitted_attribute)
+    end
+
+    context 'for a pending subject' do
+      let(:invitation) { create(:invitation) }
+      let(:object) { invitation.subject }
+
+      it 'assigns the invitation' do
+        expect(assigns[:invitation]).to eq(invitation)
+      end
     end
 
     context 'as a non-admin' do

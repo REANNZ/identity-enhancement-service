@@ -1,8 +1,7 @@
+require 'yaml'
 require 'fileutils'
 
 $0 = "god-#{God::VERSION}: #{__FILE__}"
-
-UNICORN_SOCKET = '/opt/ide/sockets/unicorn.sock'
 
 ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 RAILS_ENV = ENV['RAILS_ENV'] || 'production'
@@ -27,7 +26,10 @@ end
 God.watch do |w|
   defaults(w, 'unicorn')
 
-  w.start = "bundle exec unicorn -c config/unicorn.rb -D -l #{UNICORN_SOCKET}"
+  config = YAML.load_file(File.join(ROOT, 'config', 'deploy.yml'))
+  port = config['unicorn_port']
+
+  w.start = "bundle exec unicorn -c config/unicorn.rb -D -p #{port}"
   w.restart = -> { God.registry['unicorn'].signal('USR2') }
 
   w.env = { 'RAILS_ENV' => RAILS_ENV }

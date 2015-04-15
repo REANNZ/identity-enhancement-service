@@ -1,11 +1,11 @@
-<h1>Welcome to AAF Identity Enhancement</h1>
+<%= page_header('Welcome to AAF Identity Enhancement') %>
 
 <%- if @provider_roles.any? -%>
   <h3>Providers</h3>
 
   <p>You have been granted administrative access at the following providers:</p>
 
-  <table class="ui very basic compact table">
+  <table class="ui striped table">
     <thead>
       <tr>
         <th>Provider</th>
@@ -22,7 +22,7 @@
               <div><%= role.name %></div>
             <%- end -%>
           </td>
-          <td>
+          <td class="right aligned">
             <%= button_link_to(provider, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>
               View
@@ -31,8 +31,6 @@
       <%- end -%>
     </tbody>
   </table>
-
-  <%= divider_tag %>
 <%- end -%>
 
 <h3>Attributes</h3>
@@ -47,13 +45,13 @@
   The following attributes are provided to approved services who request information about your identity:
   </p>
 
-  <table class="ui very basic compact table" id="provided-attributes">
+  <table class="ui striped table" id="provided-attributes">
     <thead>
       <tr>
         <th>Description</th>
         <th>Provided By</th>
         <th>Attribute Type</th>
-        <th/>
+        <th />
       </tr>
     </thead>
     <tbody>
@@ -64,11 +62,11 @@
           <td>
             <%= attribute.name %>
           </td>
-          <td>
+          <td class="right aligned">
             <%-
               message = %Q( <strong>Technical Details</strong>
 
-                            <table class="ui basic compact inverted green table">
+                            <table class="ui definition compact table">
                               <tbody>
                                 <tr>
                                   <td><strong>Provider:&nbsp;</strong></td>
@@ -89,7 +87,7 @@
                             <p>It's only shown here for your information, <strong>
                             you don't need to understand or remember it</strong>.</p>)
             -%>
-            <%= button_tag(type: 'button', class: 'mini basic green help', :'data-html' => message, :'data-variation' => 'wide') do -%>
+            <%= button_tag(type: 'button', class: 'mini help basic green', :'data-html' => message, :'data-variation' => 'wide') do -%>
               Technical Details
             <%- end -%>
           </td>

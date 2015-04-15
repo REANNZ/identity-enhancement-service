@@ -7,9 +7,9 @@
   )
 %>
 
-<%= page_header(@provider.name, 'New Provided Attribute') %>
+<%= page_header(@provider.name, 'Enhance an Identity') %>
 
-<h3 class="ui header">Subject</h3>
+<h3 class="ui header">Identity</h3>
 
 <table class="ui definition table">
   <tbody>
@@ -32,7 +32,7 @@
     identity of <strong><%= @object.name %></strong>
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact table" id="provided-attributes">
+  <table class="ui striped compact table" id="provided-attributes">
     <thead>
       <tr>
         <th>Name</th>
@@ -45,7 +45,7 @@
         <tr>
           <td><%= provided_attribute.name %></td>
           <td><%= provided_attribute.value %></td>
-          <td>
+          <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
               <%= delete_button_tag(provider_provided_attribute_path(@provider, provided_attribute)) %>
             <%- end -%>
@@ -58,44 +58,79 @@
 
 <h3 class="ui header">Permitted Attributes</h3>
 
-<%- if @permitted_attributes.empty? -%>
-  <%= info_message('No Attributes Available') do -%>
-    <strong><%= @provider.name %></strong> is not able to
-    <%- if @provided_attributes.any? -%>further<%- end %> enhance the identity
-    of <strong><%= @object.name %></strong>
-  <%- end -%>
-<%- else -%>
-  <table class="ui basic compact table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Value</th>
-        <th/>
-      </tr>
-    </thead>
-    <tbody>
-      <%- @permitted_attributes.each do |permitted_attribute| -%>
-        <%- attribute = permitted_attribute.available_attribute -%>
-        <tr>
-          <td><%= attribute.name %></td>
-          <td><%= attribute.value %></td>
-          <td>
-            <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
-              <%= form_tag(provider_provided_attributes_path(@provider)) do -%>
-                <%= hidden_fields do -%>
-                  <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
-                  <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
-                <%- end -%>
+<%- if @invitation -%>
+  <%- if @invitation.expired? -%>
+    <%= error_message('Expired Invitation') do -%>
+      <p>
+        <strong><%= @object.name %></strong> has not accepted the invitation
+        delivered on <strong><%= date_string(@invitation.created_at) %></strong>
+      </p>
 
-                <%= button_tag(type: 'submit', class: 'tiny green icon') do -%>
-                  <%= icon_tag('add') %>
-                  Add
+      <p>
+        The invitation has expired, and this Subject is pending removal from
+        the system. The Subject must be invited again before any attributes can
+        be provided.
+      </p>
+    <%- end -%>
+  <%- else -%>
+    <%= warning_message('Pending Subject') do -%>
+      <p>
+        <strong><%= @object.name %></strong> has not accepted the invitation
+        delivered on <strong><%= date_string(@invitation.created_at) %></strong>
+      </p>
+
+      <p>
+        Attributes provided to this Subject will be removed on
+        <strong>
+          <%= date_string(@invitation.expires) %>
+          (in <%= distance_of_time_in_words(@invitation.expires - Time.now) %>)
+        </strong>
+        unless the invitation is accepted.
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+
+<%- if @invitation.nil? || !@invitation.expired? -%>
+  <%- if @permitted_attributes.empty? -%>
+    <%= info_message('No Attributes Available') do -%>
+      <strong><%= @provider.name %></strong> is not able to
+      <%- if @provided_attributes.any? -%>further<%- end %> enhance the identity
+      of <strong><%= @object.name %></strong>
+    <%- end -%>
+  <%- else -%>
+    <table class="ui striped compact table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+          <th/>
+        </tr>
+      </thead>
+      <tbody>
+        <%- @permitted_attributes.each do |permitted_attribute| -%>
+          <%- attribute = permitted_attribute.available_attribute -%>
+          <tr>
+            <td><%= attribute.name %></td>
+            <td><%= attribute.value %></td>
+            <td class="right aligned">
+              <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
+                <%= form_tag(provider_provided_attributes_path(@provider)) do -%>
+                  <%= hidden_fields do -%>
+                    <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
+                    <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
+                  <%- end -%>
+
+                  <%= button_tag(type: 'submit', class: 'tiny green icon') do -%>
+                    <%= icon_tag('add') %>
+                    Add
+                  <%- end -%>
                 <%- end -%>
               <%- end -%>
-            <%- end -%>
-          </td>
-        </tr>
-      <%- end -%>
-    </tbody>
-  </table>
+            </td>
+          </tr>
+        <%- end -%>
+      </tbody>
+    </table>
+  <%- end -%>
 <%- end -%>

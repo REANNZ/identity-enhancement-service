@@ -5,6 +5,6 @@ module DeleteButton
     button = find('div.ui.button', text: text)
     button.click
     expect(button).to have_css('.menu.visible:not(.animating)')
-    click_link('Confirm Delete')
+    click_link("Confirm #{text}")
   end
 end

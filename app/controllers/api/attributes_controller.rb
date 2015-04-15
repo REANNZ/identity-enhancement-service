@@ -84,11 +84,11 @@ module API
       provider
     end
 
-    def lookup_subject(provider, identifier)
-      if identifier[:shared_token]
-        find_subject_by_shared_token(identifier[:shared_token])
+    def lookup_subject(provider, attrs)
+      if attrs[:shared_token]
+        find_subject_by_shared_token(attrs[:shared_token])
       else
-        find_or_create_subject(provider, identifier)
+        find_or_create_subject(provider, attrs)
       end
     end
 
@@ -97,8 +97,8 @@ module API
         fail(BadRequest, 'The Subject was not known to this system')
     end
 
-    def find_or_create_subject(provider, identifier)
-      name, mail = identifier.values_at(:name, :mail)
+    def find_or_create_subject(provider, attrs)
+      name, mail = attrs.values_at(:name, :mail)
 
       if name.nil?
         fail(BadRequest, 'The Subject name was not provided, but is required')
@@ -107,11 +107,12 @@ module API
                          'but is required')
       end
 
-      Subject.find_by_mail(mail) || invite_subject(provider, name, mail)
+      Subject.find_by_mail(mail) || invite_subject(provider, attrs)
     end
 
-    def invite_subject(provider, name, mail)
-      create_invitation(provider, name: name, mail: mail)
+    def invite_subject(provider, attrs)
+      expires = attrs[:expires] || 4.weeks.from_now.to_date
+      create_invitation(provider, attrs.permit(:name, :mail), expires)
     end
   end
 end

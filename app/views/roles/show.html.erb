@@ -11,10 +11,13 @@
 
 <h3 class="ui header"><%= @role.name %></h3>
 
-<table class="ui basic compact table">
+<h4>Users</h4>
+<table class="ui striped compact table">
   <thead>
     <tr>
-      <th>Member</th>
+      <th>Name</th>
+      <th>Email Address</th>
+      <th>Targeted ID</th>
       <th/>
     </tr>
   </thead>
@@ -22,18 +25,45 @@
     <%- @role.subject_role_assignments.each do |assoc| -%>
       <tr>
         <td><%= assoc.subject.name %></td>
-        <td>
-          <%- if permitted?("providers:#{@provider.id}:roles:revoke") -%>
-            <%= delete_button_tag(provider_role_member_path(@provider, @role, assoc),
-                                  text: 'Revoke') %>
+        <td><%= mail_to assoc.subject.mail %></td>
+        <td><%= assoc.subject.targeted_id %></td>
+        <td class="right aligned">
+          <%- if permitted?("providers:#{@provider.id}:roles:revoke") %>
+            <%- if(assoc.subject != @subject) %>
+              <%= delete_button_tag(provider_role_member_path(@provider, @role, assoc), text: 'Revoke') %>
+            <%- else %>
+              <i class="icon ban"></i><strong>current account</strong>
+            <%- end -%>
           <%- end -%>
         </td>
       </tr>
     <%- end -%>
+  </tbody>
+</table>
+
+<h4>API Access</h4>
+<table class="ui striped compact table">
+  <thead>
+    <tr>
+      <th>x509 CN</th>
+      <th>Email Address</th>
+      <th class="center aligned">Functioning</th>
+      <th/>
+    </tr>
+  </thead>
+  <tbody>
     <%- @role.api_subject_role_assignments.each do |assoc| -%>
       <tr>
         <td><%= assoc.api_subject.x509_cn %></td>
-        <td>
+        <td><%= mail_to assoc.api_subject.contact_mail %></td>
+        <td class="center aligned">
+          <%- if assoc.api_subject.functioning? -%>
+            <%= icon_tag('green checkmark') %> Yes
+          <%- else -%>
+            <%= icon_tag('yellow warning sign') %> No
+          <%- end -%>
+        </td>
+        <td class="right aligned">
           <%- if permitted?("providers:#{@provider.id}:roles:revoke") -%>
             <%= delete_button_tag(provider_role_api_member_path(@provider, @role, assoc),
                                   text: 'Revoke') %>

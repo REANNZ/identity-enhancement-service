@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.feature 'Roles Admin', js: true do
   given(:user) { create(:subject, :authorized) }
 
-  given!(:permission) { create(:permission) }
+  given!(:permission) { create(:permission, value: 'a:*') }
   given!(:role) { permission.role }
   given!(:provider) { role.provider }
   given!(:other_role) { create(:role) }
@@ -101,7 +101,7 @@ RSpec.feature 'Roles Admin', js: true do
     end
 
     expect(current_path).to eq("#{base_path}/roles/#{role.id}/permissions")
-    attrs = attributes_for(:permission)
+    attrs = attributes_for(:permission, value: 'b:*')
 
     within('form') do
       fill_in 'Permission', with: attrs[:value]

@@ -1,4 +1,6 @@
 class Provider < ActiveRecord::Base
+  include Lipstick::AutoValidation
+
   audited comment_required: true
   has_associated_audits
 
@@ -6,9 +8,9 @@ class Provider < ActiveRecord::Base
   has_many :permitted_attributes, dependent: :destroy
   has_many :api_subjects, dependent: :destroy
 
-  validates :name, :description, presence: true
-  validates :identifier, presence: true, uniqueness: true,
-                         format: { with: /\A[\w-]{1,40}\z/ }
+  valhammer
+
+  validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
   has_many :invitations
 
@@ -25,14 +27,14 @@ class Provider < ActiveRecord::Base
     [Provider.identifier_prefix, identifier].join(':')
   end
 
-  def invite(subject)
+  def invite(subject, expires)
     identifier = SecureRandom.urlsafe_base64(19)
 
     message = "Created invitation for #{subject.name}"
 
     attrs = { subject_id: subject.id, identifier: identifier,
-              name: subject.name, mail: subject.mail,
-              expires: 1.month.from_now, audit_comment: message }
+              name: subject.name, mail: subject.mail, last_sent_at: Time.now,
+              expires: expires, audit_comment: message }
 
     invitations.create!(attrs)
   end

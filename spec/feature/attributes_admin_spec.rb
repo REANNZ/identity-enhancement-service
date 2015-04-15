@@ -82,7 +82,8 @@ RSpec.feature 'Modifying Available Attributes', js: true do
         click_button button
       end
 
-      expect(page).to have_css('.ui.error.message', text: 'Please enter a name')
+      expect(page).to have_css('.ui.error.message',
+                               text: 'Please enter a value for name')
     end
 
     scenario 'rejects an invalid name' do
@@ -102,7 +103,7 @@ RSpec.feature 'Modifying Available Attributes', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a value')
+                               text: 'Please enter a value for value')
     end
 
     scenario 'rejects an invalid value' do
@@ -122,7 +123,7 @@ RSpec.feature 'Modifying Available Attributes', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a description')
+                               text: 'Please enter a value for description')
     end
   end
 

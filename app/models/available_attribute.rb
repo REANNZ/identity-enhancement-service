@@ -1,13 +1,14 @@
 class AvailableAttribute < ActiveRecord::Base
+  include Lipstick::AutoValidation
+
   audited comment_required: true
 
   has_many :permitted_attributes, dependent: :restrict_with_error
 
-  validates :description, presence: true
-  validates :name, presence: true, inclusion: { in: %w(eduPersonEntitlement) }
+  valhammer
 
-  validates :value, presence: true, uniqueness: { scope: :name }, format: {
-    with: /\Aurn:mace:aaf\.edu\.au:ide:([\w\.-]+:)*[\w\.-]+\z/ }
+  validates :name, inclusion: { in: %w(eduPersonEntitlement) }
+  validates :value, format: /\Aurn:mace:aaf\.edu\.au:ide:([\w\.-]+:)*[\w\.-]+\z/
 
   def initialize(*)
     super

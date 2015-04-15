@@ -17,11 +17,12 @@ RSpec.feature 'Inviting a new subject', js: true do
       click_link('View')
     end
 
-    click_link('Provided Attributes')
+    click_link('Identities')
   end
 
   scenario 'creating an invitation' do
-    click_link('Send invitation to new user')
+    click_link('Enhance an Identity')
+    click_link('Invite a User')
     expect(current_path).to eq("/providers/#{provider.id}/invitations/new")
 
     within('form') do
@@ -34,6 +35,7 @@ RSpec.feature 'Inviting a new subject', js: true do
     expect(page).to have_sent_email.to(attrs[:mail])
       .with_subject('Invitation to AAF Identity Enhancement')
 
+    click_link('Enhance an Identity')
     within('#available-subjects tr', text: attrs[:name]) do
       expect(page).to have_css('td', text: 'Pending')
     end

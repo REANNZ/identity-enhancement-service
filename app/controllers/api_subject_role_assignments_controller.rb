@@ -6,7 +6,7 @@ class APISubjectRoleAssignmentsController < ApplicationController
 
   def new
     check_access!("providers:#{@provider.id}:roles:grant")
-    @api_subjects = APISubject.all
+    @api_subjects = APISubject.where.not(id: current_member_ids)
     @assoc = @role.api_subject_role_assignments.new
   end
 
@@ -41,6 +41,10 @@ class APISubjectRoleAssignmentsController < ApplicationController
   def creation_message(assoc)
     "Granted #{@role.name} at #{@provider.name} to API Account: " \
       "#{assoc.api_subject.x509_cn}"
+  end
+
+  def current_member_ids
+    @role.api_subject_role_assignments.map { |ra| ra.api_subject.id }
   end
 
   def deletion_message(assoc)

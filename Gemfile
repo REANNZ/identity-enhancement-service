@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
-source 'https://rails-assets.org'
 
-gem 'rails', '~> 4.1.8'
+gem 'rails', '~> 4.2.0'
 gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier'
 gem 'therubyracer'
@@ -15,11 +14,16 @@ gem 'rapid-rack'
 gem 'accession'
 gem 'aaf-lipstick', git: 'https://github.com/ausaccessfed/aaf-lipstick',
                     branch: 'develop'
-gem 'rails-assets-semantic-ui', '~> 1.0'
-gem 'rails-assets-jquery', '~> 1.11'
+gem 'valhammer'
 
 gem 'unicorn', require: false
 gem 'god', require: false
+
+source 'https://rails-assets.org' do
+  gem 'rails-assets-semantic-ui', '~> 1.0'
+  gem 'rails-assets-jquery', '~> 1.11'
+  gem 'rails-assets-pickadate', '~> 3.5', '!= 3.5.5'
+end
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
@@ -28,7 +32,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'timecop'
   gem 'capybara'
-  gem 'capybara-webkit'
+  gem 'poltergeist'
   gem 'database_cleaner'
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
                      branch: 'develop'
@@ -42,7 +46,6 @@ group :development, :test do
   gem 'guard-rspec', require: false
   gem 'guard-bundler', require: false
   gem 'guard-brakeman', require: false
-  gem 'guard-unicorn', require: false, ref: 'ca5177dd',
-                       github: 'andreimaxim/guard-unicorn'
+  gem 'guard-unicorn', require: false
   gem 'terminal-notifier-guard', require: false
 end

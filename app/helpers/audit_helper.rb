@@ -2,7 +2,7 @@ module AuditHelper
   include Lipstick::Helpers::LayoutHelper
 
   def audit_table(audits)
-    content_tag('table', class: 'ui very basic compact audit table') do
+    content_tag('table', class: 'ui striped compact audit table') do
       concat(audit_header)
       concat(audit_body(audits.sort_by { |a| -1 * a.created_at.to_i }))
     end

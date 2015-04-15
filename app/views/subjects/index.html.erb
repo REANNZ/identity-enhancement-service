@@ -7,7 +7,7 @@
 
 <%= page_header('Subjects') %>
 
-<table class="ui basic compact table">
+<table class="ui striped compact table">
   <thead>
     <tr>
       <th>Name</th>
@@ -37,7 +37,7 @@
             <%= icon_tag('yellow warning sign') %> No
           <%- end -%>
         </td>
-        <td class="action-buttons">
+        <td class="action-buttons right aligned">
           <%- if permitted?('admin:subjects:read') -%>
             <%= button_link_to(object, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>

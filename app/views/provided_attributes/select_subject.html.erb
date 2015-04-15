@@ -1,0 +1,100 @@
+<%=
+  breadcrumbs(
+    { 'Providers' => providers_path },
+    { @provider.name => provider_path(@provider) },
+    { 'Identities' => url_for([@provider, :provided_attributes]) },
+    'Enhance an Identity'
+  )
+%>
+
+<%= page_header(@provider.name, 'Available Identities') %>
+
+<table class="ui striped compact table" id="available-subjects">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th class="left aligned">State</th>
+      <th/>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @objects.each do |object| -%>
+      <tr>
+        <td><%= object.name %></td>
+        <td><%= object.mail %></td>
+        <td class="left aligned">
+          <%- if object.complete? -%>
+            <%= icon_tag('green checkmark') %> Active
+          <%- else -%>
+            <%= icon_tag('yellow warning sign') %> Pending
+          <%- end -%>
+        </td>
+        <td class="action-buttons right aligned">
+          <%- unless object.complete? || object.invitations.none? -%>
+            <%- invitation = object.invitations.first -%>
+            <%- if permitted?("provider:#{invitation.provider_id}:invitations:create") -%>
+              <%= button_tag(type: 'button', class: 'tiny basic blue help') do -%>
+                Invitation Status
+              <%- end -%>
+
+              <div class="ui hoverable popup invitation-status">
+                <table class="ui left aligned definition table">
+                  <tr>
+                    <td>Invited:</td>
+                    <td>
+                      <%= date_string(invitation.created_at) %>
+                      (<%= time_ago_in_words(invitation.created_at) %> ago)
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Last Sent:</td>
+                    <td>
+                      <%= date_string(invitation.last_sent_at) %>
+                      (<%= time_ago_in_words(invitation.last_sent_at) %> ago)
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Expires:</td>
+                    <td>
+                      <%= date_string(invitation.expires) %>
+                      (in <%= time_ago_in_words(invitation.expires) %>)
+                    </td>
+                  </tr>
+
+                </table>
+
+                <div class="left aligned">
+                  <%= button_link_to(redeliver_provider_invitation_path(invitation.provider, invitation),
+                                     class: 'tiny icon') do -%>
+                    <%= icon_tag('send') %>
+                    Redeliver Invitation
+                  <%- end -%>
+                </div>
+              </div>
+            <%- end -%>
+          <%- end -%>
+
+          <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
+            <%= button_link_to(new_provider_provided_attribute_path(@provider, subject_id: object.id),
+                               class: 'tiny green icon') do -%>
+              <%= icon_tag('add') %>
+              Enhance Identity
+            <%- end -%>
+          <%- end -%>
+        </td>
+      </tr>
+    <%- end -%>
+  </tbody>
+</table>
+
+<%- if permitted?("providers:#{@provider.id}:invitations:create") -%>
+  <div class="line-of-buttons">
+    <%= button_link_to(new_provider_invitation_path(@provider), class: 'large green icon') do -%>
+      <%= icon_tag('send') %>
+      Invite a User
+    <%- end -%>
+  </div>
+<%- end -%>
