@@ -1,5 +1,6 @@
 class Provider < ActiveRecord::Base
   include Lipstick::AutoValidation
+  include Lipstick::Filterable
 
   audited comment_required: true
   has_associated_audits
@@ -13,6 +14,8 @@ class Provider < ActiveRecord::Base
   validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
   has_many :invitations
+
+  filterable_by :name, :identifier
 
   def self.identifier_prefix
     Rails.application.config.ide_service.provider_prefix

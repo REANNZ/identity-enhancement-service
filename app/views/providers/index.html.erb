@@ -1,5 +1,7 @@
 <%= page_header('Providers') %>
 
+<%= search_form_tag(@filter) %>
+
 <table class="ui basic compact table">
   <thead>
     <tr>
@@ -25,6 +27,8 @@
     <%- end -%>
   </tbody>
 </table>
+
+<%= will_paginate %>
 
 <%- if permitted?('providers:create') -%>
   <div class="line-of-buttons">
