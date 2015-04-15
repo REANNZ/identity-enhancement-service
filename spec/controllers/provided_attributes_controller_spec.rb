@@ -48,12 +48,57 @@ RSpec.describe ProvidedAttributesController, type: :controller do
   context 'get :select_subject' do
     let!(:object) { create(:subject) }
 
-    before { get :select_subject, provider_id: provider.id }
+    let(:filter) { nil }
+    let(:page) { nil }
+
+    before do
+      get :select_subject, provider_id: provider.id, filter: filter, page: page
+    end
 
     it { is_expected.to have_http_status(:ok) }
     it { is_expected.to render_template('provided_attributes/select_subject') }
     it { is_expected.to have_assigned(:provider, provider) }
     it { is_expected.to have_assigned(:objects, include(object)) }
+
+    context 'with a filter' do
+      let!(:matching_subject) do
+        create(:subject, name: 'NOTHING ELSE MATCHES')
+      end
+
+      let(:filter) { 'NOTHING*ELSE*MATCHES' }
+
+      it 'only includes the matching subject' do
+        expect(assigns[:objects]).to contain_exactly(matching_subject)
+      end
+
+      it 'sets the filter' do
+        expect(assigns[:filter]).to eq(filter)
+      end
+    end
+
+    context 'pagination' do
+      let!(:enough_subjects_to_make_a_second_page) { create_list(:subject, 21) }
+
+      let!(:first_subject) do
+        create(:subject, name: 'aaaaaaaaaaa first subject')
+      end
+
+      context 'on the first page' do
+        let(:page) { '1' }
+
+        it 'includes the first subject' do
+          expect(assigns[:objects]).to include(first_subject)
+        end
+      end
+
+      context 'on the second page' do
+        let(:page) { '2' }
+
+        it 'excludes the first subject' do
+          expect(assigns[:objects]).not_to include(first_subject)
+        end
+      end
+    end
   end
 
   context 'get :new' do

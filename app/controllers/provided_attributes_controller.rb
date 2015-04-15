@@ -15,7 +15,9 @@ class ProvidedAttributesController < ApplicationController
 
   def select_subject
     check_access!("providers:#{@provider.id}:attributes:create")
-    @objects = Subject.all
+    @filter = params[:filter]
+    @objects = Subject.filter(@filter).order(:name)
+               .paginate(page: params[:page])
   end
 
   def new

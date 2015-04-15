@@ -9,6 +9,8 @@
 
 <%= page_header(@provider.name, 'Available Identities') %>
 
+<%= search_form_tag(@filter) %>
+
 <table class="ui striped compact table" id="available-subjects">
   <thead>
     <tr>
@@ -89,6 +91,8 @@
     <%- end -%>
   </tbody>
 </table>
+
+<%= will_paginate(@objects) %>
 
 <%- if permitted?("providers:#{@provider.id}:invitations:create") -%>
   <div class="line-of-buttons">
