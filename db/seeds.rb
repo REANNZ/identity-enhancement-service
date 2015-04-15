@@ -56,7 +56,6 @@ ActiveRecord::Base.transaction do
 
   providers = Provider.includes(roles: :permissions).all
 
-  print ' (brief pause...)'
   create_list(:subject, 500).each do |subject|
     if rand < 0.2
       subject.without_auditing do
