@@ -43,10 +43,10 @@ ActiveRecord::Base.transaction do
   admin = create(:role, name: 'Super Administrator', provider: aaf)
   create(:permission, role: admin, value: '*')
 
-  subject = create(:subject, name: 'Administrator', mail: 'admin@example.com')
+  admin_user = create(:subject, name: 'Administrator', mail: 'root@example.com')
 
-  create(:subject_role_assignment, subject: subject, role: admin)
-  create(:invitation, subject: subject, provider: aaf,
+  create(:subject_role_assignment, subject: admin_user, role: admin)
+  create(:invitation, subject: admin_user, provider: aaf,
                       identifier: invitation_code)
 
   create_list(:provider, 100).each do |provider|
