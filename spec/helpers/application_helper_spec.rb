@@ -13,4 +13,11 @@ RSpec.describe ApplicationHelper, type: :helper do
     subject { helper.environment_string }
     it { is_expected.to eq(string) }
   end
+
+  context '#application_version' do
+    it 'is a valid semver version' do
+      expect(helper.application_version)
+        .to match(/^\d+\.\d+\.\d+([+-][a-zA-Z0-9\.-]+){0,2}$/)
+    end
+  end
 end

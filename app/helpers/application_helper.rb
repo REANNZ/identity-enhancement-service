@@ -14,4 +14,8 @@ module ApplicationHelper
   def date_string(timestamp)
     timestamp.strftime('%d/%m/%Y')
   end
+
+  def application_version
+    '0.1.2'
+  end
 end
