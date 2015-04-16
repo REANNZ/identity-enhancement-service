@@ -12,7 +12,13 @@ RSpec.describe APISubjectRoleAssignmentsController, type: :controller do
   let(:api_subject) { create(:api_subject) }
   let(:role) { create(:role) }
   let(:provider) { role.provider }
-  let(:base_params) { { provider_id: provider.id, role_id: role.id } }
+  let(:filter) { nil }
+  let(:page) { nil }
+
+  let(:base_params) do
+    { provider_id: provider.id, role_id: role.id, page: page, filter: filter }
+  end
+
   let(:model_class) { APISubjectRoleAssignment }
 
   context 'by role_id' do
@@ -32,6 +38,51 @@ RSpec.describe APISubjectRoleAssignmentsController, type: :controller do
       context 'as a non-authenticated user' do
         let(:user) { nil }
         it { is_expected.to redirect_to('/auth/login') }
+      end
+
+      context 'with a filter' do
+        let!(:matching_api_subject) do
+          create(:api_subject, description: 'NOTHING ELSE MATCHES')
+        end
+
+        let!(:other_api_subject) { create(:api_subject) }
+
+        let(:filter) { 'NOTHING*ELSE*MATCHES' }
+
+        it 'only includes the matching api_subject' do
+          expect(assigns[:api_subjects])
+            .to contain_exactly(matching_api_subject)
+        end
+
+        it 'sets the filter' do
+          expect(assigns[:filter]).to eq(filter)
+        end
+      end
+
+      context 'pagination' do
+        let!(:enough_api_subjects_to_make_a_second_page) do
+          create_list(:api_subject, 21)
+        end
+
+        let!(:first_api_subject) do
+          create(:api_subject, x509_cn: 'aaaaaaaaaaa_first_api_subject')
+        end
+
+        context 'on the first page' do
+          let(:page) { '1' }
+
+          it 'includes the first api_subject' do
+            expect(assigns[:api_subjects]).to include(first_api_subject)
+          end
+        end
+
+        context 'on the second page' do
+          let(:page) { '2' }
+
+          it 'excludes the first api_subject' do
+            expect(assigns[:api_subjects]).not_to include(first_api_subject)
+          end
+        end
       end
     end
 
