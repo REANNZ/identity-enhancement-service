@@ -2,6 +2,18 @@
 
 <%= search_form_tag(@filter) %>
 
+<%- if @providers.empty? -%>
+  <%= info_message('No Providers') do -%>
+    <%- if @filter.blank? -%>
+      <p>There are no Providers in the system.</p>
+    <%- else -%>
+      <p>
+        No Providers match your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- else -%>
 <table class="ui basic compact table">
   <thead>
     <tr>
@@ -27,6 +39,7 @@
     <%- end -%>
   </tbody>
 </table>
+<%- end -%>
 
 <%= will_paginate %>
 

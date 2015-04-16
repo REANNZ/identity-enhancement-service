@@ -9,6 +9,18 @@
 
 <%= search_form_tag(@filter) %>
 
+<%- if @objects.empty? -%>
+  <%= info_message('No Subjects') do -%>
+    <%- if @filter.blank? -%>
+      <p>There are no Subjects in the system.</p>
+    <%- else -%>
+      <p>
+        No Subjects match your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- else -%>
 <table class="ui striped compact table">
   <thead>
     <tr>
@@ -55,5 +67,6 @@
     <%- end -%>
   </tbody>
 </table>
+<%- end -%>
 
 <%= will_paginate(@objects) %>
