@@ -1,6 +1,6 @@
 class ProvidersController < ApplicationController
   def index
-    check_access!('providers:list')
+    public_action
     @filter = params[:filter]
     @providers = Provider.filter(@filter).order(:name)
                  .paginate(page: params[:page])

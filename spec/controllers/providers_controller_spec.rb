@@ -19,7 +19,9 @@ RSpec.describe ProvidersController, type: :controller do
 
     context 'as a non-admin' do
       let(:user) { create(:subject) }
-      it { is_expected.to have_http_status(:forbidden) }
+      it { is_expected.to have_http_status(:ok) }
+      it { is_expected.to render_template('providers/index') }
+      it { is_expected.to have_assigned(:providers, include(provider)) }
     end
 
     context 'with no user' do
