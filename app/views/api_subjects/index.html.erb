@@ -15,7 +15,7 @@
   <%- end -%>
 <%- else -%>
   <table class="ui striped compact table">
-    <thead>
+    <thead class="stack-disappear">
       <tr>
         <th>X.509 CN</th>
         <th>Description</th>
@@ -30,9 +30,9 @@
           <td><%= api_subject.description %></td>
           <td>
             <%- if api_subject.functioning? -%>
-              <%= icon_tag('green checkmark') %> Yes
+              <%= icon_tag('green checkmark') %> Functioning
             <%- else -%>
-              <%= icon_tag('yellow warning sign') %> No
+              <%= icon_tag('yellow warning sign') %> Not Functioning
             <%- end -%>
           </td>
           <td class="right aligned">

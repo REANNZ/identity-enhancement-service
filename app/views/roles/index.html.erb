@@ -9,11 +9,11 @@
 <%= page_header(@provider.name, 'Roles') %>
 
 <table class="ui striped compact table">
-  <thead>
+  <thead class="stack-disappear">
     <tr>
       <th>Name</th>
-      <th class="center aligned">Users</th>
-      <th class="center aligned">API Accounts</th>
+      <th>Users</th>
+      <th>API Accounts</th>
       <th/>
     </tr>
   </thead>
@@ -21,8 +21,14 @@
     <%- @roles.each do |role| -%>
       <tr>
         <td><%= role.name %></td>
-        <td class="center aligned"><%= role.subjects.count %></td>
-        <td class="center aligned"><%= role.api_subjects.count %></td>
+        <td>
+          <%= role.subjects.count %>
+          <span class="stack-appear">Users</span>
+        </td>
+        <td>
+          <%= role.api_subjects.count %>
+          <span class="stack-appear">API Accounts</span>
+        </td>
         <td class="right aligned">
           <%- if permitted?("providers:#{@provider.id}:read") -%>
             <%= button_link_to([@provider, role], class: 'tiny icon') do -%>
