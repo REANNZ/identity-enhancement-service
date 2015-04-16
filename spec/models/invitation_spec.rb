@@ -24,6 +24,15 @@ RSpec.describe Invitation, type: :model do
       subject { create(:invitation) }
       it { is_expected.to allow_value(1.day.ago).for(:expires) }
     end
+
+    context '#subject' do
+      let!(:other) { create(:invitation) }
+
+      it 'is required to be unique' do
+        expect { subject.subject = other.subject }
+          .to change { subject.valid? }.to(false)
+      end
+    end
   end
 
   context '#expired?' do

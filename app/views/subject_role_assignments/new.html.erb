@@ -10,6 +10,8 @@
 
 <%= page_header(@provider.name, 'Grant Role to Subject') %>
 
+<%= search_form_tag(@filter) %>
+
 <h3 class="ui header"><%= @role.name %></h3>
 
 <%- if @subjects.present? %>
@@ -43,6 +45,20 @@
       <%- end -%>
     </tbody>
   </table>
+
+  <%= will_paginate(@subjects) %>
 <%- else %>
-  <p>All available users are already a member of this role.
+  <%- if @filter.blank? -%>
+    <%= info_message('No Subjects') do -%>
+      <p>All available Subjects are already a member of this role.</p>
+    <%- end -%>
+  <%- else -%>
+    <%= info_message('No Subjects') do -%>
+      <p>
+        All available Subjects are already a member of this role, or have been
+        excluded by your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
 <%- end %>

@@ -9,6 +9,20 @@
 
 <%= page_header(@provider.name, 'Available Identities') %>
 
+<%= search_form_tag(@filter) %>
+
+<%- if @objects.empty? -%>
+  <%= info_message('No Subjects') do -%>
+    <%- if @filter.blank? -%>
+      <p>There are no Subjects in the system.</p>
+    <%- else -%>
+      <p>
+        No Subjects match your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- else -%>
 <table class="ui striped compact table" id="available-subjects">
   <thead>
     <tr>
@@ -31,8 +45,8 @@
           <%- end -%>
         </td>
         <td class="action-buttons right aligned">
-          <%- unless object.complete? || object.invitations.none? -%>
-            <%- invitation = object.invitations.first -%>
+          <%- unless object.complete? || object.invitation.nil? -%>
+            <%- invitation = object.invitation -%>
             <%- if permitted?("provider:#{invitation.provider_id}:invitations:create") -%>
               <%= button_tag(type: 'button', class: 'tiny basic blue help') do -%>
                 Invitation Status
@@ -89,6 +103,9 @@
     <%- end -%>
   </tbody>
 </table>
+<%- end -%>
+
+<%= will_paginate(@objects) %>
 
 <%- if permitted?("providers:#{@provider.id}:invitations:create") -%>
   <div class="line-of-buttons">

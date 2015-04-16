@@ -15,13 +15,15 @@ class ProvidedAttributesController < ApplicationController
 
   def select_subject
     check_access!("providers:#{@provider.id}:attributes:create")
-    @objects = Subject.all
+    @filter = params[:filter]
+    @objects = Subject.filter(@filter).order(:name)
+               .paginate(page: params[:page])
   end
 
   def new
     check_access!("providers:#{@provider.id}:attributes:create")
     @object = Subject.find(params[:subject_id])
-    @invitation = @object.invitations.first unless @object.complete?
+    @invitation = @object.invitation unless @object.complete?
 
     @provided_attributes = @object.provided_attributes.for_provider(@provider)
     @permitted_attributes = available_permitted_attributes(@provided_attributes)

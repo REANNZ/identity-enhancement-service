@@ -3,15 +3,18 @@ class Subject < ActiveRecord::Base
   has_associated_audits
 
   include Accession::Principal
+  include Lipstick::Filterable
 
   has_many :subject_role_assignments, dependent: :destroy
   has_many :roles, through: :subject_role_assignments
   has_many :provided_attributes, dependent: :destroy
-  has_many :invitations, dependent: :nullify
+  has_one :invitation, dependent: :nullify
 
   valhammer
 
   validates :targeted_id, :shared_token, presence: true, if: :complete?
+
+  filterable_by :name, :mail
 
   def permissions
     subject_role_assignments.flat_map { |ra| ra.role.permissions.map(&:value) }
@@ -37,6 +40,7 @@ class Subject < ActiveRecord::Base
       merge_attributes(other)
 
       other.audit_comment = "Merged into Subject #{id}"
+      other.association(:invitation).reset
       other.destroy!
     end
   end

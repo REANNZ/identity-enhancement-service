@@ -1,6 +1,7 @@
 class APISubject < ActiveRecord::Base
   include Accession::Principal
   include Lipstick::AutoValidation
+  include Lipstick::Filterable
 
   audited comment_required: true
   has_associated_audits
@@ -13,6 +14,8 @@ class APISubject < ActiveRecord::Base
   valhammer
 
   validates :x509_cn, format: /\A[\w-]+\z/
+
+  filterable_by :x509_cn, :description
 
   @lipstick_field_names = { x509_cn: 'X.509 CN' }
 

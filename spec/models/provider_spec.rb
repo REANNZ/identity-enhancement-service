@@ -58,7 +58,7 @@ RSpec.describe Provider, type: :model do
 
     it 'sets the user attributes' do
       run
-      expect(user.invitations.last)
+      expect(user.invitation)
         .to have_attributes(name: user.name, mail: user.mail,
                             subject_id: user.id)
     end
@@ -66,7 +66,7 @@ RSpec.describe Provider, type: :model do
     it 'sets the expiry' do
       Timecop.freeze do
         run
-        expect(user.invitations.last.expires.to_i).to eq(expires.to_i)
+        expect(user.invitation.expires.to_i).to eq(expires.to_i)
       end
     end
 

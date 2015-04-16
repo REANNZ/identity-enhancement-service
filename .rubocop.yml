@@ -13,3 +13,7 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Exclude:
     - db/migrate/*.rb
+
+Rails/Output:
+  Exclude:
+    - db/seeds.rb

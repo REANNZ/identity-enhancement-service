@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150327042954) do
+ActiveRecord::Schema.define(version: 20150401001609) do
 
   create_table "api_subject_role_assignments", force: :cascade do |t|
     t.integer  "api_subject_id", limit: 4, null: false
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20150327042954) do
   end
 
   add_index "invitations", ["identifier"], name: "index_invitations_on_identifier", unique: true, using: :btree
+  add_index "invitations", ["subject_id"], name: "index_invitations_on_subject_id", unique: true, using: :btree
 
   create_table "permissions", force: :cascade do |t|
     t.integer  "role_id",    limit: 4,   null: false
