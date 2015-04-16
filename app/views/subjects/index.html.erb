@@ -22,7 +22,7 @@
   <%- end -%>
 <%- else -%>
 <table class="ui striped compact table">
-  <thead>
+  <thead class="stack-disappear">
     <tr>
       <th>Name</th>
       <th>Email Address</th>
@@ -46,9 +46,9 @@
         </td>
         <td>
           <%- if object.functioning? -%>
-            <%= icon_tag('green checkmark') %> Yes
+            <%= icon_tag('green checkmark') %> Functioning
           <%- else -%>
-            <%= icon_tag('yellow warning sign') %> No
+            <%= icon_tag('yellow warning sign') %> Not Functioning
           <%- end -%>
         </td>
         <td class="action-buttons right aligned">
