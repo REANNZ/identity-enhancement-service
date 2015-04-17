@@ -83,12 +83,13 @@ RSpec.describe Provider, type: :model do
     end
 
     it 'creates the roles' do
-      expect { run }.to change(provider.roles, :count)
+      expect { run }.to change(provider.roles, :count).by(5)
     end
 
     it 'replaces PROVIDER_ID with the actual id' do
       run
-      expect(provider.roles.find_by_name('api_rw').permissions.map(&:value))
+      role = provider.roles.find_by_name('API Read/Write')
+      expect(role.permissions.map(&:value))
         .to include("providers:#{provider.id}:attributes:create")
     end
   end
