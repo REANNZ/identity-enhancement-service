@@ -95,7 +95,7 @@
     <%- end -%>
   <%- end -%>
 
-  <%- if permitted?('admin:subjects:read') -%>
+  <%- if permitted?('admin:subjects:delete') -%>
     <%= delete_button_tag(@object, class: 'large') %>
   <%- end -%>
 </div>
