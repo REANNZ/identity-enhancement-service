@@ -19,6 +19,32 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  context 'associated objects' do
+    context 'roles' do
+      let(:child) { create(:role) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'permitted_attributes' do
+      let!(:child) { create(:permitted_attribute) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'api_subjects' do
+      let!(:child) { create(:api_subject) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'requested_enhancements' do
+      let!(:child) { create(:requested_enhancement) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+  end
+
   context '::lookup' do
     let(:provider) { create(:provider) }
     let(:prefix) { Rails.application.config.ide_service.provider_prefix }
