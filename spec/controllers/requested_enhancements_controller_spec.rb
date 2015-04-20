@@ -26,18 +26,29 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
   context 'get :index' do
     before { get :index, provider_id: provider.id }
 
-    let(:req) { create(:requested_enhancement, provider: provider) }
-    let(:other_req) { create(:requested_enhancement) }
+    let!(:req) { create(:requested_enhancement, provider: provider) }
+    let!(:other_req) { create(:requested_enhancement) }
 
     it { is_expected.to have_http_status(:ok) }
     it { is_expected.to render_template('requested_enhancements/index') }
 
-    it 'assigns the enhancements' do
+    it 'assigns the enhancement requests' do
       expect(assigns[:requested_enhancements]).to include(req)
     end
 
-    it 'only assigns enhancements requested from the current provider' do
+    it 'only assigns enhancements requests from the current provider' do
       expect(assigns[:requested_enhancements]).not_to include(other_req)
+    end
+
+    context 'when the request is actioned' do
+      let!(:req) do
+        create(:requested_enhancement, provider: provider, actioned: true,
+                                       actioned_by: user)
+      end
+
+      it 'excludes the actioned request' do
+        expect(assigns[:requested_enhancements]).not_to include(req)
+      end
     end
 
     context 'with an unprivileged user' do
@@ -55,11 +66,34 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
 
     let(:req) { create(:requested_enhancement, provider: provider) }
 
+    let(:permitted_attribute) do
+      create(:permitted_attribute, provider: provider)
+    end
+
     it { is_expected.to have_http_status(:ok) }
     it { is_expected.to render_template('requested_enhancements/show') }
 
     it 'assigns the requested enhancement' do
       expect(assigns[:requested_enhancement]).to eq(req)
+    end
+
+    context 'with attributes provided' do
+      let!(:attr) do
+        create(:provided_attribute, permitted_attribute: permitted_attribute,
+                                    subject: req.subject)
+      end
+
+      let!(:other_attr) do
+        create(:provided_attribute, subject: req.subject)
+      end
+
+      it 'assigns the already-provided attributes' do
+        expect(assigns[:provided_attributes]).to include(attr)
+      end
+
+      it 'excludes provided attributes from other providers' do
+        expect(assigns[:provided_attributes]).not_to include(other_attr)
+      end
     end
 
     context 'with an unprivileged user' do
@@ -103,7 +137,12 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
       before { run }
 
       it 'redirects to the provider' do
-        expect(response).to redirect_to(provider_path(provider))
+        expect(response).to redirect_to(dashboard_path)
+      end
+
+      it 'sets the flash message' do
+        expect(flash[:success]).to eq('Your request for identity enhancement ' \
+                                      "has been sent to #{provider.name}")
       end
 
       include_examples 'common requested_enhancements stuff'
@@ -132,6 +171,11 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
         expect(response).to redirect_to([provider, :requested_enhancements])
       end
 
+      it 'sets the flash message' do
+        expect(flash[:success]).to eq("Request from #{req.subject.name} " \
+                                      'has been dismissed.')
+      end
+
       context 'with an unprivileged user' do
         let(:user) { create(:subject) }
 
@@ -145,8 +189,10 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
 
   context 'get :select_provider' do
     let(:user) { create(:subject) }
+    let(:filter) { nil }
+    let(:page) { nil }
 
-    before { get :select_provider }
+    before { get :select_provider, filter: filter, page: page }
 
     it { is_expected.to have_http_status(:ok) }
 
@@ -155,6 +201,46 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
 
     it 'assigns the providers list' do
       expect(assigns[:providers]).to include(provider)
+    end
+
+    context 'with a filter' do
+      let!(:matching_provider) do
+        create(:provider, name: 'NOTHING ELSE MATCHES')
+      end
+
+      let(:filter) { 'NOTHING*ELSE*MATCHES' }
+
+      it 'only includes the matching provider' do
+        expect(assigns[:providers]).to contain_exactly(matching_provider)
+      end
+
+      it 'sets the filter' do
+        expect(assigns[:filter]).to eq(filter)
+      end
+    end
+
+    context 'pagination' do
+      let!(:enough_providers_for_a_second_page) { create_list(:provider, 21) }
+
+      let!(:first_provider) do
+        create(:provider, name: 'aaaaaaaaaaa first provider')
+      end
+
+      context 'on the first page' do
+        let(:page) { '1' }
+
+        it 'includes the first provider' do
+          expect(assigns[:providers]).to include(first_provider)
+        end
+      end
+
+      context 'on the second page' do
+        let(:page) { '2' }
+
+        it 'excludes the first provider' do
+          expect(assigns[:providers]).not_to include(first_provider)
+        end
+      end
     end
   end
 end

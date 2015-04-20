@@ -1,0 +1,17 @@
+<%= page_header('Request Enhancement') %>
+
+<%= search_form_tag(@filter) %>
+
+<table>
+  <%- @providers.each do |provider| -%>
+    <tr>
+      <td><%= provider.name %></td>
+      <td>
+        <%= button_link_to([:new, provider, :requested_enhancement], class: 'tiny icon') do -%>
+          Select
+        <%- end -%>
+      </td>
+  <%- end -%>
+</table>
+
+<%= will_paginate(@providers) %>

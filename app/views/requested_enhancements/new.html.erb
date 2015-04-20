@@ -1,0 +1,20 @@
+<%= form_for([@provider, @requested_enhancement], html: { id: 'new-request' }) do |f| -%>
+  <%= field_block do -%>
+    <%= f.label(:message) do -%>
+      Message
+      <%= field_help_text('This message will be shown to the provider when they review your request.') %>
+    <%- end -%>
+    <%= f.text_area(:message) %>
+  <%- end -%>
+
+  <%= button_tag(type: 'submit', class: 'large green icon') do -%>
+    <%= icon_tag('checkmark') %>
+    Submit Request
+  <%- end -%>
+
+  <%= error_messages_tag %>
+<%- end -%>
+
+<%= validate_form('#new-request', :requested_enhancement) do -%>
+  <%= auto_validate(@requested_enhancement, :message) %>
+<%- end -%>

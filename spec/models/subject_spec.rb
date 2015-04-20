@@ -121,6 +121,12 @@ RSpec.describe Subject, type: :model do
       subject { child.subject }
       it_behaves_like 'an association which cascades delete'
     end
+
+    context 'requested_enhancements' do
+      let!(:child) { create(:requested_enhancement) }
+      subject { child.subject }
+      it_behaves_like 'an association which cascades delete'
+    end
   end
 
   context '#merge' do

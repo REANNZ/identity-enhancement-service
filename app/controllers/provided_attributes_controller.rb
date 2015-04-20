@@ -22,7 +22,7 @@ class ProvidedAttributesController < ApplicationController
 
   def new
     check_access!("providers:#{@provider.id}:attributes:create")
-    @object = Subject.find(params[:subject_id])
+    @object = find_subject
     @invitation = @object.invitation unless @object.complete?
 
     @provided_attributes = @object.provided_attributes.for_provider(@provider)
@@ -36,6 +36,11 @@ class ProvidedAttributesController < ApplicationController
     flash[:success] = creation_message(@provided_attribute)
 
     @subject = @provided_attribute.subject
+
+    if requested_enhancement
+      return redirect_to [@provider, requested_enhancement]
+    end
+
     redirect_to new_provider_provided_attribute_path(@provider,
                                                      subject_id: @subject.id)
   end
@@ -101,5 +106,17 @@ class ProvidedAttributesController < ApplicationController
   def available_permitted_attributes(provided_attributes)
     ids = provided_attributes.map(&:permitted_attribute_id)
     @provider.permitted_attributes.reject { |a| ids.include?(a.id) }
+  end
+
+  def find_subject
+    return Subject.find(params[:subject_id]) if params[:subject_id]
+
+    requested_enhancement.subject
+  end
+
+  def requested_enhancement
+    return nil unless params[:requested_enhancement_id]
+    @requested_enhancement ||=
+      RequestedEnhancement.find(params[:requested_enhancement_id])
   end
 end

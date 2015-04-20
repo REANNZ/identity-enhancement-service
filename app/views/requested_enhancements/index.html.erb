@@ -1,0 +1,31 @@
+<%=
+  breadcrumbs(
+    { 'Providers' => providers_path },
+    { @provider.name => provider_path(@provider) },
+    'Requests'
+  )
+%>
+
+<%= page_header('Providers', 'View Enhancement Requests') %>
+
+<%- if @requested_enhancements.empty? -%>
+  <%= info_message('No Enhancement Requests') do -%>
+    <p>There are no outstanding requests for identity enhancement.</p>
+  <%- end -%>
+<%- else -%>
+  <table>
+    <tbody>
+    <%- @requested_enhancements.each do |requested_enhancement| -%>
+      <tr>
+        <td><%= requested_enhancement.subject.name %></td>
+        <td>
+          <%= button_link_to([@provider, requested_enhancement], class: 'tiny icon') do -%>
+            <%= icon_tag('content') %>
+            View
+          <%- end -%>
+        </td>
+      </tr>
+    <%- end -%>
+    </tbody>
+  </table>
+<%- end -%>

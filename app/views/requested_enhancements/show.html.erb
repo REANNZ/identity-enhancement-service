@@ -1,0 +1,47 @@
+<table class="definition">
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td><%= @requested_enhancement.subject.name %></td>
+    </tr>
+
+    <tr>
+      <td>Email Address</td>
+      <td><%= @requested_enhancement.subject.mail %></td>
+    </tr>
+
+    <tr>
+      <td>Message</td>
+      <td class="enhancement-request-message">
+        <%= @requested_enhancement.message %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <%- @provided_attributes.each do |attribute| -%>
+      <tr>
+        <td><%= attribute.name %></td>
+        <td><%= attribute.value %></td>
+      </tr>
+    <%- end -%>
+  </tbody>
+</table>
+
+<div class="line-of-buttons">
+  <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
+    <%= button_link_to([:new, @provider, @requested_enhancement, :provided_attribute],
+                       class: 'large green icon') do -%>
+      <%= icon_tag('add') %>
+      Enhance Identity
+    <%- end -%>
+
+    <%= button_link_to([:dismiss, @provider, @requested_enhancement],
+                       method: :post, class: 'large icon') do -%>
+      <%= icon_tag('remove') %>
+      Dismiss
+    <%- end -%>
+  <%- end -%>
+</div>

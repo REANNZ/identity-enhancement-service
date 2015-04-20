@@ -115,7 +115,7 @@
             <td><%= attribute.value %></td>
             <td class="right aligned">
               <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
-                <%= form_tag(provider_provided_attributes_path(@provider)) do -%>
+                <%= form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
                   <%= hidden_fields do -%>
                     <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
                     <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>

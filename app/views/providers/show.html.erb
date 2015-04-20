@@ -26,6 +26,11 @@
       <%= icon_tag('users') %>
       Identities
     <%- end -%>
+
+    <%= button_link_to([@provider, :requested_enhancements], class: 'large icon') do -%>
+      <%= icon_tag('comments') %>
+      Requests
+    <%- end -%>
   <%- end -%>
 
   <%- if permitted?("providers:#{@provider.id}:update") -%>

@@ -5,12 +5,16 @@ class RequestedEnhancementsController < ApplicationController
 
   def index
     check_access!("providers:#{@provider.id}:attributes:list")
-    @requested_enhancements = @provider.requested_enhancements.all
+    @requested_enhancements = @provider.requested_enhancements.pending.all
   end
 
   def show
     check_access!("providers:#{@provider.id}:attributes:list")
     @requested_enhancement = @provider.requested_enhancements.find(params[:id])
+    @provided_attributes =
+      @requested_enhancement.subject.provided_attributes
+      .joins(:permitted_attribute)
+      .where(permitted_attributes: { provider_id: @provider.id })
   end
 
   def new
@@ -25,7 +29,9 @@ class RequestedEnhancementsController < ApplicationController
                    subject: subject)
 
     @requested_enhancement = @provider.requested_enhancements.create!(attrs)
-    redirect_to @provider
+    flash[:success] = 'Your request for identity enhancement has been sent ' \
+                      "to #{@provider.name}"
+    redirect_to dashboard_path
   end
 
   def dismiss
@@ -36,15 +42,8 @@ class RequestedEnhancementsController < ApplicationController
       actioned: true, actioned_by: subject,
       audit_comment: 'Actioned enhancement request via web')
 
-    redirect_to [@provider, :requested_enhancements]
-  end
-
-  def update
-    check_access!("providers:#{@provider.id}:attributes:create")
-    @requested_enhancement = @provider.requested_enhancements.find(params[:id])
-    attrs = requested_enhancement_params
-            .merge(audit_comment: 'Edited enhancement request via web')
-    @requested_enhancement.update_attributes!(attrs)
+    flash[:success] = "Request from #{@requested_enhancement.subject.name} " \
+                      'has been dismissed.'
     redirect_to [@provider, :requested_enhancements]
   end
 
@@ -55,7 +54,9 @@ class RequestedEnhancementsController < ApplicationController
 
   def select_provider
     public_action
-    @providers = Provider.all
+    @filter = params[:filter]
+    @providers = Provider.filter(@filter).order(:name)
+                 .paginate(page: params[:page])
   end
 
   private

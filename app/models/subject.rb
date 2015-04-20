@@ -8,6 +8,7 @@ class Subject < ActiveRecord::Base
   has_many :subject_role_assignments, dependent: :destroy
   has_many :roles, through: :subject_role_assignments
   has_many :provided_attributes, dependent: :destroy
+  has_many :requested_enhancements, dependent: :destroy
   has_one :invitation, dependent: :nullify
 
   valhammer
