@@ -47,7 +47,7 @@
           <td><%= provided_attribute.value %></td>
           <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
-              <%= delete_button_tag(provider_provided_attribute_path(@provider, provided_attribute)) %>
+              <%= delete_button_tag(url_for([@provider, @requested_enhancement, provided_attribute].compact)) %>
             <%- end -%>
           </td>
         </tr>

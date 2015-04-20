@@ -36,13 +36,7 @@ class ProvidedAttributesController < ApplicationController
     flash[:success] = creation_message(@provided_attribute)
 
     @subject = @provided_attribute.subject
-
-    if requested_enhancement
-      return redirect_to [@provider, requested_enhancement]
-    end
-
-    redirect_to new_provider_provided_attribute_path(@provider,
-                                                     subject_id: @subject.id)
+    redirect_from_create_or_destroy
   end
 
   def destroy
@@ -52,11 +46,19 @@ class ProvidedAttributesController < ApplicationController
     flash[:success] = deletion_message(@provided_attribute)
 
     @subject = @provided_attribute.subject
-    redirect_to new_provider_provided_attribute_path(@provider,
-                                                     subject_id: @subject.id)
+    redirect_from_create_or_destroy
   end
 
   private
+
+  def redirect_from_create_or_destroy
+    if requested_enhancement
+      return redirect_to [@provider, requested_enhancement]
+    end
+
+    redirect_to new_provider_provided_attribute_path(@provider,
+                                                     subject_id: @subject.id)
+  end
 
   def permitted_attribute
     id = provided_attribute_params[:permitted_attribute_id]

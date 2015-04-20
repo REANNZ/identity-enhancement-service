@@ -37,7 +37,7 @@ Rails.application.routes.draw do
         post 'dismiss' => 'requested_enhancements#dismiss', as: 'dismiss'
       end
 
-      resources :provided_attributes, only: %i(new create)
+      resources :provided_attributes, only: %i(new create destroy)
     end
   end
 
