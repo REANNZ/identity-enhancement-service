@@ -28,7 +28,19 @@ Rails.application.routes.draw do
         get 'audits' => 'api_subjects#audits', as: 'audit'
       end
     end
+
+    resources :requested_enhancements, except: %i(edit update) do
+      collection do
+        get 'select' => 'requested_enhancements#select', as: 'select'
+      end
+      member do
+        post 'dismiss' => 'requested_enhancements#dismiss', as: 'dismiss'
+      end
+    end
   end
+
+  get 'request_enhancement' => 'requested_enhancements#select_provider',
+      as: 'request_enhancement'
 
   resources :invitations, only: [] do
     collection do
