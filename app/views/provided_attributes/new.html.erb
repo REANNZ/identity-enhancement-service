@@ -1,10 +1,20 @@
 <%=
-  breadcrumbs(
-    { 'Providers' => providers_path },
-    { @provider.name => provider_path(@provider) },
-    { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
-    @object.name
-  )
+  if @requested_enhancement
+    breadcrumbs(
+      { 'Providers' => providers_path },
+      { @provider.name => provider_path(@provider) },
+      { 'Requests' => provider_requested_enhancements_path(@provider) },
+      { @requested_enhancement.subject.name => provider_requested_enhancement_path(@provider, @requested_enhancement) },
+      'Enhance Identity'
+    )
+  else
+    breadcrumbs(
+      { 'Providers' => providers_path },
+      { @provider.name => provider_path(@provider) },
+      { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
+      @object.name
+    )
+  end
 %>
 
 <%= page_header(@provider.name, 'Enhance an Identity') %>

@@ -1,4 +1,15 @@
-<table class="definition">
+<%=
+  breadcrumbs(
+    { 'Providers' => providers_path },
+    { @provider.name => provider_path(@provider) },
+    { 'Requests' => provider_requested_enhancements_path(@provider) },
+    @requested_enhancement.subject.name
+  )
+%>
+
+<%= page_header(@provider.name, 'Identity Enhancement Request') %>
+
+<table class="ui compact definition table">
   <tbody>
     <tr>
       <td>Name</td>
@@ -12,23 +23,37 @@
 
     <tr>
       <td>Message</td>
-      <td class="enhancement-request-message">
-        <%= @requested_enhancement.message %>
-      </td>
+      <td class="enhancement-request-message"><%= @requested_enhancement.message %></td>
     </tr>
   </tbody>
 </table>
 
-<table>
-  <tbody>
-    <%- @provided_attributes.each do |attribute| -%>
+<%- if @provided_attributes.empty? -%>
+  <%= info_message('No Provided Attributes') do -%>
+    <strong><%= @provider.name %></strong> is not currently enhancing the
+    identity of <strong><%= @requested_enhancement.subject.name %></strong>
+  <%- end -%>
+<%- else -%>
+  <h3 class="ui header">Current Attributes</h3>
+
+  <table class="ui striped compact table" id="provided-attributes">
+    <thead class="stack-disappear">
       <tr>
-        <td><%= attribute.name %></td>
-        <td><%= attribute.value %></td>
+        <th>Name</th>
+        <th>Value</th>
+        <th/>
       </tr>
-    <%- end -%>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <%- @provided_attributes.each do |provided_attribute| -%>
+        <tr>
+          <td><%= provided_attribute.name %></td>
+          <td><%= provided_attribute.value %></td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
+<%- end -%>
 
 <div class="line-of-buttons">
   <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
@@ -39,7 +64,7 @@
     <%- end -%>
 
     <%= button_link_to([:dismiss, @provider, @requested_enhancement],
-                       method: :post, class: 'large icon') do -%>
+                       method: :post, class: 'large red icon') do -%>
       <%= icon_tag('remove') %>
       Dismiss
     <%- end -%>
