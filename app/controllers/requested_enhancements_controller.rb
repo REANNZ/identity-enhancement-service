@@ -1,4 +1,6 @@
 class RequestedEnhancementsController < ApplicationController
+  delegate :image_url, to: :view_context
+
   before_action(except: :select_provider) do
     @provider = Provider.find(params[:provider_id])
   end
@@ -31,6 +33,9 @@ class RequestedEnhancementsController < ApplicationController
     @requested_enhancement = @provider.requested_enhancements.create!(attrs)
     flash[:success] = 'Your request for identity enhancement has been sent ' \
                       "to #{@provider.name}"
+
+    deliver(@requested_enhancement)
+
     redirect_to dashboard_path
   end
 
@@ -63,5 +68,40 @@ class RequestedEnhancementsController < ApplicationController
 
   def requested_enhancement_params
     params.require(:requested_enhancement).permit(:message)
+  end
+
+  def deliver(req)
+    Mail.deliver(to: email_recipients,
+                 from: Rails.application.config.ide_service.mail[:from],
+                 subject: 'New Enhancement Request - AAF Identity Enhancement',
+                 body: email_message(req).render,
+                 content_type: 'text/html; charset=UTF-8')
+  end
+
+  private
+
+  def email_message(req)
+    Lipstick::EmailMessage.new(title: 'AAF Identity Enhancement',
+                               image_url: image_url('email_branding.png'),
+                               content: email_body(req))
+  end
+
+  def email_recipients
+    Subject.joins(:roles)
+      .where(roles: { provider_id: @provider.id })
+      .includes(roles: :permissions)
+      .select { |u| u.permits?("providers:#{@provider.id}:attributes:list") }
+      .map(&:mail)
+  end
+
+  EMAIL_BODY = File.read(Rails.root.join('config/enhancement_request.md'))
+               .freeze
+
+  def email_body(req)
+    format(EMAIL_BODY,
+           url: url_for([@provider, req]),
+           provider: @provider.name,
+           name: req.subject.name,
+           mail: req.subject.mail)
   end
 end

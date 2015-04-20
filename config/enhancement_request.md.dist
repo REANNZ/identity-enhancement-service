@@ -1,0 +1,8 @@
+%{provider} has been asked to provide an enhancement to an identity known to AAF
+Identity Enhancement. Please visit the following link to view the request
+details:
+
+<%{url}>
+
+Regards,<br/>
+AAF Team

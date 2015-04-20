@@ -125,6 +125,15 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
     let(:user) { create(:subject) }
     let(:attrs) { { message: Faker::Lorem.paragraph } }
 
+    let!(:provider_admin) do
+      create(:subject).tap do |admin|
+        role = create(:role, provider: provider)
+        create(:subject_role_assignment, role: role, subject: admin)
+        create(:permission, role: role, value: "providers:#{provider.id}:*")
+        admin.reload
+      end
+    end
+
     def run
       post :create, provider_id: provider.id, requested_enhancement: attrs
     end
@@ -143,6 +152,15 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
       it 'sets the flash message' do
         expect(flash[:success]).to eq('Your request for identity enhancement ' \
                                       "has been sent to #{provider.name}")
+      end
+
+      it 'sends an email' do
+        text = "A request from #{user.name} <#{user.mail}> was submitted " \
+               "recently to request that #{provider.name} enhance their " \
+               'identity'
+
+        expect(response)
+          .to have_sent_email.to(provider_admin.mail).matching_body(/#{text}/)
       end
 
       include_examples 'common requested_enhancements stuff'
