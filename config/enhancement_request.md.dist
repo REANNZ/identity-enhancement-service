@@ -1,8 +1,10 @@
-%{provider} has been asked to provide an enhancement to an identity known to AAF
-Identity Enhancement. Please visit the following link to view the request
-details:
+You're receiving this email as an administrator of %{provider} within the AAF
+Identity Enhancement Service.
+
+A request from %{name} &lt;%{mail}&gt; was submitted recently to request that
+%{provider} enhance their identity so they can access additional research
+related services.
+
+Please visit the following link to see full request details:
 
 <%{url}>
-
-Regards,<br/>
-AAF Team
