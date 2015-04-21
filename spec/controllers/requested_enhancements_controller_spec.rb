@@ -155,12 +155,10 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
       end
 
       it 'sends an email' do
-        text = "A request from #{user.name} <#{user.mail}> was submitted " \
-               "recently to request that #{provider.name} enhance their " \
-               'identity'
+        pattern = /.*A request.+was submitted.+to request.+enhance.*/m
 
-        expect(response)
-          .to have_sent_email.to(provider_admin.mail).matching_body(/#{text}/)
+        expect(response).to have_sent_email.to(provider_admin.mail)
+        expect(response).to have_sent_email.matching_body(pattern)
       end
 
       include_examples 'common requested_enhancements stuff'

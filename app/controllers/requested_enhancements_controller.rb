@@ -71,14 +71,15 @@ class RequestedEnhancementsController < ApplicationController
   end
 
   def deliver(req)
-    Mail.deliver(to: email_recipients,
+    recipients = email_recipients
+    return if recipients.empty?
+
+    Mail.deliver(to: recipients,
                  from: Rails.application.config.ide_service.mail[:from],
                  subject: 'New Enhancement Request - AAF Identity Enhancement',
                  body: email_message(req).render,
                  content_type: 'text/html; charset=UTF-8')
   end
-
-  private
 
   def email_message(req)
     Lipstick::EmailMessage.new(title: 'AAF Identity Enhancement',
