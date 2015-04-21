@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Requested Enhancements', :focus, js: true do
+RSpec.feature 'Requested Enhancements', js: true do
   let!(:provider) { create(:provider) }
 
   background do
