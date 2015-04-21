@@ -27,6 +27,8 @@ class ProvidersController < ApplicationController
   def show
     check_access!("providers:#{params[:id]}:read")
     @provider = Provider.find(params[:id])
+    @request_count = RequestedEnhancement.where(provider_id: @provider.id)
+                     .pending.count
   end
 
   def edit

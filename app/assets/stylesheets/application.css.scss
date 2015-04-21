@@ -111,3 +111,14 @@ footer {
 .enhancement-request-message {
   white-space: pre;
 }
+
+.ui.button.with-attached-label {
+  position: relative;
+
+  .ui.label {
+    position: absolute;
+    margin: 0px;
+    right: -3px;
+    top: -3px;
+  }
+}
