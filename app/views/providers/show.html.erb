@@ -26,6 +26,15 @@
       <%= icon_tag('users') %>
       Identities
     <%- end -%>
+
+    <%= button_link_to([@provider, :requested_enhancements], class: 'large icon with-attached-label') do -%>
+      <%= icon_tag('comments') %>
+      Requests
+
+      <%- if @request_count > 0 -%>
+        <div class="ui tiny circular red label"><%= @request_count %></div>
+      <%- end -%>
+    <%- end -%>
   <%- end -%>
 
   <%- if permitted?("providers:#{@provider.id}:update") -%>

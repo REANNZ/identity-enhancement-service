@@ -8,6 +8,7 @@ class Provider < ActiveRecord::Base
   has_many :roles, dependent: :destroy
   has_many :permitted_attributes, dependent: :destroy
   has_many :api_subjects, dependent: :destroy
+  has_many :requested_enhancements, dependent: :destroy
 
   valhammer
 

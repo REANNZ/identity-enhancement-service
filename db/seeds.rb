@@ -56,6 +56,10 @@ ActiveRecord::Base.transaction do
 
   providers = Provider.includes(roles: :permissions).all
 
+  providers.each do |provider|
+    create_list(:requested_enhancement, (1..5).to_a.sample, provider: provider)
+  end
+
   create_list(:subject, 500).each do |subject|
     if rand < 0.2
       subject.without_auditing do

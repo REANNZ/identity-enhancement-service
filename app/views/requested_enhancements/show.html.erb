@@ -1,0 +1,85 @@
+<%=
+  breadcrumbs(
+    { 'Providers' => providers_path },
+    { @provider.name => provider_path(@provider) },
+    { 'Requests' => provider_requested_enhancements_path(@provider) },
+    @requested_enhancement.subject.name
+  )
+%>
+
+<%= page_header(@provider.name, 'Identity Enhancement Request') %>
+
+<table class="ui compact definition table">
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td><%= @requested_enhancement.subject.name %></td>
+    </tr>
+
+    <tr>
+      <td>Email Address</td>
+      <td><%= @requested_enhancement.subject.mail %></td>
+    </tr>
+
+    <tr>
+      <td>Message</td>
+      <td class="enhancement-request-message"><%= @requested_enhancement.message %></td>
+    </tr>
+
+    <tr>
+      <td>State</td>
+      <%- if @requested_enhancement.actioned? -%>
+        <td class="positive">
+          Actioned by <strong><%= @requested_enhancement.actioned_by.name %></strong>
+        </td>
+      <%- else -%>
+        <td class="warning">Pending</td>
+      <%- end -%>
+    </tr>
+  </tbody>
+</table>
+
+<%- if @provided_attributes.empty? -%>
+  <%= info_message('No Provided Attributes') do -%>
+    <strong><%= @provider.name %></strong> is not currently enhancing the
+    identity of <strong><%= @requested_enhancement.subject.name %></strong>
+  <%- end -%>
+<%- else -%>
+  <h3 class="ui header">Current Attributes</h3>
+
+  <table class="ui striped compact table" id="provided-attributes">
+    <thead class="stack-disappear">
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th/>
+      </tr>
+    </thead>
+    <tbody>
+      <%- @provided_attributes.each do |provided_attribute| -%>
+        <tr>
+          <td><%= provided_attribute.name %></td>
+          <td><%= provided_attribute.value %></td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
+<%- end -%>
+
+<div class="line-of-buttons">
+  <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
+    <%= button_link_to([:new, @provider, @requested_enhancement, :provided_attribute],
+                       class: 'large green icon') do -%>
+      <%= icon_tag('add') %>
+      Enhance Identity
+    <%- end -%>
+
+    <%- unless @requested_enhancement.actioned? -%>
+      <%= button_link_to([:dismiss, @provider, @requested_enhancement],
+                         method: :post, class: 'large red icon') do -%>
+        <%= icon_tag('remove') %>
+        Dismiss
+      <%- end -%>
+    <%- end -%>
+  <%- end -%>
+</div>

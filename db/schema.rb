@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150415232646) do
+ActiveRecord::Schema.define(version: 20150417013617) do
 
   create_table "api_subject_role_assignments", force: :cascade do |t|
     t.integer  "api_subject_id", limit: 4, null: false
@@ -122,6 +122,16 @@ ActiveRecord::Schema.define(version: 20150415232646) do
   end
 
   add_index "providers", ["identifier"], name: "index_providers_on_identifier", unique: true, using: :btree
+
+  create_table "requested_enhancements", force: :cascade do |t|
+    t.integer  "subject_id",     limit: 4,                    null: false
+    t.integer  "provider_id",    limit: 4,                    null: false
+    t.string   "message",        limit: 4096,                 null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.boolean  "actioned",       limit: 1,    default: false, null: false
+    t.integer  "actioned_by_id", limit: 4
+  end
 
   create_table "roles", force: :cascade do |t|
     t.integer  "provider_id", limit: 4,   null: false
