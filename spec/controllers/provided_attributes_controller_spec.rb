@@ -236,6 +236,10 @@ RSpec.describe ProvidedAttributesController, type: :controller do
     it { is_expected.to change(ProvidedAttribute, :count).by(1) }
     it { is_expected.to have_assigned(:provider, provider) }
 
+    it 'marks the requested enhancement as actioned' do
+      expect { run }.to change { req.reload.actioned? }.to be_truthy
+    end
+
     context 'the response' do
       before { run }
       subject { response }

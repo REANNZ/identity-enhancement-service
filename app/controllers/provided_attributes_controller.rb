@@ -56,8 +56,7 @@ class ProvidedAttributesController < ApplicationController
       return redirect_to [@provider, requested_enhancement]
     end
 
-    redirect_to new_provider_provided_attribute_path(@provider,
-                                                     subject_id: @subject.id)
+    redirect_to [:new, @provider, :provided_attribute, subject_id: @subject.id]
   end
 
   def permitted_attribute
@@ -78,21 +77,27 @@ class ProvidedAttributesController < ApplicationController
   end
 
   def creation_message(provided_attribute)
-    subject = provided_attribute.subject
     "Provided attribute with name #{provided_attribute.name} and value " \
-      "#{provided_attribute.value} to #{subject.name}"
+      "#{provided_attribute.value} to #{provided_attribute.subject.name}"
   end
 
   def deletion_message(provided_attribute)
-    subject = provided_attribute.subject
     "Removed attribute with name #{provided_attribute.name} and value " \
-      "#{provided_attribute.value} from #{subject.name}"
+      "#{provided_attribute.value} from #{provided_attribute.subject.name}"
   end
 
   def create_provided_attribute
-    attrs = provided_attribute_params.merge(attribute_attrs)
-    attrs.merge!(audit_comment: 'Provided attribute via web interface')
-    permitted_attribute.provided_attributes.create!(attrs)
+    ProvidedAttribute.transaction do
+      enhancement_attrs = {
+        actioned: true, actioned_by: subject,
+        audit_comment: 'Automatically actioned by providing an attribute' }
+
+      requested_enhancement.try(:update_attributes!, enhancement_attrs)
+
+      attrs = provided_attribute_params.merge(attribute_attrs)
+      attrs.merge!(audit_comment: 'Provided attribute via web interface')
+      permitted_attribute.provided_attributes.create!(attrs)
+    end
   end
 
   def delete_provided_attribute
