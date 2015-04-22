@@ -25,6 +25,17 @@
       <td>Message</td>
       <td class="enhancement-request-message"><%= @requested_enhancement.message %></td>
     </tr>
+
+    <tr>
+      <td>State</td>
+      <%- if @requested_enhancement.actioned? -%>
+        <td class="positive">
+          Actioned by <strong><%= @requested_enhancement.actioned_by.name %></strong>
+        </td>
+      <%- else -%>
+        <td class="warning">Pending</td>
+      <%- end -%>
+    </tr>
   </tbody>
 </table>
 
@@ -63,10 +74,12 @@
       Enhance Identity
     <%- end -%>
 
-    <%= button_link_to([:dismiss, @provider, @requested_enhancement],
-                       method: :post, class: 'large red icon') do -%>
-      <%= icon_tag('remove') %>
-      Dismiss
+    <%- unless @requested_enhancement.actioned? -%>
+      <%= button_link_to([:dismiss, @provider, @requested_enhancement],
+                         method: :post, class: 'large red icon') do -%>
+        <%= icon_tag('remove') %>
+        Dismiss
+      <%- end -%>
     <%- end -%>
   <%- end -%>
 </div>

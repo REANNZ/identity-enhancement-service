@@ -53,7 +53,7 @@ RSpec.feature 'Requested Enhancements', js: true do
     let!(:req) { create(:requested_enhancement, provider: provider) }
     let!(:attr) { create(:permitted_attribute, provider: provider) }
 
-    it 'actions the request' do
+    background do
       within('tr', text: provider.name) do
         click_link('View')
       end
@@ -66,7 +66,9 @@ RSpec.feature 'Requested Enhancements', js: true do
 
       expect(page).to have_css('.definition td', text: req.subject.name)
         .and have_css('.enhancement-request-message', text: req.message)
+    end
 
+    it 'actions the request' do
       click_link('Enhance Identity')
 
       within('tr', text: attr.available_attribute.value) do
@@ -76,6 +78,15 @@ RSpec.feature 'Requested Enhancements', js: true do
       expect(page).to have_css('.success.message', text: 'Provided attribute')
         .and have_css('tr', text: attr.available_attribute.value)
 
+      expect(page).not_to have_css('a.ui.button', text: 'Dismiss')
+      click_link('Requests')
+
+      expect(current_path)
+        .to eq("/providers/#{provider.id}/requested_enhancements")
+      expect(page).not_to have_css('tr', text: req.subject.name)
+    end
+
+    it 'dismisses the request' do
       click_link('Dismiss')
 
       expect(current_path)
