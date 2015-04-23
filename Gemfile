@@ -13,7 +13,7 @@ gem 'audited-activerecord'
 gem 'rapid-rack'
 gem 'accession'
 gem 'aaf-lipstick', git: 'https://github.com/ausaccessfed/aaf-lipstick',
-                    branch: 'develop'
+                    branch: 'bugfix/blank-date-picker'
 gem 'valhammer'
 
 gem 'unicorn', require: false
