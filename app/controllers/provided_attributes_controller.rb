@@ -23,6 +23,7 @@ class ProvidedAttributesController < ApplicationController
   def new
     check_access!("providers:#{@provider.id}:attributes:create")
     @object = find_subject
+    @provisioned_subject = @object.provision(@provider)
     @invitation = @object.invitation unless @object.complete?
 
     @provided_attributes = @object.provided_attributes.for_provider(@provider)
@@ -97,6 +98,7 @@ class ProvidedAttributesController < ApplicationController
       attrs = provided_attribute_params.merge(attribute_attrs)
       attrs.merge!(audit_comment: 'Provided attribute via web interface')
       permitted_attribute.provided_attributes.create!(attrs)
+        .tap { |attr| attr.subject.provision(@provider) }
     end
   end
 

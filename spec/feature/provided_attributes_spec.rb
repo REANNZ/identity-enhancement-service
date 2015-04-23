@@ -133,4 +133,25 @@ RSpec.feature 'Providing attributes to subjects', js: true do
 
     expect(page).to have_no_css('#provided-attributes tr', text: value)
   end
+
+  scenario 'setting the expiry date of a relationship', :focus do
+    within('#provided-attributes tr', text: attribute.value) do
+      click_link('View')
+    end
+
+    within('tr', text: "Relationship with #{provider.name} Expires") do
+      click_link('Edit')
+    end
+
+    within('form') do
+      date = 1.year.from_now.xmlschema
+      execute_script(
+        "$('#provisioned_subject_expires_at').pickadate('picker')" \
+        ".set('select', '#{date}', { format: 'yyyy-mm-dd' })")
+      save_screenshot('test.png')
+      click_button('Save')
+    end
+
+    expect(page).to have_content('in about 1 year')
+  end
 end
