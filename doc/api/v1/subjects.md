@@ -2,7 +2,7 @@
 
 ## List Attributes
 
-List all attributes and providers associated with the specified identity.
+List all attributes and enhancement providers associated with the specified identity.
 
 ```
 GET /api/subjects/:shared_token/attributes
@@ -53,7 +53,7 @@ POST /api/subjects/attributes
 | Name | Type | Description | Optional |
 |---|---|---|---|
 | subject | object | An object specifying the identity which will be modified by the request | No |
-| provider | string | URN of the provider who will assert or modify attributes for the identity in this request | No |
+| provider | string | URN of the enhancement provider who will assert or modify attributes for the identity in this request | No |
 | attributes | array | An array of *attribute* objects specifying the attributes which will be modified by the request | No |
 
 #### subject
