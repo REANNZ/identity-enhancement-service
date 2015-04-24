@@ -25,7 +25,7 @@ All clients **MUST** be well behaved, extensions to the API will not be broadcas
 ## Authentication
 All clients **MUST** posses and supply a valid SSL certificate signed by the AAF Certificate Authority for the federation in which they are operating to establish their validity. For current details on certificate generation and signing contact [AAF support](mailto:support@aaf.edu.au?subject=IdE API certificate) who will work with you to securely complete the request.
 
-Once provided with a certificate administrators for the *provider* **MUST** create an API Account within the IdE *provider* web interface and submit:
+Once provided with a certificate administrators for the *Enhancement Provider* **MUST** create an API Account within the IdE *Provider* web interface and submit:
 
 * Details of the certificate issued by the AAF
 * A Description of how the remote system intends to use the account to interact with IdE
