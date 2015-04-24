@@ -134,7 +134,7 @@ RSpec.feature 'Providing attributes to subjects', js: true do
     expect(page).to have_no_css('#provided-attributes tr', text: value)
   end
 
-  scenario 'setting the expiry date of a relationship', :focus do
+  scenario 'setting the expiry date of a relationship' do
     within('#provided-attributes tr', text: attribute.value) do
       click_link('View')
     end
