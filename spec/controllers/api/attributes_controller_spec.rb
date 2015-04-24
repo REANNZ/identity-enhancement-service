@@ -97,6 +97,12 @@ module API
                                 value: attribute.value)
         end
 
+        it 'creates a ProvisionedSubject' do
+          object = assigns[:object]
+          expect(object.provisioned_subjects.where(provider: provider))
+            .to be_present
+        end
+
         context 'with no provider identifier' do
           let(:provider_params) { nil }
           it_behaves_like 'attribute creation failure',
