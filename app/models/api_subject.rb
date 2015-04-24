@@ -26,4 +26,8 @@ class APISubject < ActiveRecord::Base
   def functioning?
     enabled?
   end
+
+  def contact_details
+    { name: contact_name, mail: contact_mail }
+  end
 end
