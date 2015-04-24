@@ -31,6 +31,21 @@
       <td>Email</td>
       <td><%= @object.mail %></td>
     </tr>
+    <tr>
+      <td>Relationship with <%= @provider.name %> Expires</td>
+      <td>
+        <%- if @provisioned_subject.expires_at %>
+          <%= date_string @provisioned_subject.expires_at %>
+          (in <%= distance_of_time_in_words(@provisioned_subject.expires_at.to_i - Time.now.to_i) %>)
+        <%- else -%>
+          Never
+        <%- end -%>
+        &nbsp;&nbsp;&nbsp;
+        <%= button_link_to([:edit, @provider, @provisioned_subject], class: 'mini icon') do -%>
+          <%= icon_tag('edit') -%>
+          Edit
+        <%- end -%>
+      </td>
   </tbody>
 </table>
 

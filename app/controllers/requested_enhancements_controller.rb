@@ -52,11 +52,6 @@ class RequestedEnhancementsController < ApplicationController
     redirect_to [@provider, :requested_enhancements]
   end
 
-  def destroy
-    public_action
-    render nothing: true
-  end
-
   def select_provider
     public_action
     @filter = params[:filter]

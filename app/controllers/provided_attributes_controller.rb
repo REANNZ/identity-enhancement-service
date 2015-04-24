@@ -23,6 +23,7 @@ class ProvidedAttributesController < ApplicationController
   def new
     check_access!("providers:#{@provider.id}:attributes:create")
     @object = find_subject
+    @provisioned_subject = @object.provision(@provider)
     @invitation = @object.invitation unless @object.complete?
 
     @provided_attributes = @object.provided_attributes.for_provider(@provider)
@@ -35,8 +36,7 @@ class ProvidedAttributesController < ApplicationController
     @provided_attribute = create_provided_attribute
     flash[:success] = creation_message(@provided_attribute)
 
-    @subject = @provided_attribute.subject
-    redirect_from_create_or_destroy
+    redirect_from_create_or_destroy(@provided_attribute.subject)
   end
 
   def destroy
@@ -45,18 +45,17 @@ class ProvidedAttributesController < ApplicationController
     @provided_attribute = delete_provided_attribute
     flash[:success] = deletion_message(@provided_attribute)
 
-    @subject = @provided_attribute.subject
-    redirect_from_create_or_destroy
+    redirect_from_create_or_destroy(@provided_attribute.subject)
   end
 
   private
 
-  def redirect_from_create_or_destroy
+  def redirect_from_create_or_destroy(subject)
     if requested_enhancement
       return redirect_to [@provider, requested_enhancement]
     end
 
-    redirect_to [:new, @provider, :provided_attribute, subject_id: @subject.id]
+    redirect_to [:new, @provider, :provided_attribute, subject_id: subject.id]
   end
 
   def permitted_attribute
@@ -97,6 +96,7 @@ class ProvidedAttributesController < ApplicationController
       attrs = provided_attribute_params.merge(attribute_attrs)
       attrs.merge!(audit_comment: 'Provided attribute via web interface')
       permitted_attribute.provided_attributes.create!(attrs)
+        .tap { |attr| attr.subject.provision(@provider) }
     end
   end
 

@@ -9,6 +9,7 @@ class Subject < ActiveRecord::Base
   has_many :roles, through: :subject_role_assignments
   has_many :provided_attributes, dependent: :destroy
   has_many :requested_enhancements, dependent: :destroy
+  has_many :provisioned_subjects, dependent: :destroy
   has_one :invitation, dependent: :nullify
 
   valhammer
@@ -48,6 +49,12 @@ class Subject < ActiveRecord::Base
 
   def functioning?
     enabled?
+  end
+
+  def provision(provider)
+    provisioned_subjects
+      .create_with(audit_comment: 'Provisioned for new attribute')
+      .find_or_create_by!(provider: provider)
   end
 
   private

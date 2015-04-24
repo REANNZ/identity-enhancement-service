@@ -39,6 +39,8 @@ Rails.application.routes.draw do
 
       resources :provided_attributes, only: %i(new create destroy)
     end
+
+    resources :provisioned_subjects, only: %i(edit update)
   end
 
   get 'request_enhancement' => 'requested_enhancements#select_provider',

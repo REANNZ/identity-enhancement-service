@@ -8,8 +8,8 @@ GIT
 
 GIT
   remote: https://github.com/ausaccessfed/aaf-lipstick
-  revision: 6205e7443adde8eedc03a0837c38bd650a450ace
-  branch: develop
+  revision: 3c49ee858abb5a6509b18d79416c07ac66b4dd5f
+  branch: bugfix/blank-date-picker
   specs:
     aaf-lipstick (1.1.0)
       actionview (~> 4.1)
@@ -207,7 +207,7 @@ GEM
     rails-assets-jquery (1.11.2)
     rails-assets-pickadate (3.5.4)
       rails-assets-jquery (>= 1.7)
-    rails-assets-semantic-ui (1.11.8)
+    rails-assets-semantic-ui (1.12.0)
       rails-assets-jquery (>= 1.8)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
@@ -371,7 +371,7 @@ DEPENDENCIES
   pry
   rails (~> 4.2.0)
   rails-assets-jquery (~> 1.11)!
-  rails-assets-pickadate (~> 3.5, != 3.5.5)!
+  rails-assets-pickadate (= 3.5.4)!
   rails-assets-semantic-ui (~> 1.0)!
   rapid-rack
   redis

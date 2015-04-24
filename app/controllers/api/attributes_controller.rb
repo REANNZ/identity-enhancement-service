@@ -42,6 +42,8 @@ module API
     end
 
     def create_attribute(provider, subject, opts)
+      subject.provision(@provider)
+
       permitted_attribute = lookup_permitted_attribute(provider, opts)
 
       audit_attrs = { audit_comment: 'Provided attribute via API call' }
