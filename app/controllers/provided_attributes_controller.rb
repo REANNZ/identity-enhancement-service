@@ -15,13 +15,16 @@ class ProvidedAttributesController < ApplicationController
 
   def select_subject
     check_access!("providers:#{@provider.id}:attributes:create")
-    @objects = Subject.all
+    @filter = params[:filter]
+    @objects = Subject.filter(@filter).order(:name)
+               .paginate(page: params[:page])
   end
 
   def new
     check_access!("providers:#{@provider.id}:attributes:create")
-    @object = Subject.find(params[:subject_id])
-    @invitation = @object.invitations.first unless @object.complete?
+    @object = find_subject
+    @provisioned_subject = @object.provision(@provider)
+    @invitation = @object.invitation unless @object.complete?
 
     @provided_attributes = @object.provided_attributes.for_provider(@provider)
     @permitted_attributes = available_permitted_attributes(@provided_attributes)
@@ -33,9 +36,7 @@ class ProvidedAttributesController < ApplicationController
     @provided_attribute = create_provided_attribute
     flash[:success] = creation_message(@provided_attribute)
 
-    @subject = @provided_attribute.subject
-    redirect_to new_provider_provided_attribute_path(@provider,
-                                                     subject_id: @subject.id)
+    redirect_from_create_or_destroy(@provided_attribute.subject)
   end
 
   def destroy
@@ -44,12 +45,18 @@ class ProvidedAttributesController < ApplicationController
     @provided_attribute = delete_provided_attribute
     flash[:success] = deletion_message(@provided_attribute)
 
-    @subject = @provided_attribute.subject
-    redirect_to new_provider_provided_attribute_path(@provider,
-                                                     subject_id: @subject.id)
+    redirect_from_create_or_destroy(@provided_attribute.subject)
   end
 
   private
+
+  def redirect_from_create_or_destroy(subject)
+    if requested_enhancement
+      return redirect_to [@provider, requested_enhancement]
+    end
+
+    redirect_to [:new, @provider, :provided_attribute, subject_id: subject.id]
+  end
 
   def permitted_attribute
     id = provided_attribute_params[:permitted_attribute_id]
@@ -69,21 +76,28 @@ class ProvidedAttributesController < ApplicationController
   end
 
   def creation_message(provided_attribute)
-    subject = provided_attribute.subject
     "Provided attribute with name #{provided_attribute.name} and value " \
-      "#{provided_attribute.value} to #{subject.name}"
+      "#{provided_attribute.value} to #{provided_attribute.subject.name}"
   end
 
   def deletion_message(provided_attribute)
-    subject = provided_attribute.subject
     "Removed attribute with name #{provided_attribute.name} and value " \
-      "#{provided_attribute.value} from #{subject.name}"
+      "#{provided_attribute.value} from #{provided_attribute.subject.name}"
   end
 
   def create_provided_attribute
-    attrs = provided_attribute_params.merge(attribute_attrs)
-    attrs.merge!(audit_comment: 'Provided attribute via web interface')
-    permitted_attribute.provided_attributes.create!(attrs)
+    ProvidedAttribute.transaction do
+      enhancement_attrs = {
+        actioned: true, actioned_by: subject,
+        audit_comment: 'Automatically actioned by providing an attribute' }
+
+      requested_enhancement.try(:update_attributes!, enhancement_attrs)
+
+      attrs = provided_attribute_params.merge(attribute_attrs)
+      attrs.merge!(audit_comment: 'Provided attribute via web interface')
+      permitted_attribute.provided_attributes.create!(attrs)
+        .tap { |attr| attr.subject.provision(@provider) }
+    end
   end
 
   def delete_provided_attribute
@@ -99,5 +113,17 @@ class ProvidedAttributesController < ApplicationController
   def available_permitted_attributes(provided_attributes)
     ids = provided_attributes.map(&:permitted_attribute_id)
     @provider.permitted_attributes.reject { |a| ids.include?(a.id) }
+  end
+
+  def find_subject
+    return Subject.find(params[:subject_id]) if params[:subject_id]
+
+    requested_enhancement.subject
+  end
+
+  def requested_enhancement
+    return nil unless params[:requested_enhancement_id]
+    @requested_enhancement ||=
+      RequestedEnhancement.find(params[:requested_enhancement_id])
   end
 end

@@ -5,8 +5,8 @@
 
   <p>You have been granted administrative access at the following providers:</p>
 
-  <table class="ui striped table">
-    <thead>
+  <table class="ui striped stackable table">
+    <thead class="stack-disappear">
       <tr>
         <th>Provider</th>
         <th>Roles</th>
@@ -38,7 +38,12 @@
 <%- if @subject.provided_attributes.empty? -%>
   <%= info_message('No Attributes') do -%>
     <p>Your identity is currently not being enhanced by AAF Identity Enhancement.</p>
-    <p>Please contact the administrator at your organisation to request this.</p>
+    <p>
+      <%= button_link_to(:request_enhancement, class: 'large primary icon') do -%>
+        <%= icon_tag('comment') %>
+        Request Enhancement
+      <%- end -%>
+    </p>
   <%- end -%>
 <%- else -%>
   <p class="large">
@@ -95,4 +100,11 @@
       <%- end -%>
     </tbody>
   </table>
+
+  <div class="line-of-buttons">
+    <%= button_link_to(:request_enhancement, class: 'large primary icon') do -%>
+      <%= icon_tag('comment') %>
+      Request Enhancement
+    <%- end -%>
+  </div>
 <%- end -%>

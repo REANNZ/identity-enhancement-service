@@ -9,6 +9,7 @@ class Invitation < ActiveRecord::Base
   valhammer
 
   validates :identifier, format: /\A[\w-]+\z/
+  validates :subject, uniqueness: true
   validate :must_not_be_preexpired
 
   scope :available, -> { where(used: false) }

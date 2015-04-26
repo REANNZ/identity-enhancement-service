@@ -69,3 +69,56 @@
 .invitation-status.popup {
   max-width: none;
 }
+
+.ui.definition.table td:first-child {
+  width: 33%;
+}
+
+footer {
+  word-wrap: break-word;
+}
+
+.inline-form {
+  display: inline-block;
+  margin: 0px;
+  padding: 0px;
+}
+
+@media only screen and (max-width: 767px) {
+  .ui.table:not(.unstackable) .stack-disappear {
+    display: none;
+  }
+
+  .line-of-buttons .button {
+    float: left;
+    clear: both;
+    margin-bottom: 0.3em;
+  }
+
+  .line-of-buttons::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .ui.table:not(.unstackable) .stack-appear {
+    display: none;
+  }
+}
+
+.enhancement-request-message {
+  white-space: pre;
+}
+
+.ui.button.with-attached-label {
+  position: relative;
+
+  .ui.label {
+    position: absolute;
+    margin: 0px;
+    right: -3px;
+    top: -3px;
+  }
+}

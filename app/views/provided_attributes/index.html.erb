@@ -17,7 +17,7 @@
   <%- end -%>
 <%- else -%>
   <table class="ui striped compact table" id="provided-attributes">
-    <thead>
+    <thead class="stack-disappear">
       <tr>
         <th>Name</th>
         <th>Email</th>
@@ -35,6 +35,14 @@
           <td><%= attribute.name %></td>
           <td><%= attribute.value %></td>
           <td class="right aligned">
+            <%- if permitted?("providers:#{@provider.id}:attributes:list") -%>
+              <%= button_link_to([:new, @provider, :provided_attribute, subject_id: attribute.subject_id],
+                                 class: 'tiny icon') do -%>
+                <%= icon_tag('content') %>
+                View
+              <%- end -%>
+            <%- end -%>
+
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
               <%= delete_button_tag(
                     provider_provided_attribute_path(@provider, attribute)) %>

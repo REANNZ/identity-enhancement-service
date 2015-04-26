@@ -22,7 +22,8 @@
     </tr>
   </thead>
   <tbody>
-    <%- @role.subject_role_assignments.each do |assoc| -%>
+    <%- @role.subject_role_assignments.sort_by { |a| a.subject.name.downcase }
+          .each do |assoc| -%>
       <tr>
         <td><%= assoc.subject.name %></td>
         <td><%= mail_to assoc.subject.mail %></td>
@@ -52,7 +53,8 @@
     </tr>
   </thead>
   <tbody>
-    <%- @role.api_subject_role_assignments.each do |assoc| -%>
+    <%- @role.api_subject_role_assignments.sort_by { |a| a.api_subject.x509_cn.downcase }
+          .each do |assoc| -%>
       <tr>
         <td><%= assoc.api_subject.x509_cn %></td>
         <td><%= mail_to assoc.api_subject.contact_mail %></td>

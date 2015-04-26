@@ -1,0 +1,32 @@
+<%= page_header('Request Enhancement') %>
+
+<%= info_message('Select a Provider') do -%>
+  <p>To enhance your identity, you will need to make a request to an Enhancement Provider.</p>
+  <p>Please select from the providers below to begin making your request.</p>
+<%- end -%>
+
+<%= search_form_tag(@filter) %>
+
+<table class="ui striped compact table">
+  <thead>
+    <tr>
+      <th>Provider</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- @providers.each do |provider| -%>
+      <tr>
+        <td><%= provider.name %></td>
+        <td class="action-buttons right aligned">
+          <%= button_link_to([:new, provider, :requested_enhancement], class: 'tiny green icon') do -%>
+            <%= icon_tag('right chevron') %>
+            Select
+          <%- end -%>
+        </td>
+      </tr>
+    <%- end -%>
+  </tbody>
+</table>
+
+<%= will_paginate(@providers) %>

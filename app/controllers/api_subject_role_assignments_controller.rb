@@ -6,7 +6,9 @@ class APISubjectRoleAssignmentsController < ApplicationController
 
   def new
     check_access!("providers:#{@provider.id}:roles:grant")
-    @api_subjects = APISubject.where.not(id: current_member_ids)
+    @filter = params[:filter]
+    @api_subjects = APISubject.where.not(id: current_member_ids).filter(@filter)
+                    .order(:x509_cn).paginate(page: params[:page])
     @assoc = @role.api_subject_role_assignments.new
   end
 

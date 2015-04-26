@@ -1,7 +1,9 @@
 class ProvidersController < ApplicationController
   def index
-    check_access!('providers:list')
-    @providers = Provider.all
+    public_action
+    @filter = params[:filter]
+    @providers = Provider.filter(@filter).order(:name)
+                 .paginate(page: params[:page])
   end
 
   def new
@@ -25,6 +27,8 @@ class ProvidersController < ApplicationController
   def show
     check_access!("providers:#{params[:id]}:read")
     @provider = Provider.find(params[:id])
+    @request_count = RequestedEnhancement.where(provider_id: @provider.id)
+                     .pending.count
   end
 
   def edit

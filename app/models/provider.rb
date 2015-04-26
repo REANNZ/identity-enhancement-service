@@ -1,5 +1,6 @@
 class Provider < ActiveRecord::Base
   include Lipstick::AutoValidation
+  include Lipstick::Filterable
 
   audited comment_required: true
   has_associated_audits
@@ -7,12 +8,16 @@ class Provider < ActiveRecord::Base
   has_many :roles, dependent: :destroy
   has_many :permitted_attributes, dependent: :destroy
   has_many :api_subjects, dependent: :destroy
+  has_many :requested_enhancements, dependent: :destroy
+  has_many :provisioned_subjects, dependent: :destroy
 
   valhammer
 
   validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
   has_many :invitations
+
+  filterable_by :name, :identifier
 
   def self.identifier_prefix
     Rails.application.config.ide_service.provider_prefix
@@ -40,22 +45,22 @@ class Provider < ActiveRecord::Base
   end
 
   DEFAULT_ROLES = {
-    api_ro: %w(api:attributes:read),
-    api_rw: %w(
+    'API Read Only' => %w(api:attributes:read),
+    'API Read/Write' => %w(
       api:attributes:*
       providers:PROVIDER_ID:attributes:create
     ),
-    web_ro: %w(
+    'Web UI Read Only' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
     ),
-    web_rw: %w(
+    'Web UI Read/Write' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
       providers:PROVIDER_ID:invitations:*
       providers:PROVIDER_ID:attributes:*
     ),
-    admin: %w(
+    'Administrator' => %w(
       providers:PROVIDER_ID:*
     )
   }

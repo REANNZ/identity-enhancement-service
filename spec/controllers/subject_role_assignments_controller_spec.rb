@@ -12,7 +12,13 @@ RSpec.describe SubjectRoleAssignmentsController, type: :controller do
   let(:object) { create(:subject) }
   let(:role) { create(:role) }
   let(:provider) { role.provider }
-  let(:base_params) { { provider_id: provider.id, role_id: role.id } }
+  let(:filter) { nil }
+  let(:page) { nil }
+
+  let(:base_params) do
+    { provider_id: provider.id, role_id: role.id, filter: filter, page: page }
+  end
+
   let(:model_class) { SubjectRoleAssignment }
 
   context 'by role_id' do
@@ -32,6 +38,48 @@ RSpec.describe SubjectRoleAssignmentsController, type: :controller do
       context 'as a non-authenticated user' do
         let(:user) { nil }
         it { is_expected.to redirect_to('/auth/login') }
+      end
+
+      context 'with a filter' do
+        let!(:matching_subject) do
+          create(:subject, name: 'NOTHING ELSE MATCHES')
+        end
+
+        let(:filter) { 'NOTHING*ELSE*MATCHES' }
+
+        it 'only includes the matching subject' do
+          expect(assigns[:subjects]).to contain_exactly(matching_subject)
+        end
+
+        it 'sets the filter' do
+          expect(assigns[:filter]).to eq(filter)
+        end
+      end
+
+      context 'pagination' do
+        let!(:enough_subjects_to_make_a_second_page) do
+          create_list(:subject, 21)
+        end
+
+        let!(:first_subject) do
+          create(:subject, name: 'aaaaaaaaaaa first subject')
+        end
+
+        context 'on the first page' do
+          let(:page) { '1' }
+
+          it 'includes the first subject' do
+            expect(assigns[:subjects]).to include(first_subject)
+          end
+        end
+
+        context 'on the second page' do
+          let(:page) { '2' }
+
+          it 'excludes the first subject' do
+            expect(assigns[:subjects]).not_to include(first_subject)
+          end
+        end
       end
     end
 

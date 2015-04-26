@@ -19,6 +19,32 @@ RSpec.describe Provider, type: :model do
     end
   end
 
+  context 'associated objects' do
+    context 'roles' do
+      let(:child) { create(:role) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'permitted_attributes' do
+      let!(:child) { create(:permitted_attribute) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'api_subjects' do
+      let!(:child) { create(:api_subject) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'requested_enhancements' do
+      let!(:child) { create(:requested_enhancement) }
+      subject { child.provider }
+      it_behaves_like 'an association which cascades delete'
+    end
+  end
+
   context '::lookup' do
     let(:provider) { create(:provider) }
     let(:prefix) { Rails.application.config.ide_service.provider_prefix }
@@ -58,7 +84,7 @@ RSpec.describe Provider, type: :model do
 
     it 'sets the user attributes' do
       run
-      expect(user.invitations.last)
+      expect(user.invitation)
         .to have_attributes(name: user.name, mail: user.mail,
                             subject_id: user.id)
     end
@@ -66,7 +92,7 @@ RSpec.describe Provider, type: :model do
     it 'sets the expiry' do
       Timecop.freeze do
         run
-        expect(user.invitations.last.expires.to_i).to eq(expires.to_i)
+        expect(user.invitation.expires.to_i).to eq(expires.to_i)
       end
     end
 
@@ -83,12 +109,13 @@ RSpec.describe Provider, type: :model do
     end
 
     it 'creates the roles' do
-      expect { run }.to change(provider.roles, :count)
+      expect { run }.to change(provider.roles, :count).by(5)
     end
 
     it 'replaces PROVIDER_ID with the actual id' do
       run
-      expect(provider.roles.find_by_name('api_rw').permissions.map(&:value))
+      role = provider.roles.find_by_name('API Read/Write')
+      expect(role.permissions.map(&:value))
         .to include("providers:#{provider.id}:attributes:create")
     end
   end

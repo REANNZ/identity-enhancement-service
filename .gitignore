@@ -1,6 +1,7 @@
 config/rapidconnect.yml
 config/ide_service.yml
 config/invitation.md
+config/enhancement_request.md
 
 log
 coverage

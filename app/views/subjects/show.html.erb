@@ -20,11 +20,11 @@
     </tr>
     <tr>
       <td>Shared Token</td>
-      <td><%= @object.shared_token %></td>
+      <td><%= @object.shared_token || '<em>(not set)</em>'.html_safe %></td>
     </tr>
     <tr>
       <td>Targeted ID</td>
-      <td><%= @object.targeted_id %></td>
+      <td><%= @object.targeted_id || '<em>(not set)</em>'.html_safe %></td>
     </tr>
     <tr>
       <td>Complete</td>
@@ -32,6 +32,60 @@
     </tr>
   </tbody>
 </table>
+
+<%- if (invitation = @object.invitation) -%>
+  <h4 class="ui header">Invitation Details</h4>
+
+  <table class="ui definition table">
+    <tbody>
+      <tr>
+        <td>Name</td>
+        <td><%= invitation.name %></td>
+      </tr>
+
+      <tr>
+        <td>Email Address</td>
+        <td><%= invitation.mail %></td>
+      </tr>
+
+      <tr>
+        <td>Used</td>
+        <td><%= yes_no_string(invitation.used?) %></td>
+      </tr>
+
+      <tr>
+        <td>Invited</td>
+        <td>
+          <%= date_string(invitation.created_at) %>
+          (<%= distance_of_time_in_words(invitation.created_at - Time.now) %> ago)
+        </td>
+      </tr>
+
+      <tr>
+        <td>Last Sent</td>
+        <td>
+          <%= date_string(invitation.last_sent_at) %>
+          (<%= distance_of_time_in_words(invitation.last_sent_at - Time.now) %> ago)
+        </td>
+      </tr>
+
+      <tr>
+        <td>Expires</td>
+        <%- if invitation.expires < Time.now -%>
+          <td class="error">
+            <%= date_string(invitation.expires) %>
+            (<%= distance_of_time_in_words(invitation.expires - Time.now) %> ago)
+          </td>
+        <%- else -%>
+          <td>
+            <%= date_string(invitation.expires) %>
+            (in <%= distance_of_time_in_words(invitation.expires - Time.now) %>)
+          </td>
+        <%- end -%>
+      </tr>
+    </tbody>
+  </table>
+<%- end -%>
 
 <div class="line-of-buttons">
   <%- if permitted?('admin:subjects:audit') -%>
@@ -41,7 +95,7 @@
     <%- end -%>
   <%- end -%>
 
-  <%- if permitted?('admin:subjects:read') -%>
+  <%- if permitted?('admin:subjects:delete') -%>
     <%= delete_button_tag(@object, class: 'large') %>
   <%- end -%>
 </div>
