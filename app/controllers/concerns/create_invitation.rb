@@ -38,8 +38,11 @@ module CreateInvitation
   EMAIL_BODY = File.read(Rails.root.join('config/invitation.md')).freeze
 
   def email_body(invitation)
-    format(EMAIL_BODY,
-           url: accept_invitations_url(identifier: invitation.identifier),
-           expires: invitation.expires.strftime('%d/%m/%Y'))
+    opts = subject.contact_details.merge(
+      provider: invitation.provider.name,
+      url: accept_invitations_url(identifier: invitation.identifier),
+      expires: invitation.expires.strftime('%d/%m/%Y'))
+
+    format(EMAIL_BODY, opts)
   end
 end

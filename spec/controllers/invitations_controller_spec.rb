@@ -176,6 +176,16 @@ RSpec.describe InvitationsController, type: :controller do
         expect(subject).to have_sent_email.matching_body(expected)
       end
 
+      it 'gives the provider details in the message' do
+        expected = /#{provider.name}/
+        expect(subject).to have_sent_email.matching_body(expected)
+      end
+
+      it 'gives the contact details of the provider admin who invited' do
+        expected = /#{user.name}.*#{user.mail}/m
+        expect(subject).to have_sent_email.matching_body(expected)
+      end
+
       it 'redirects back to the Identities page' do
         expect(response).to redirect_to([provider, :provided_attributes])
       end

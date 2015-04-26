@@ -57,6 +57,10 @@ class Subject < ActiveRecord::Base
       .find_or_create_by!(provider: provider)
   end
 
+  def contact_details
+    { name: name, mail: mail }
+  end
+
   private
 
   def merge_roles(other)
