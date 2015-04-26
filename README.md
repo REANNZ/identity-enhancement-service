@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-**Current Release:** 0.1.1-MVP (19/01/2014)
+**Current Release:** 0.1.3 (27/04/2015)
 
 IdE enhances existing institution identities for users undertaking research activities in the Australian Higher Education sector by specifically identifying these users as a "researchers".
 
