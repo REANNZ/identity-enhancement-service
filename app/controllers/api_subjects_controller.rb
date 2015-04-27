@@ -69,6 +69,7 @@ class APISubjectsController < ApplicationController
 
   def api_subject_params
     params.require(:api_subject)
-      .permit(:x509_cn, :name, :description, :contact_name, :contact_mail)
+      .permit(:x509_cn, :name, :description, :contact_name, :contact_mail,
+              :enabled)
   end
 end
