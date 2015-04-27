@@ -82,6 +82,70 @@ RSpec.describe SubjectsController, type: :controller do
     end
   end
 
+  context 'patch :update' do
+    def run
+      patch :update, id: object.id, subject: subject_attrs
+    end
+
+    shared_context 'subjects update response' do
+      it 'redirects to the subject' do
+        run
+        expect(response).to redirect_to(object)
+      end
+
+      context 'with no user' do
+        let(:user) { nil }
+
+        it 'redirects to login' do
+          run
+          expect(response).to redirect_to('/auth/login')
+        end
+      end
+
+      context 'with no permissions' do
+        let(:user) { create(:subject) }
+
+        it 'is forbidden' do
+          run
+          expect(response).to have_http_status(:forbidden)
+            .and render_template('errors/forbidden')
+        end
+      end
+    end
+
+    context 'disabling subject' do
+      let(:subject_attrs) { { enabled: false } }
+      let(:object) { create(:subject, enabled: true) }
+
+      it 'sets the enabled flag' do
+        expect { run }.to change { object.reload.enabled? }.to be_falsey
+      end
+
+      it 'sets the flash message' do
+        run
+        expect(flash[:success]).to match(/#{object.name} has been disabled/)
+      end
+
+      include_context 'subjects update response'
+    end
+
+    context 'enabling subject' do
+      let(:subject_attrs) { { enabled: true } }
+      let(:object) { create(:subject, enabled: false) }
+
+      it 'sets the enabled flag' do
+        expect { run }.to change { object.reload.enabled? }.to be_truthy
+      end
+
+      it 'sets the flash message' do
+        run
+        expect(flash[:success]).to match(/#{object.name} has been enabled/)
+      end
+
+      include_context 'subjects update response'
+    end
+  end
+
   context 'post :destroy' do
     def run
       delete :destroy, id: object.id

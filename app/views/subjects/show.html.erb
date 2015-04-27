@@ -30,6 +30,14 @@
       <td>Complete</td>
       <td><%= yes_no_string(@object.complete?) %></td>
     </tr>
+    <tr>
+      <td>Enabled</td>
+      <%- if @object.enabled? -%>
+        <td class="positive">Yes</td>
+      <%- else -%>
+        <td class="negative">No</td>
+      <%- end -%>
+    </tr>
   </tbody>
 </table>
 
@@ -92,6 +100,24 @@
     <%= button_link_to([:audit, @object], class: 'large icon') do -%>
       <%= icon_tag('history') %>
       Audit
+    <%- end -%>
+  <%- end -%>
+
+  <%- if permitted?('admin:subjects:update') -%>
+    <%= form_for(@object, html: { class: 'inline-form' }) do |f| -%>
+      <%- if @object.enabled? -%>
+        <%= f.hidden_field(:enabled, value: false) %>
+        <%= button_tag(type: 'submit', class: 'large red icon') do -%>
+          <%= icon_tag('remove') %>
+          Disable
+        <%- end -%>
+      <%- else -%>
+        <%= f.hidden_field(:enabled, value: true) %>
+        <%= button_tag(type: 'submit', class: 'large green icon') do -%>
+          <%= icon_tag('checkmark') %>
+          Enable
+        <%- end -%>
+      <%- end -%>
     <%- end -%>
   <%- end -%>
 

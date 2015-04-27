@@ -13,6 +13,19 @@ class SubjectsController < ApplicationController
     @object = Subject.find(params[:id])
   end
 
+  def update
+    check_access!('admin:subjects:update')
+
+    @object = Subject.find(params[:id])
+    @object.attributes = subject_params
+    word = @object.enabled? ? 'Enabled' : 'Disabled'
+    @object.update_attributes!(audit_comment: "#{word} Subject")
+
+    flash[:success] = "#{@object.name} has been #{word.downcase}"
+
+    redirect_to @object
+  end
+
   def destroy
     check_access!('admin:subjects:delete')
     @object = Subject.find(params[:id])
@@ -28,5 +41,11 @@ class SubjectsController < ApplicationController
     check_access!('admin:subjects:audit')
     @object = Subject.find(params[:id])
     @audits = @object.audits.all
+  end
+
+  private
+
+  def subject_params
+    params.require(:subject).permit(:enabled)
   end
 end

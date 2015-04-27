@@ -31,6 +31,14 @@
     <%= f.text_field :contact_mail %>
   <%- end -%>
 
+  <%= field_block(class: 'inline') do -%>
+    <%= f.check_box(:enabled) %>
+    <%= f.label(:enabled) do -%>
+      Enabled
+      <%= field_help_text('An API Subject can be disabled without deleting it') %>
+    <%- end -%>
+  <%- end -%>
+
   <div class="line-of-buttons">
     <%= button_tag(type: 'submit', class: 'large green icon') do -%>
       <%= icon_tag('checkmark') %>
