@@ -75,7 +75,10 @@ module API
         #   },
         #   "attributes": [{
         #     "name":      "eduPersonEntitlement",
-        #     "value":     "urn:mace:aaf.edu.au:ide:researcher:1"
+        #     "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
+        #
+        #     OPTIONALLY:
+        #     "public":    true
         #   }]
         # }
         post_params = { subject: subject_params, provider: provider_params,
@@ -95,6 +98,28 @@ module API
           expect(ProvidedAttribute.last)
             .to have_attributes(name: attribute.name,
                                 value: attribute.value)
+        end
+
+        context 'when creating a public attribute' do
+          let(:attrs) do
+            attribute = permitted_attribute.available_attribute
+            [{ name: attribute.name, value: attribute.value, public: true }]
+          end
+
+          it 'sets the public flag to true' do
+            expect(ProvidedAttribute.last).to be_public
+          end
+        end
+
+        context 'when creating a private attribute' do
+          let(:attrs) do
+            attribute = permitted_attribute.available_attribute
+            [{ name: attribute.name, value: attribute.value, public: false }]
+          end
+
+          it 'sets the public flag to false' do
+            expect(ProvidedAttribute.last).not_to be_public
+          end
         end
 
         it 'creates a ProvisionedSubject' do

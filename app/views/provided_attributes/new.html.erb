@@ -140,15 +140,24 @@
             <td><%= attribute.value %></td>
             <td class="right aligned">
               <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
-                <%= form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
+                <%= inline_form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
                   <%= hidden_fields do -%>
                     <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
                     <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
                   <%- end -%>
 
-                  <%= button_tag(type: 'submit', class: 'tiny green icon') do -%>
+                  <%- if @provider.public? -%>
+                    <%= button_tag(name: 'provided_attribute[public]', value: 'true',
+                                   type: 'submit', class: 'tiny green icon') do -%>
+                      <%= icon_tag('add') %>
+                      Add as Public Attribute
+                    <%- end -%>
+                  <%- end -%>
+
+                  <%= button_tag(name: 'provided_attribute[public]', value: 'false',
+                                 type: 'submit', class: 'tiny green icon') do -%>
                     <%= icon_tag('add') %>
-                    Add
+                    Add as Private Attribute
                   <%- end -%>
                 <%- end -%>
               <%- end -%>

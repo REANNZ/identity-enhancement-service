@@ -72,7 +72,7 @@ class ProvidedAttributesController < ApplicationController
 
   def provided_attribute_params
     params.require(:provided_attribute)
-      .permit(:subject_id, :permitted_attribute_id)
+      .permit(:subject_id, :permitted_attribute_id, :public)
   end
 
   def creation_message(provided_attribute)
