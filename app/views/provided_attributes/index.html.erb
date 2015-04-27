@@ -23,17 +23,31 @@
         <th>Email</th>
         <th>Attribute</th>
         <th>Value</th>
+        <th>Visibility</th>
         <th/>
       </tr>
     </thead>
 
     <tbody>
-      <%- @provided_attributes.each do |attribute| -%>
+      <%- @provided_attributes.sort_by { |a| [a.public? ? 1 : 0, a.name, a.value] }.each do |attribute| -%>
         <tr>
           <td><%= attribute.subject.name %></td>
           <td><%= attribute.subject.mail %></td>
           <td><%= attribute.name %></td>
           <td><%= attribute.value %></td>
+          <%- if attribute.public? -%>
+            <%- if @provider.public? -%>
+              <td class="positive"><%= icon_tag('checkmark') %> Public</td>
+            <%- else -%>
+              <td class="negative"><%= icon_tag('warning sign') %> Public</td>
+            <%- end -%>
+          <%- else -%>
+            <%- if @provider.public? -%>
+              <td class="warning"><%= icon_tag('lock') %> Private</td>
+            <%- else -%>
+              <td class="positive"><%= icon_tag('lock') %> Private</td>
+            <%- end -%>
+          <%- end -%>
           <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:list") -%>
               <%= button_link_to([:new, @provider, :provided_attribute, subject_id: attribute.subject_id],
