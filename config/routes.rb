@@ -66,7 +66,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :subjects, only: %i(index show destroy) do
+    resources :subjects, only: %i(index show update destroy) do
       member do
         get 'audits' => 'subjects#audits', as: 'audit'
       end
