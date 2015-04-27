@@ -152,6 +152,12 @@
                       <%= icon_tag('add') %>
                       Add as Public Attribute
                     <%- end -%>
+                  <%- else -%>
+                    <%= button_tag(type: 'button', class: 'tiny disabled icon',
+                                   :'data-content' => 'This is a private Enhancement Provider, and cannot add a public attribute') do -%>
+                      <%= icon_tag('add') %>
+                      Can't Add Public Attribute
+                    <%- end -%>
                   <%- end -%>
 
                   <%= button_tag(name: 'provided_attribute[public]', value: 'false',
