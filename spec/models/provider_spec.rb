@@ -119,4 +119,53 @@ RSpec.describe Provider, type: :model do
         .to include("providers:#{provider.id}:attributes:create")
     end
   end
+
+  context '::visible_to' do
+    let(:public_provider) { create(:provider, public: true) }
+    let(:private_provider) { create(:provider, public: false) }
+    let(:role) { create(:role, provider: private_provider) }
+
+    subject { Provider.visible_to(user).all }
+
+    context 'for a Subject' do
+      let(:user) { create(:subject) }
+
+      it { is_expected.to include(public_provider) }
+      it { is_expected.not_to include(private_provider) }
+
+      context 'with access' do
+        before { create(:subject_role_assignment, subject: user, role: role) }
+        it { is_expected.to include(private_provider) }
+      end
+
+      context 'with admin access' do
+        let(:user) { create(:subject, :authorized, permission: '*') }
+
+        it { is_expected.to include(public_provider) }
+        it { is_expected.to include(private_provider) }
+      end
+    end
+
+    context 'for an APISubject' do
+      let(:user) { create(:api_subject) }
+
+      it { is_expected.to include(public_provider) }
+      it { is_expected.not_to include(private_provider) }
+
+      context 'with access' do
+        before do
+          create(:api_subject_role_assignment, api_subject: user, role: role)
+        end
+
+        it { is_expected.to include(private_provider) }
+      end
+
+      context 'with admin access' do
+        let(:user) { create(:api_subject, :authorized, permission: '*') }
+
+        it { is_expected.to include(public_provider) }
+        it { is_expected.to include(private_provider) }
+      end
+    end
+  end
 end

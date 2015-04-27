@@ -28,6 +28,31 @@ class Provider < ActiveRecord::Base
     find_by_identifier(Regexp.last_match[1]) if re.match(identifier)
   end
 
+  def self.visible_to(user)
+    return all if user.permits?('admin:providers:list')
+    return visible_to_api_subject(user) if user.is_a?(APISubject)
+    visible_to_subject(user)
+  end
+
+  def self.visible_to_subject(user)
+    distinct
+      .joins('left outer join roles on providers.id = roles.provider_id')
+      .joins('left outer join subject_role_assignments ' \
+             'on roles.id = subject_role_assignments.role_id ' \
+             "and subject_role_assignments.subject_id = #{user.id}")
+      .where('providers.public = 1 or subject_role_assignments.id is not null')
+  end
+
+  def self.visible_to_api_subject(user)
+    distinct
+      .joins('left outer join roles on providers.id = roles.provider_id')
+      .joins('left outer join api_subject_role_assignments ' \
+             'on roles.id = api_subject_role_assignments.role_id ' \
+             "and api_subject_role_assignments.api_subject_id = #{user.id}")
+      .where('providers.public = 1 ' \
+             'or api_subject_role_assignments.id is not null')
+  end
+
   def full_identifier
     [Provider.identifier_prefix, identifier].join(':')
   end

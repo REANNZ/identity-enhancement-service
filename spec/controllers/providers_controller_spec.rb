@@ -17,6 +17,27 @@ RSpec.describe ProvidersController, type: :controller do
     it { is_expected.to render_template('providers/index') }
     it { is_expected.to have_assigned(:providers, include(provider)) }
 
+    context 'with a private provider' do
+      let(:secret_squirrel) { create(:provider, public: false) }
+
+      it 'excludes the provider' do
+        expect(assigns[:providers]).not_to include(secret_squirrel)
+      end
+
+      context 'when the user has access' do
+        let(:user) do
+          create(:subject).tap do |user|
+            role = create(:role, provider: secret_squirrel)
+            create(:subject_role_assignment, subject: user, role: role)
+          end
+        end
+
+        it 'includes the provider' do
+          expect(assigns[:providers]).to include(secret_squirrel)
+        end
+      end
+    end
+
     context 'as a non-admin' do
       let(:user) { create(:subject) }
       it { is_expected.to have_http_status(:ok) }

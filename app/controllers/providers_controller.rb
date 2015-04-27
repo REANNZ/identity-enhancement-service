@@ -2,7 +2,7 @@ class ProvidersController < ApplicationController
   def index
     public_action
     @filter = params[:filter]
-    @providers = Provider.filter(@filter).order(:name)
+    @providers = Provider.visible_to(subject).filter(@filter).order(:name)
                  .paginate(page: params[:page])
   end
 
