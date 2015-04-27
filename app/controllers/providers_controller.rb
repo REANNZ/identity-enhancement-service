@@ -62,7 +62,7 @@ class ProvidersController < ApplicationController
   private
 
   def provider_params
-    params.require(:provider).permit(:name, :description, :identifier)
+    params.require(:provider).permit(:name, :description, :identifier, :public)
   end
 
   def create_provider
