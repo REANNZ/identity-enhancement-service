@@ -1,0 +1,75 @@
+<%- if attribute.public? -%>
+  <%- if @provider.public? -%>
+    <%- message = %Q(
+      <p><strong>Public Attribute</strong></p>
+
+      <p>
+        This attribute is visible to all approved clients of AAF Identity
+        Enhancement.
+      </p>
+    ) -%>
+
+    <td class="positive">
+      <%= button_tag(type: 'button', class: 'help basic green icon',
+                     :'data-html' => message, :'data-variation' => 'wide') do -%>
+        <%= icon_tag('world') %>
+        Public
+      <%- end -%>
+    </td>
+  <%- else -%>
+    <%- message = %Q(
+      <p><strong>Public Attribute</strong></p>
+
+      <p>
+        This attribute is visible to all clients of AAF Identity Enhancement.
+      </p>
+
+      <p>
+        This is <strong>a private Enhancement Provider</strong> which should
+        not be providing any public attributes. It should be removed and added
+        as a private attribute.
+      </p>
+    ) -%>
+
+    <td class="negative">
+      <%= button_tag(type: 'button', class: 'help basic red icon',
+                     :'data-html' => message, :'data-variation' => 'wide') do -%>
+        <%= icon_tag('warning sign') %>
+        Public
+      <%- end -%>
+    </td>
+  <%- end -%>
+<%- else -%>
+  <%- message = %Q(
+    <p><strong>Private Attribute</strong></p>
+
+    <p>
+      This attribute is <strong>only</strong> visible to clients who have
+      permission to view attributes provided by
+      <strong>#{@provider.name}</strong>.
+    </p>
+
+    <p>
+      This attribute will only be returned via the JSON API. It is not
+      available via the SAML AttributeQuery interface.
+    </p>
+  ) -%>
+
+  <%- if @provider.public? -%>
+    <td class="warning">
+      <%= button_tag(type: 'button', class: 'help basic yellow icon',
+                     :'data-html' => message, :'data-variation' => 'wide') do -%>
+        <%= icon_tag('lock') %>
+        Private
+      <%- end -%>
+    </td>
+  <%- else -%>
+    <td class="positive">
+      <%= button_tag(type: 'button', class: 'help basic green icon',
+                     :'data-html' => message, :'data-variation' => 'wide') do -%>
+        <%= icon_tag('lock') %>
+        Private
+      <%- end -%>
+    </td>
+  <%- end -%>
+<%- end -%>
