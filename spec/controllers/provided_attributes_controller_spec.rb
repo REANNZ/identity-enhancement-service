@@ -155,7 +155,8 @@ RSpec.describe ProvidedAttributesController, type: :controller do
       attributes_for(:provided_attribute,
                      permitted_attribute: permitted_attribute)
         .merge(subject_id: other_object.id,
-               permitted_attribute_id: permitted_attribute.id)
+               permitted_attribute_id: permitted_attribute.id,
+               public: true)
     end
 
     def run
@@ -166,6 +167,26 @@ RSpec.describe ProvidedAttributesController, type: :controller do
 
     it { is_expected.to change(ProvidedAttribute, :count).by(1) }
     it { is_expected.to have_assigned(:provider, provider) }
+
+    it 'creates the attribute as public' do
+      run
+      expect(ProvidedAttribute.last).to be_public
+    end
+
+    context 'creating a private attribute' do
+      let(:attrs) do
+        attributes_for(:provided_attribute,
+                       permitted_attribute: permitted_attribute)
+          .merge(subject_id: other_object.id,
+                 permitted_attribute_id: permitted_attribute.id,
+                 public: false)
+      end
+
+      it 'creates the attribute as private' do
+        run
+        expect(ProvidedAttribute.last).not_to be_public
+      end
+    end
 
     context 'the response' do
       before { run }

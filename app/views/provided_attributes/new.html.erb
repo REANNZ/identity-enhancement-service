@@ -62,6 +62,7 @@
       <tr>
         <th>Name</th>
         <th>Value</th>
+        <th>Visibility</th>
         <th/>
       </tr>
     </thead>
@@ -70,6 +71,7 @@
         <tr>
           <td><%= provided_attribute.name %></td>
           <td><%= provided_attribute.value %></td>
+          <td><%= render partial: 'attribute_visibility', locals: { attribute: provided_attribute } %></td>
           <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
               <%= delete_button_tag(url_for([@provider, @requested_enhancement, provided_attribute].compact)) %>
@@ -140,15 +142,30 @@
             <td><%= attribute.value %></td>
             <td class="right aligned">
               <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
-                <%= form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
+                <%= inline_form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
                   <%= hidden_fields do -%>
                     <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
                     <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
                   <%- end -%>
 
-                  <%= button_tag(type: 'submit', class: 'tiny green icon') do -%>
+                  <%- if @provider.public? -%>
+                    <%= button_tag(name: 'provided_attribute[public]', value: 'true',
+                                   type: 'submit', class: 'tiny green icon') do -%>
+                      <%= icon_tag('add') %>
+                      Add as Public Attribute
+                    <%- end -%>
+                  <%- else -%>
+                    <%= button_tag(type: 'button', class: 'tiny disabled icon',
+                                   :'data-content' => 'This is a private Enhancement Provider, and cannot add a public attribute') do -%>
+                      <%= icon_tag('add') %>
+                      Can't Add Public Attribute
+                    <%- end -%>
+                  <%- end -%>
+
+                  <%= button_tag(name: 'provided_attribute[public]', value: 'false',
+                                 type: 'submit', class: 'tiny green icon') do -%>
                     <%= icon_tag('add') %>
-                    Add
+                    Add as Private Attribute
                   <%- end -%>
                 <%- end -%>
               <%- end -%>

@@ -72,7 +72,7 @@ RSpec.feature 'Requested Enhancements', js: true do
       click_link('Enhance Identity')
 
       within('tr', text: attr.available_attribute.value) do
-        click_button('Add')
+        click_button('Add as Public Attribute')
       end
 
       expect(page).to have_css('.success.message', text: 'Provided attribute')

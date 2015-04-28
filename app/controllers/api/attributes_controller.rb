@@ -19,7 +19,7 @@ module API
         @object = lookup_subject(@provider, params[:subject])
         params[:attributes].each do |attribute|
           update_attribute(@provider, @object,
-                           attribute.permit(:name, :value, :_destroy))
+                           attribute.permit(:name, :value, :public, :_destroy))
         end
 
         render status: :no_content, nothing: true
@@ -64,9 +64,11 @@ module API
     end
 
     def lookup_permitted_attribute(provider, opts)
+      lookup_opts = opts.slice(:name, :value)
+
       permitted_attribute = provider.permitted_attributes
                             .joins(:available_attribute)
-                            .find_by(available_attributes: opts)
+                            .find_by(available_attributes: lookup_opts)
 
       permitted_attribute ||
         fail(BadRequest, "#{provider.name} is not permitted to provide " \
