@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.feature 'Visiting the invitation page', type: :feature do
+RSpec.feature 'Visiting the invitation page', js: true do
   given(:invitation) { create(:invitation) }
 
   background do
