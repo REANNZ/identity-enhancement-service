@@ -28,6 +28,15 @@
     <%= f.text_field :description %>
   <%- end -%>
 
+  <%= field_block(class: 'inline') do -%>
+    <%= f.check_box(:public) %>
+    <%= f.label(:public) do -%>
+      Public
+      <%= field_help_text('A private Enhancement Provider is only visible to ' \
+                          'users who have been given access') %>
+    <%- end -%>
+  <%- end -%>
+
   <div class="line-of-buttons">
     <%= f.button(class: 'large green icon') do -%>
       <%= icon_tag('checkmark') %>
