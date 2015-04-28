@@ -9,13 +9,11 @@
       </p>
     ) -%>
 
-    <td class="positive">
-      <%= button_tag(type: 'button', class: 'help basic green icon',
-                     :'data-html' => message, :'data-variation' => 'wide') do -%>
-        <%= icon_tag('world') %>
-        Public
-      <%- end -%>
-    </td>
+    <%= button_tag(type: 'button', class: 'help basic green icon',
+                   :'data-html' => message, :'data-variation' => 'wide') do -%>
+      <%= icon_tag('world') %>
+      Public
+    <%- end -%>
   <%- else -%>
     <%- message = %Q(
       <p><strong>Public Attribute</strong></p>
@@ -31,13 +29,11 @@
       </p>
     ) -%>
 
-    <td class="negative">
-      <%= button_tag(type: 'button', class: 'help basic red icon',
-                     :'data-html' => message, :'data-variation' => 'wide') do -%>
-        <%= icon_tag('warning sign') %>
-        Public
-      <%- end -%>
-    </td>
+    <%= button_tag(type: 'button', class: 'help basic red icon',
+                   :'data-html' => message, :'data-variation' => 'wide') do -%>
+      <%= icon_tag('warning sign') %>
+      Public
+    <%- end -%>
   <%- end -%>
 <%- else -%>
   <%- message = %Q(
@@ -56,20 +52,16 @@
   ) -%>
 
   <%- if @provider.public? -%>
-    <td class="warning">
-      <%= button_tag(type: 'button', class: 'help basic yellow icon',
-                     :'data-html' => message, :'data-variation' => 'wide') do -%>
-        <%= icon_tag('lock') %>
-        Private
-      <%- end -%>
-    </td>
+    <%= button_tag(type: 'button', class: 'help basic yellow icon',
+                   :'data-html' => message, :'data-variation' => 'wide') do -%>
+      <%= icon_tag('lock') %>
+      Private
+    <%- end -%>
   <%- else -%>
-    <td class="positive">
-      <%= button_tag(type: 'button', class: 'help basic green icon',
-                     :'data-html' => message, :'data-variation' => 'wide') do -%>
-        <%= icon_tag('lock') %>
-        Private
-      <%- end -%>
-    </td>
+    <%= button_tag(type: 'button', class: 'help basic green icon',
+                   :'data-html' => message, :'data-variation' => 'wide') do -%>
+      <%= icon_tag('lock') %>
+      Private
+    <%- end -%>
   <%- end -%>
 <%- end -%>

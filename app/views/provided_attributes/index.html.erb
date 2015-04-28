@@ -35,7 +35,7 @@
           <td><%= attribute.subject.mail %></td>
           <td><%= attribute.name %></td>
           <td><%= attribute.value %></td>
-          <%= render partial: 'attribute_visibility', locals: { attribute: attribute } %>
+          <td><%= render partial: 'attribute_visibility', locals: { attribute: attribute } %></td>
           <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:list") -%>
               <%= button_link_to([:new, @provider, :provided_attribute, subject_id: attribute.subject_id],

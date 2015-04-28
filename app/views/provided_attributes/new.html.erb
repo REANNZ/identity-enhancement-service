@@ -71,7 +71,7 @@
         <tr>
           <td><%= provided_attribute.name %></td>
           <td><%= provided_attribute.value %></td>
-          <%= render partial: 'attribute_visibility', locals: { attribute: provided_attribute } %>
+          <td><%= render partial: 'attribute_visibility', locals: { attribute: provided_attribute } %></td>
           <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
               <%= delete_button_tag(url_for([@provider, @requested_enhancement, provided_attribute].compact)) %>
