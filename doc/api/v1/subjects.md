@@ -31,10 +31,14 @@ Status: 200 OK
     "name":      "eduPersonEntitlement",
     "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
     "provider":  "urn:mace:aaf.edu.au:ide:providers:provider1"
+    "created":   "2015-01-01T00:00:00Z",
+    "expires":   "2016-01-01T00:00:00Z"
   }, {
     "name":      "eduPersonEntitlement",
     "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
     "provider":  "urn:mace:aaf.edu.au:ide:providers:provider2"
+    "created":   "2015-01-01T00:00:00Z",
+    "expires":   null
   }]
 }
 ```
