@@ -6,8 +6,8 @@ module API
       check_access!('api:attributes:read')
       @object = Subject.find_by_shared_token(params[:shared_token])
 
-      @provided_attributes = @object.provided_attributes
-                             .includes(permitted_attribute: :provider).all
+      @provided_attributes = filter_attributes(
+        @object.provided_attributes.includes(permitted_attribute: :provider))
     end
 
     def create
@@ -25,6 +25,14 @@ module API
     end
 
     private
+
+    def filter_attributes(attributes)
+      attributes.select do |attr|
+        provider_id = attr.permitted_attribute.provider_id
+        attr.public? ||
+          subject.permits?("providers:#{provider_id}:attributes:read")
+      end
+    end
 
     def update_attribute(provider, subject, opts)
       return destroy_attribute(provider, subject, opts) if opts[:_destroy]

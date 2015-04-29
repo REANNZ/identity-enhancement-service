@@ -31,6 +31,33 @@ module API
         expect(assigns[:provided_attributes]).to contain_exactly(*attributes)
       end
 
+      context 'with private attributes' do
+        let!(:attributes) do
+          create_list(:provided_attribute, 2, subject: object, public: false)
+        end
+
+        it 'assigns the attributes' do
+          expect(assigns[:provided_attributes]).to be_empty
+        end
+
+        context 'when the user has access to the provider' do
+          let!(:attributes) do
+            attr = create(:permitted_attribute, provider: provider)
+
+            [
+              create(:provided_attribute, subject: object, public: false),
+              create(:provided_attribute, subject: object, public: false,
+                                          permitted_attribute: attr)
+            ]
+          end
+
+          it 'assigns the attributes' do
+            expect(assigns[:provided_attributes])
+              .to contain_exactly(attributes[1])
+          end
+        end
+      end
+
       it 'assigns the subject' do
         expect(assigns[:object]).to eq(object)
       end
