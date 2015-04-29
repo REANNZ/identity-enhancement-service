@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427054047) do
+ActiveRecord::Schema.define(version: 20150429202326) do
 
   create_table "api_subject_role_assignments", force: :cascade do |t|
     t.integer  "api_subject_id", limit: 4, null: false
