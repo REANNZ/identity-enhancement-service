@@ -14,7 +14,8 @@ module API
       check_access!('api:attributes:create')
       Subject.transaction do
         @provider = lookup_provider(params[:provider])
-        @object = lookup_subject(@provider, params[:subject])
+        @object = provision_subject(@provider, params[:subject])
+
         params[:attributes].each do |attribute|
           update_attribute(@provider, @object,
                            attribute.permit(:name, :value, :public, :_destroy))
@@ -34,14 +35,22 @@ module API
       end
     end
 
+    def provision_subject(provider, attrs)
+      subject = lookup_subject(provider, attrs)
+
+      provisioned_subject = subject.provision(provider)
+      return subject unless params.key?(:expires)
+
+      provisioned_subject.update_attributes!(expires_at: params[:expires])
+      subject
+    end
+
     def update_attribute(provider, subject, opts)
       return destroy_attribute(provider, subject, opts) if opts[:_destroy]
       create_attribute(provider, subject, opts)
     end
 
     def create_attribute(provider, subject, opts)
-      subject.provision(@provider)
-
       permitted_attribute = lookup_permitted_attribute(provider, opts)
 
       audit_attrs = { audit_comment: 'Provided attribute via API call' }

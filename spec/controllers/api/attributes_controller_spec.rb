@@ -87,6 +87,11 @@ module API
         [{ name: attribute.name, value: attribute.value }]
       end
 
+      let(:post_params) do
+        { subject: subject_params, provider: provider_params,
+          attributes: attrs }
+      end
+
       def run
         # {
         #   "subject": {
@@ -108,14 +113,13 @@ module API
         #     "public":    true
         #   }]
         # }
-        post_params = { subject: subject_params, provider: provider_params,
-                        attributes: attrs }
         post :create, post_params.merge(format: 'json')
       end
 
       before { run }
       subject { response }
       let(:response_data) { JSON.parse(response.body) }
+      let(:expires) { nil }
 
       shared_examples 'attribute creation' do
         it { is_expected.to have_http_status(:no_content) }
@@ -153,6 +157,47 @@ module API
           object = assigns[:object]
           expect(object.provisioned_subjects.where(provider: provider))
             .to be_present
+        end
+
+        context 'with no expiry time' do
+          it 'leaves the ProvisionedSubject expiry time intact' do
+            object = assigns[:object]
+            provisioned_subject =
+              object.provisioned_subjects.where(provider: provider).first
+
+            provisioned_subject.update_attributes!(expires_at: 2.years.from_now)
+
+            expect { run }
+              .not_to change { provisioned_subject.reload.expires_at }
+          end
+        end
+
+        context 'when an expiry time is provided' do
+          let(:expires) { Time.at(1.year.from_now.to_i) }
+
+          let(:post_params) do
+            { subject: subject_params, provider: provider_params,
+              attributes: attrs, expires: expires }
+          end
+
+          it 'sets expiry on the ProvisionedSubject' do
+            object = assigns[:object]
+            expect(object.provisioned_subjects.where(provider: provider).first)
+              .to have_attributes(expires_at: expires)
+          end
+        end
+
+        context 'when a null expiry time is provided' do
+          let(:post_params) do
+            { subject: subject_params, provider: provider_params,
+              attributes: attrs, expires: nil }
+          end
+
+          it 'removes expiry on the ProvisionedSubject' do
+            object = assigns[:object]
+            expect(object.provisioned_subjects.where(provider: provider).first)
+              .to have_attributes(expires_at: nil)
+          end
         end
 
         context 'with no provider identifier' do

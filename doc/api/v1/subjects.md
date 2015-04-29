@@ -59,6 +59,7 @@ POST /api/subjects/attributes
 |---|---|---|---|
 | subject | object | An object specifying the identity which will be modified by the request | No |
 | provider | string | URN of the enhancement provider who will assert or modify attributes for the identity in this request | No |
+| expires | timestamp | The expiry time of the described Subject's relationship with the described Provider. If the option is present and has a `null` value, the expiry time will be removed. If the option is missing, the existing expiry time will be preserved. An ISO8601 formatted timestamp, in the `YYYY-MM-DD` or `YYYY-MM-DDThh:mm:ssZ` format. | Yes |
 | attributes | array | An array of *attribute* objects specifying the attributes which will be modified by the request | No |
 
 #### subject
