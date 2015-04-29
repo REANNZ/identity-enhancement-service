@@ -120,7 +120,7 @@ RSpec.describe ProvidersController, type: :controller do
       before { run }
       subject { response }
 
-      it { is_expected.to redirect_to(providers_path) }
+      it { is_expected.to redirect_to(assigns[:provider]) }
 
       context 'with invalid attributes' do
         let(:attrs) { attributes_for(:provider, identifier: 'not valid') }
@@ -178,7 +178,7 @@ RSpec.describe ProvidersController, type: :controller do
     before { patch :update, id: provider.id, provider: attrs }
     subject { response }
 
-    it { is_expected.to redirect_to(providers_path) }
+    it { is_expected.to redirect_to(assigns[:provider]) }
     it { is_expected.to have_assigned(:provider, provider) }
 
     context 'with invalid attributes' do

@@ -21,7 +21,7 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Created provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def show
@@ -45,7 +45,7 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Updated provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def destroy
