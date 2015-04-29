@@ -19,10 +19,11 @@ module API
     #   "attributes": [{
     #     "name":      "eduPersonEntitlement",
     #     "value":     "urn:mace:aaf.edu.au:ide:researcher:1"
-    #     "providers": [
-    #       "urn:mace:aaf.edu.au:ide:providers:provider1",
-    #       "urn:mace:aaf.edu.au:ide:providers:provider2"
-    #     ],
+    #     "provider":  "urn:mace:aaf.edu.au:ide:providers:provider1"
+    #   }, {
+    #     "name":      "eduPersonEntitlement",
+    #     "value":     "urn:mace:aaf.edu.au:ide:researcher:1"
+    #     "provider":  "urn:mace:aaf.edu.au:ide:providers:provider2"
     #   }]
     # }
     context 'get /api/subjects/:shared_token/attributes' do
@@ -51,14 +52,12 @@ module API
 
       context 'the attribute entry' do
         subject { json[:attributes].first }
+
+        let(:provider) { provided_attribute.permitted_attribute.provider }
+
         it { is_expected.to include(name: provided_attribute.name) }
         it { is_expected.to include(value: provided_attribute.value) }
-
-        context 'providers' do
-          let(:provider) { provided_attribute.permitted_attribute.provider }
-          subject { json[:attributes].first[:providers] }
-          it { is_expected.to contain_exactly(provider.full_identifier) }
-        end
+        it { is_expected.to include(provider: provider.full_identifier) }
       end
 
       context 'attribute with multiple providers' do
@@ -83,7 +82,7 @@ module API
 
         context 'the attribute list' do
           subject { json[:attributes] }
-          it { is_expected.to contain_exactly(an_instance_of(Hash)) }
+          it { is_expected.to contain_exactly(*[an_instance_of(Hash)] * 2) }
         end
 
         context 'the attribute entry' do
@@ -93,7 +92,7 @@ module API
 
           context 'providers' do
             let(:provider) { provided_attribute.permitted_attribute.provider }
-            subject { json[:attributes].first[:providers] }
+            subject { json[:attributes].map { |a| a[:provider] } }
 
             it 'contains both providers' do
               expect(subject).to contain_exactly(provider.full_identifier,
@@ -104,12 +103,8 @@ module API
       end
 
       context 'multiple attributes' do
-        let(:other_provided_attribute) do
+        let!(:other_provided_attribute) do
           create(:provided_attribute, subject: object)
-        end
-
-        let(:other_provider) do
-          other_provided_attribute.permitted_attribute.provider
         end
 
         def run
@@ -123,37 +118,39 @@ module API
         end
 
         context 'the first attribute entry' do
+          let(:provider) { provided_attribute.permitted_attribute.provider }
+
           def find_in(list)
-            list.find { |a| a[:value] == provided_attribute.value }
+            list.find do |a|
+              a[:provider] == provider.full_identifier &&
+                a[:value] == provided_attribute.value
+            end
           end
 
           subject { find_in(json[:attributes]) }
 
           it { is_expected.to include(name: provided_attribute.name) }
           it { is_expected.to include(value: provided_attribute.value) }
-
-          context 'providers' do
-            let(:provider) { provided_attribute.permitted_attribute.provider }
-            subject { find_in(json[:attributes])[:providers] }
-            it { is_expected.to contain_exactly(provider.full_identifier) }
-          end
+          it { is_expected.to include(provider: provider.full_identifier) }
         end
 
         context 'the other attribute entry' do
+          let(:provider) do
+            other_provided_attribute.permitted_attribute.provider
+          end
+
           def find_in(list)
-            list.find { |a| a[:value] == other_provided_attribute.value }
+            list.find do |a|
+              a[:provider] == provider.full_identifier &&
+                a[:value] == other_provided_attribute.value
+            end
           end
 
           subject { find_in(json[:attributes]) }
 
           it { is_expected.to include(name: other_provided_attribute.name) }
           it { is_expected.to include(value: other_provided_attribute.value) }
-
-          context 'providers' do
-            let(:provider) { other_provider }
-            subject { find_in(json[:attributes])[:providers] }
-            it { is_expected.to contain_exactly(provider.full_identifier) }
-          end
+          it { is_expected.to include(provider: provider.full_identifier) }
         end
       end
     end

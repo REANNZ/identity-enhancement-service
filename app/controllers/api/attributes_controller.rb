@@ -8,8 +8,6 @@ module API
 
       @provided_attributes = @object.provided_attributes
                              .includes(permitted_attribute: :provider).all
-
-      @attributes_map = map_attributes(@provided_attributes)
     end
 
     def create
@@ -27,14 +25,6 @@ module API
     end
 
     private
-
-    def map_attributes(provided_attributes)
-      # { [attr.name, attr.value] => [provider1, provider2, ...], ... }
-      provided_attributes.each_with_object({}) do |attr, map|
-        list = (map[[attr.name, attr.value]] ||= [])
-        list << attr.permitted_attribute.provider
-      end
-    end
 
     def update_attribute(provider, subject, opts)
       return destroy_attribute(provider, subject, opts) if opts[:_destroy]

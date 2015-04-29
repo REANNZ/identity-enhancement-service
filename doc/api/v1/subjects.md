@@ -30,10 +30,11 @@ Status: 200 OK
   "attributes": [{
     "name":      "eduPersonEntitlement",
     "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
-    "providers": [
-      "urn:mace:aaf.edu.au:ide:providers:provider1",
-      "urn:mace:aaf.edu.au:ide:providers:provider2"
-    ]
+    "provider":  "urn:mace:aaf.edu.au:ide:providers:provider1"
+  }, {
+    "name":      "eduPersonEntitlement",
+    "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
+    "provider":  "urn:mace:aaf.edu.au:ide:providers:provider2"
   }]
 }
 ```
