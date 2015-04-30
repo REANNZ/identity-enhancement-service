@@ -22,5 +22,12 @@ module API
         it { is_expected.to route_to('api/attributes#create', format: 'json') }
       end
     end
+
+    context ProvidersController do
+      context '/api/providers' do
+        subject { { get: '/api/providers' } }
+        it { is_expected.to route_to('api/providers#index', format: 'json') }
+      end
+    end
   end
 end
