@@ -97,15 +97,29 @@ module API
 
     def lookup_subject(provider, attrs)
       if attrs[:shared_token]
-        find_subject_by_shared_token(attrs[:shared_token])
+        find_or_create_by_shared_token(provider, attrs)
       else
         find_or_create_subject(provider, attrs)
       end
     end
 
-    def find_subject_by_shared_token(shared_token)
-      Subject.find_by_shared_token(shared_token) ||
-        fail(BadRequest, 'The Subject was not known to this system')
+    def find_or_create_by_shared_token(provider, attrs)
+      subject = Subject.find_by_shared_token(attrs[:shared_token])
+
+      if subject.nil? && attrs[:allow_create]
+        return create_by_shared_token(provider, attrs)
+      end
+
+      subject || fail(BadRequest, 'The Subject was not known to this system')
+    end
+
+    def create_by_shared_token(provider, attrs)
+      audit_attrs = {
+        audit_comment: 'Provisioned via API call with shared token'
+      }
+
+      Subject.create!(attrs.permit(:name, :mail, :shared_token)
+                      .merge(audit_attrs))
     end
 
     def find_or_create_subject(provider, attrs)
@@ -122,6 +136,10 @@ module API
     end
 
     def invite_subject(provider, attrs)
+      unless attrs[:allow_create]
+        fail(BadRequest, 'The Subject was not known to this system')
+      end
+
       expires = attrs[:expires] || 4.weeks.from_now.to_date
       create_invitation(provider, attrs.permit(:name, :mail), expires)
     end
