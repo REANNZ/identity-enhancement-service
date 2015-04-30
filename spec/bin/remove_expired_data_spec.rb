@@ -61,4 +61,43 @@ RSpec.describe 'bin/remove_expired_data' do
       object.reload
     end
   end
+
+  context 'with an expired provisioned subject' do
+    let(:provisioned_subject) do
+      create(:provisioned_subject, expires_at: 1.minute.ago)
+    end
+
+    let(:permitted_attribute) do
+      create(:permitted_attribute, provider: provider)
+    end
+
+    let(:provider) { provisioned_subject.provider }
+    let(:object) { provisioned_subject.subject }
+    let!(:attribute) do
+      create(:provided_attribute, subject: object,
+                                  permitted_attribute: permitted_attribute)
+    end
+
+    it 'removes the attribute' do
+      expect { run }.to change(ProvidedAttribute, :count).by(-1)
+      expect { attribute.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'removes the provisioned subject' do
+      expect { run }.to change(ProvisionedSubject, :count).by(-1)
+      expect { provisioned_subject.reload }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context 'with a nonexpired provisioned subject' do
+    let!(:provisioned_subject) do
+      create(:provisioned_subject, expires_at: 1.hour.from_now)
+    end
+
+    it 'leaves the provisioned subject intact' do
+      expect { run }.not_to change(ProvisionedSubject, :count)
+      provisioned_subject.reload
+    end
+  end
 end
