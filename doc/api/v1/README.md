@@ -99,3 +99,4 @@ The information supplied thus far is applicable to **all endpoints provided** by
 Specific details on interacting with supplied endpoint categories are provided in the following documents:
 
 1. [Subjects](subjects.md)
+2. [Providers](providers.md)
