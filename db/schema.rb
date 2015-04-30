@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150417013617) do
+ActiveRecord::Schema.define(version: 20150427054047) do
 
   create_table "api_subject_role_assignments", force: :cascade do |t|
     t.integer  "api_subject_id", limit: 4, null: false
@@ -103,25 +103,37 @@ ActiveRecord::Schema.define(version: 20150417013617) do
   add_index "permitted_attributes", ["provider_id", "available_attribute_id"], name: "permitted_attributes_unique_attribute", unique: true, using: :btree
 
   create_table "provided_attributes", force: :cascade do |t|
-    t.integer  "permitted_attribute_id", limit: 4,   null: false
-    t.integer  "subject_id",             limit: 4,   null: false
-    t.string   "name",                   limit: 255, null: false
-    t.string   "value",                  limit: 255, null: false
+    t.integer  "permitted_attribute_id", limit: 4,                  null: false
+    t.integer  "subject_id",             limit: 4,                  null: false
+    t.string   "name",                   limit: 255,                null: false
+    t.string   "value",                  limit: 255,                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "public",                 limit: 1,   default: true, null: false
   end
 
   add_index "provided_attributes", ["subject_id", "permitted_attribute_id"], name: "provided_attributes_unique_attribute", unique: true, using: :btree
 
   create_table "providers", force: :cascade do |t|
-    t.string   "name",        limit: 255,              null: false
-    t.string   "description", limit: 255, default: "", null: false
-    t.string   "identifier",  limit: 255,              null: false
+    t.string   "name",        limit: 255,                null: false
+    t.string   "description", limit: 255, default: "",   null: false
+    t.string   "identifier",  limit: 255,                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "public",      limit: 1,   default: true, null: false
   end
 
   add_index "providers", ["identifier"], name: "index_providers_on_identifier", unique: true, using: :btree
+
+  create_table "provisioned_subjects", force: :cascade do |t|
+    t.integer  "subject_id",  limit: 4, null: false
+    t.integer  "provider_id", limit: 4, null: false
+    t.datetime "expires_at"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "provisioned_subjects", ["subject_id", "provider_id"], name: "index_provisioned_subjects_on_subject_id_and_provider_id", unique: true, using: :btree
 
   create_table "requested_enhancements", force: :cascade do |t|
     t.integer  "subject_id",     limit: 4,                    null: false

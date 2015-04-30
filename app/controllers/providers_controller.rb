@@ -2,7 +2,7 @@ class ProvidersController < ApplicationController
   def index
     public_action
     @filter = params[:filter]
-    @providers = Provider.filter(@filter).order(:name)
+    @providers = Provider.visible_to(subject).filter(@filter).order(:name)
                  .paginate(page: params[:page])
   end
 
@@ -21,7 +21,7 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Created provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def show
@@ -45,7 +45,7 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Updated provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def destroy
@@ -62,7 +62,7 @@ class ProvidersController < ApplicationController
   private
 
   def provider_params
-    params.require(:provider).permit(:name, :description, :identifier)
+    params.require(:provider).permit(:name, :description, :identifier, :public)
   end
 
   def create_provider

@@ -17,6 +17,21 @@
       <td>Identifier</td>
       <td><%= @provider.identifier %></td>
     </tr>
+    <tr>
+      <td>Visibility</td>
+      <%- if @provider.public? -%>
+        <td class="positive">Public</td>
+      <%- else -%>
+        <td class="warning">
+          <p>Private</p>
+          <p>
+            <strong>Note:</strong> Users will not be able to request enhancement
+            from this provider, and may not be aware that it exists in the
+            system.
+          </p>
+        </td>
+      <%- end -%>
+    </tr>
   </tbody>
 </table>
 

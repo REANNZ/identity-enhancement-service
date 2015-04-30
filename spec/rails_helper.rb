@@ -52,6 +52,12 @@ RSpec.configure do |config|
   Capybara.javascript_driver = :poltergeist
 
   config.before(:suite) { DatabaseCleaner.strategy = :truncation }
-  config.before(:each, type: :feature) { DatabaseCleaner.start }
+
+  config.before(:each, type: :feature) do
+    DatabaseCleaner.start
+    page.driver.reset!
+    page.driver.browser.url_blacklist = %w(https://fonts.googleapis.com)
+  end
+
   config.after(:each, type: :feature) { DatabaseCleaner.clean }
 end

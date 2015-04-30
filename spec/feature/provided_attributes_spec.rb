@@ -63,7 +63,7 @@ RSpec.feature 'Providing attributes to subjects', js: true do
     value = permitted.available_attribute.value
 
     within('tr', text: value) do
-      click_button('Add')
+      click_button('Add as Public Attribute')
     end
 
     expect(current_path).to eq("#{base_path}/provided_attributes/new")
@@ -91,7 +91,7 @@ RSpec.feature 'Providing attributes to subjects', js: true do
       value = permitted.available_attribute.value
 
       within('tr', text: value) do
-        click_button('Add')
+        click_button('Add as Public Attribute')
       end
 
       expect(current_path).to eq("#{base_path}/provided_attributes/new")

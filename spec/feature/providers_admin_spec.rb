@@ -42,7 +42,7 @@ RSpec.feature 'Modifying Providers', js: true do
       click_button 'Create'
     end
 
-    expect(current_path).to eq(providers_path)
+    expect(current_path).to match(%r{/providers/\d+})
     expect(page).to have_css('table tr td', text: attrs[:name])
   end
 
@@ -63,7 +63,7 @@ RSpec.feature 'Modifying Providers', js: true do
       click_button 'Save'
     end
 
-    expect(current_path).to eq(providers_path)
+    expect(current_path).to match(%r{/providers/\d+})
     expect(page).to have_css('table tr td', text: new_name)
   end
 
