@@ -78,7 +78,7 @@ RSpec.describe 'bin/remove_expired_data' do
                                   permitted_attribute: permitted_attribute)
     end
 
-    it 'removes the removes the attribute' do
+    it 'removes the attribute' do
       expect { run }.to change(ProvidedAttribute, :count).by(-1)
       expect { attribute.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
