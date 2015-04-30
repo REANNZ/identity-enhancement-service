@@ -16,6 +16,6 @@ module ApplicationHelper
   end
 
   def application_version
-    '0.1.3'
+    '0.1.4'
   end
 end
