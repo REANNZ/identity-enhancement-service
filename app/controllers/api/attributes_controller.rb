@@ -6,17 +6,16 @@ module API
       check_access!('api:attributes:read')
       @object = Subject.find_by_shared_token(params[:shared_token])
 
-      @provided_attributes = @object.provided_attributes
-                             .includes(permitted_attribute: :provider).all
-
-      @attributes_map = map_attributes(@provided_attributes)
+      @provided_attributes = filter_attributes(
+        @object.provided_attributes.includes(permitted_attribute: :provider))
     end
 
     def create
       check_access!('api:attributes:create')
       Subject.transaction do
         @provider = lookup_provider(params[:provider])
-        @object = lookup_subject(@provider, params[:subject])
+        @object = provision_subject(@provider, params[:subject])
+
         params[:attributes].each do |attribute|
           update_attribute(@provider, @object,
                            attribute.permit(:name, :value, :public, :_destroy))
@@ -28,12 +27,22 @@ module API
 
     private
 
-    def map_attributes(provided_attributes)
-      # { [attr.name, attr.value] => [provider1, provider2, ...], ... }
-      provided_attributes.each_with_object({}) do |attr, map|
-        list = (map[[attr.name, attr.value]] ||= [])
-        list << attr.permitted_attribute.provider
+    def filter_attributes(attributes)
+      attributes.select do |attr|
+        provider_id = attr.permitted_attribute.provider_id
+        attr.public? ||
+          subject.permits?("providers:#{provider_id}:attributes:read")
       end
+    end
+
+    def provision_subject(provider, attrs)
+      subject = lookup_subject(provider, attrs)
+
+      provisioned_subject = subject.provision(provider)
+      return subject unless params.key?(:expires)
+
+      provisioned_subject.update_attributes!(expires_at: params[:expires])
+      subject
     end
 
     def update_attribute(provider, subject, opts)
@@ -42,8 +51,6 @@ module API
     end
 
     def create_attribute(provider, subject, opts)
-      subject.provision(@provider)
-
       permitted_attribute = lookup_permitted_attribute(provider, opts)
 
       audit_attrs = { audit_comment: 'Provided attribute via API call' }

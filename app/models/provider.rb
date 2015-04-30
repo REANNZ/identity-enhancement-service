@@ -70,10 +70,13 @@ class Provider < ActiveRecord::Base
   end
 
   DEFAULT_ROLES = {
-    'API Read Only' => %w(api:attributes:read),
+    'API Read Only' => %w(
+      api:attributes:read
+      providers:PROVIDER_ID:attributes:read
+    ),
     'API Read/Write' => %w(
       api:attributes:*
-      providers:PROVIDER_ID:attributes:create
+      providers:PROVIDER_ID:attributes:*
     ),
     'Web UI Read Only' => %w(
       providers:PROVIDER_ID:list
