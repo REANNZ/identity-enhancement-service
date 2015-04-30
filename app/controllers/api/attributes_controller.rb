@@ -6,17 +6,16 @@ module API
       check_access!('api:attributes:read')
       @object = Subject.find_by_shared_token(params[:shared_token])
 
-      @provided_attributes = @object.provided_attributes
-                             .includes(permitted_attribute: :provider).all
-
-      @attributes_map = map_attributes(@provided_attributes)
+      @provided_attributes = filter_attributes(
+        @object.provided_attributes.includes(permitted_attribute: :provider))
     end
 
     def create
       check_access!('api:attributes:create')
       Subject.transaction do
         @provider = lookup_provider(params[:provider])
-        @object = lookup_subject(@provider, params[:subject])
+        @object = provision_subject(@provider, params[:subject])
+
         params[:attributes].each do |attribute|
           update_attribute(@provider, @object,
                            attribute.permit(:name, :value, :public, :_destroy))
@@ -28,12 +27,22 @@ module API
 
     private
 
-    def map_attributes(provided_attributes)
-      # { [attr.name, attr.value] => [provider1, provider2, ...], ... }
-      provided_attributes.each_with_object({}) do |attr, map|
-        list = (map[[attr.name, attr.value]] ||= [])
-        list << attr.permitted_attribute.provider
+    def filter_attributes(attributes)
+      attributes.select do |attr|
+        provider_id = attr.permitted_attribute.provider_id
+        attr.public? ||
+          subject.permits?("providers:#{provider_id}:attributes:read")
       end
+    end
+
+    def provision_subject(provider, attrs)
+      subject = lookup_subject(provider, attrs)
+
+      provisioned_subject = subject.provision(provider)
+      return subject unless params.key?(:expires)
+
+      provisioned_subject.update_attributes!(expires_at: params[:expires])
+      subject
     end
 
     def update_attribute(provider, subject, opts)
@@ -42,8 +51,6 @@ module API
     end
 
     def create_attribute(provider, subject, opts)
-      subject.provision(@provider)
-
       permitted_attribute = lookup_permitted_attribute(provider, opts)
 
       audit_attrs = { audit_comment: 'Provided attribute via API call' }
@@ -64,11 +71,9 @@ module API
     end
 
     def lookup_permitted_attribute(provider, opts)
-      lookup_opts = opts.slice(:name, :value)
-
-      permitted_attribute = provider.permitted_attributes
-                            .joins(:available_attribute)
-                            .find_by(available_attributes: lookup_opts)
+      permitted_attribute =
+        provider.permitted_attributes.joins(:available_attribute)
+        .find_by(available_attributes: opts.slice(:name, :value))
 
       permitted_attribute ||
         fail(BadRequest, "#{provider.name} is not permitted to provide " \
@@ -76,32 +81,36 @@ module API
     end
 
     def lookup_provider(opts)
-      if opts.nil? || opts[:identifier].nil?
+      if opts.try(:[], :identifier).nil?
         fail(BadRequest, 'The Provider is not properly identified')
       end
 
       provider = Provider.lookup(opts[:identifier])
-      provider || fail(BadRequest, "The Provider #{opts[:identifier]} " \
-                                   'was not found')
-
-      check_access!("providers:#{provider.id}:attributes:create")
-      provider
+      check_access!("providers:#{provider.id}:attributes:create") if provider
+      provider || fail(BadRequest, 'The specified Provider was not found')
     end
 
     def lookup_subject(provider, attrs)
-      if attrs[:shared_token]
-        find_subject_by_shared_token(attrs[:shared_token])
-      else
-        find_or_create_subject(provider, attrs)
-      end
+      return find_or_create_by_shared_token(attrs) if attrs[:shared_token]
+      find_or_create_by_invitation(provider, attrs)
     end
 
-    def find_subject_by_shared_token(shared_token)
-      Subject.find_by_shared_token(shared_token) ||
-        fail(BadRequest, 'The Subject was not known to this system')
+    def find_or_create_by_shared_token(attrs)
+      subject = Subject.find_by_shared_token(attrs[:shared_token])
+
+      return subject if subject
+      return create_by_shared_token(attrs) if attrs[:allow_create]
+      fail(BadRequest, 'The Subject was not known to this system')
     end
 
-    def find_or_create_subject(provider, attrs)
+    def create_by_shared_token(attrs)
+      audit_attrs = { audit_comment: 'Created via API call with shared_token' }
+
+      Subject.create!(attrs.permit(:name, :mail, :shared_token)
+                      .merge(audit_attrs))
+    end
+
+    def find_or_create_by_invitation(provider, attrs)
       name, mail = attrs.values_at(:name, :mail)
 
       if name.nil?
@@ -115,6 +124,8 @@ module API
     end
 
     def invite_subject(provider, attrs)
+      fail(BadRequest, 'The Subject was not found') unless attrs[:allow_create]
+
       expires = attrs[:expires] || 4.weeks.from_now.to_date
       create_invitation(provider, attrs.permit(:name, :mail), expires)
     end

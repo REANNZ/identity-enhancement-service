@@ -85,5 +85,7 @@ Rails.application.routes.draw do
 
       post 'attributes' => 'attributes#create'
     end
+
+    get 'providers' => 'providers#index'
   end
 end
