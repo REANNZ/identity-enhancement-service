@@ -362,7 +362,7 @@ module API
           end
 
           it_behaves_like 'attribute creation failure',
-                          /Subject was not known to this system/
+                          /The Subject was not found/
         end
 
         context 'identifying by name and email address' do
