@@ -71,11 +71,9 @@ module API
     end
 
     def lookup_permitted_attribute(provider, opts)
-      lookup_opts = opts.slice(:name, :value)
-
-      permitted_attribute = provider.permitted_attributes
-                            .joins(:available_attribute)
-                            .find_by(available_attributes: lookup_opts)
+      permitted_attribute =
+        provider.permitted_attributes.joins(:available_attribute)
+        .find_by(available_attributes: opts.slice(:name, :value))
 
       permitted_attribute ||
         fail(BadRequest, "#{provider.name} is not permitted to provide " \
@@ -83,32 +81,36 @@ module API
     end
 
     def lookup_provider(opts)
-      if opts.nil? || opts[:identifier].nil?
+      if opts.try(:[], :identifier).nil?
         fail(BadRequest, 'The Provider is not properly identified')
       end
 
       provider = Provider.lookup(opts[:identifier])
-      provider || fail(BadRequest, "The Provider #{opts[:identifier]} " \
-                                   'was not found')
-
-      check_access!("providers:#{provider.id}:attributes:create")
-      provider
+      check_access!("providers:#{provider.id}:attributes:create") if provider
+      provider || fail(BadRequest, 'The specified Provider was not found')
     end
 
     def lookup_subject(provider, attrs)
-      if attrs[:shared_token]
-        find_subject_by_shared_token(attrs[:shared_token])
-      else
-        find_or_create_subject(provider, attrs)
-      end
+      return find_or_create_by_shared_token(attrs) if attrs[:shared_token]
+      find_or_create_by_invitation(provider, attrs)
     end
 
-    def find_subject_by_shared_token(shared_token)
-      Subject.find_by_shared_token(shared_token) ||
-        fail(BadRequest, 'The Subject was not known to this system')
+    def find_or_create_by_shared_token(attrs)
+      subject = Subject.find_by_shared_token(attrs[:shared_token])
+
+      return subject if subject
+      return create_by_shared_token(attrs) if attrs[:allow_create]
+      fail(BadRequest, 'The Subject was not known to this system')
     end
 
-    def find_or_create_subject(provider, attrs)
+    def create_by_shared_token(attrs)
+      audit_attrs = { audit_comment: 'Created via API call with shared_token' }
+
+      Subject.create!(attrs.permit(:name, :mail, :shared_token)
+                      .merge(audit_attrs))
+    end
+
+    def find_or_create_by_invitation(provider, attrs)
       name, mail = attrs.values_at(:name, :mail)
 
       if name.nil?
@@ -122,6 +124,8 @@ module API
     end
 
     def invite_subject(provider, attrs)
+      fail(BadRequest, 'The Subject was not found') unless attrs[:allow_create]
+
       expires = attrs[:expires] || 4.weeks.from_now.to_date
       create_invitation(provider, attrs.permit(:name, :mail), expires)
     end

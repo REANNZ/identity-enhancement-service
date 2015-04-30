@@ -241,10 +241,14 @@ module API
         end
       end
 
-      shared_examples 'invitation of new subject' do
+      shared_examples 'creation of a new subject' do
         it 'assigns the subject' do
           expect(assigns[:object]).to eq(Subject.last)
         end
+      end
+
+      shared_examples 'invitation of new subject' do
+        include_examples 'creation of a new subject'
 
         it 'emails the invitation' do
           expect(response).to have_sent_email.to(object.mail)
@@ -352,9 +356,18 @@ module API
                           /Subject was not known to this system/
         end
 
-        context 'identifying by name and email address' do
+        context 'missing allow_create option' do
           let(:subject_params) do
             { name: object.name, mail: object.mail }
+          end
+
+          it_behaves_like 'attribute creation failure',
+                          /The Subject was not found/
+        end
+
+        context 'identifying by name and email address' do
+          let(:subject_params) do
+            { name: object.name, mail: object.mail, allow_create: true }
           end
 
           include_examples 'attribute creation'
@@ -378,7 +391,8 @@ module API
 
           let(:subject_params) do
             {
-              name: object.name, mail: object.mail, expires: expires.iso8601
+              name: object.name, mail: object.mail, expires: expires.iso8601,
+              allow_create: true
             }
           end
 
@@ -388,6 +402,18 @@ module API
             expect(Invitation.last.expires).to eq(expires)
           end
         end
+      end
+
+      context 'creating a subject by shared token, name and email address' do
+        let(:object) { build(:subject) }
+
+        let(:subject_params) do
+          { name: object.name, mail: object.mail,
+            shared_token: object.shared_token, allow_create: true }
+        end
+
+        include_examples 'attribute creation'
+        include_examples 'creation of a new subject'
       end
     end
   end
