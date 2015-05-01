@@ -47,6 +47,17 @@ RSpec.describe 'bin/remove_expired_data' do
         object.reload
       end
     end
+
+    context 'when the invitation has no subject' do
+      before do
+        object.audit_comment = 'Deleted by test'
+        object.destroy!
+      end
+
+      it 'skips the invitation' do
+        expect { run }.not_to change(Invitation, :count)
+      end
+    end
   end
 
   context 'with a nonexpired invitation' do
