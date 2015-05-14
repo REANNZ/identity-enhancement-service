@@ -5,4 +5,6 @@ class ProvisionedSubject < ActiveRecord::Base
   valhammer
 
   validates :provider, uniqueness: { scope: :subject }
+
+  scope :expired, -> { where(arel_table[:expires_at].lt(Time.now.utc)) }
 end
