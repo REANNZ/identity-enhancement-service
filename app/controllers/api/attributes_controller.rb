@@ -3,6 +3,9 @@ module API
     include CreateInvitation
 
     def show
+      logger.info("Request to #{request.path} from Provider " \
+                  "#{@subject.provider_id}, API Subject #{@subject.x509_cn}")
+
       check_access!('api:attributes:read')
       @object = Subject.find_by_shared_token(params[:shared_token])
 
