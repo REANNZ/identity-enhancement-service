@@ -8,8 +8,6 @@ class APIConstraints
     @default || req.headers['Accept'].include?(version_string)
   end
 
-  private
-
   def version_string
     "application/vnd.aaf.ide.v#{@version}+json"
   end
