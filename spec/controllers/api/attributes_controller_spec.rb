@@ -346,13 +346,13 @@ module API
         context 'identifying by name' do
           let(:subject_params) { { name: object.name } }
           it_behaves_like 'attribute creation failure',
-                          /Subject email address was not provided/
+                          /Subject email address is required/
         end
 
         context 'identifying by email address' do
           let(:subject_params) { { mail: object.mail } }
           it_behaves_like 'attribute creation failure',
-                          /Subject name was not provided/
+                          /Subject name is required/
         end
       end
 
@@ -386,13 +386,13 @@ module API
         context 'identifying by name' do
           let(:subject_params) { { name: object.name } }
           it_behaves_like 'attribute creation failure',
-                          /Subject email address was not provided/
+                          /Subject email address is required/
         end
 
         context 'identifying by email address' do
           let(:subject_params) { { mail: object.mail } }
           it_behaves_like 'attribute creation failure',
-                          /Subject name was not provided/
+                          /Subject name is required/
         end
 
         context 'specifying the expiry' do
