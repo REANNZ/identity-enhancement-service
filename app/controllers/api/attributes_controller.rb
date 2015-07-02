@@ -4,7 +4,7 @@ module API
 
     def show
       check_access!('api:attributes:read')
-      @object = Subject.find_by_shared_token(params[:shared_token])
+      @object = Subject.find_by_shared_token!(params[:shared_token])
 
       @provided_attributes = filter_attributes(
         @object.provided_attributes.includes(permitted_attribute: :provider))
