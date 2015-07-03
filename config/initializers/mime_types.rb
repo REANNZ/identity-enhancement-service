@@ -12,4 +12,4 @@ module ToIDEVersion1
   end
 end
 
-Hash.include(ToIDEV1)
+Hash.include(ToIDEVersion1)
