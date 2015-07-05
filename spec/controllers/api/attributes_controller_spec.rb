@@ -2,10 +2,14 @@ require 'rails_helper'
 
 module API
   RSpec.describe AttributesController, type: :controller do
+    let(:logger) { spy }
+    before { controller.logger = logger }
+
     let(:api_subject) do
       role = create(:role, provider: provider)
       create(:permission, role: role, value: "providers:#{provider.id}:*")
-      user = create(:api_subject, :authorized, permission: 'api:attributes:*')
+      user = create(:api_subject, :authorized, permission: 'api:attributes:*',
+                                               provider: provider)
 
       create(:api_subject_role_assignment, role: role, api_subject: user)
       user
@@ -29,6 +33,11 @@ module API
 
       it 'assigns the attributes' do
         expect(assigns[:provided_attributes]).to contain_exactly(*attributes)
+      end
+
+      it 'logs the request' do
+        expect(logger).to have_received(:info)
+          .with(/Provider #{provider.id}.*API Subject #{api_subject.x509_cn}/)
       end
 
       context 'with private attributes' do
@@ -337,13 +346,13 @@ module API
         context 'identifying by name' do
           let(:subject_params) { { name: object.name } }
           it_behaves_like 'attribute creation failure',
-                          /Subject email address was not provided/
+                          /Subject email address is required/
         end
 
         context 'identifying by email address' do
           let(:subject_params) { { mail: object.mail } }
           it_behaves_like 'attribute creation failure',
-                          /Subject name was not provided/
+                          /Subject name is required/
         end
       end
 
@@ -377,13 +386,13 @@ module API
         context 'identifying by name' do
           let(:subject_params) { { name: object.name } }
           it_behaves_like 'attribute creation failure',
-                          /Subject email address was not provided/
+                          /Subject email address is required/
         end
 
         context 'identifying by email address' do
           let(:subject_params) { { mail: object.mail } }
           it_behaves_like 'attribute creation failure',
-                          /Subject name was not provided/
+                          /Subject name is required/
         end
 
         context 'specifying the expiry' do
