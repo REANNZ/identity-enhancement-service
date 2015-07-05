@@ -3,6 +3,8 @@ ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 worker_processes 5
 preload_app true
 pid File.join(ROOT, 'tmp', 'pids', 'unicorn.pid')
+stdout_path '/var/log/aaf/ide/unicorn/stdout.log'
+stderr_path '/var/log/aaf/ide/unicorn/stderr.log'
 
 before_fork do |server, _worker|
   old_pid = File.join(ROOT, 'tmp', 'pids', 'unicorn.pid.oldbin')
