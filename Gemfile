@@ -40,6 +40,7 @@ group :development, :test do
   gem 'pry', require: false
   gem 'brakeman', '~> 2.6', require: false
   gem 'simplecov', require: false
+  gem 'codeclimate-test-reporter', require: false
 
   gem 'guard', require: false
   gem 'guard-rubocop', require: false
