@@ -209,7 +209,7 @@ GEM
     rails-assets-jquery (1.11.3)
     rails-assets-pickadate (3.5.4)
       rails-assets-jquery (>= 1.7)
-    rails-assets-semantic-ui (1.12.3)
+    rails-assets-semantic-ui (1.12.1)
       rails-assets-jquery (>= 1.8)
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
@@ -375,7 +375,7 @@ DEPENDENCIES
   rails (~> 4.2.0)
   rails-assets-jquery (~> 1.11)!
   rails-assets-pickadate (= 3.5.4)!
-  rails-assets-semantic-ui (~> 1.0)!
+  rails-assets-semantic-ui (= 1.12.1)!
   rapid-rack
   redis
   redis-rails
