@@ -31,7 +31,7 @@ RSpec.feature 'Visiting the invitation page', js: true do
   end
 
   context 'with an expired invitation' do
-    given!(:invitation) { create(:invitation, expires: 1.second.from_now) }
+    given!(:invitation) { create(:invitation, expires: 30.seconds.from_now) }
 
     scenario 'attempting to accept the invitation' do
       Timecop.travel(1.minute) do

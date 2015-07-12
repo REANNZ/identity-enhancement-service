@@ -27,12 +27,14 @@ end
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
+  gem 'rspec-retry'
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'shoulda-matchers'
   gem 'timecop'
   gem 'capybara'
   gem 'poltergeist'
+  gem 'phantomjs', require: 'phantomjs/poltergeist'
   gem 'database_cleaner'
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
                      branch: 'develop'
