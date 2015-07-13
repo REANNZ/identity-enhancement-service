@@ -88,7 +88,7 @@ RSpec.describe InvitationsController, type: :controller do
 
       it 'sets the expiry' do
         run
-        expect(Invitation.last.expires).to eq(Time.parse(attrs[:expires]))
+        expect(Invitation.last.expires).to eq(Time.zone.parse(attrs[:expires]))
       end
 
       it 'sets flash success' do
@@ -122,7 +122,8 @@ RSpec.describe InvitationsController, type: :controller do
         end
 
         it 'does not create a invitation' do
-          expect { run }.to raise_error(/Nope/).and not_change(Invitation, :count)
+          expect { run }.to raise_error(/Nope/)
+            .and not_change(Invitation, :count)
         end
       end
 
@@ -168,7 +169,7 @@ RSpec.describe InvitationsController, type: :controller do
       it { is_expected.to have_sent_email.matching_body(/#{text}/) }
 
       it 'updates the last_sent_at timestamp' do
-        expect(invitation.reload.last_sent_at.to_i).to eq(Time.now.to_i)
+        expect(invitation.reload.last_sent_at.to_i).to eq(Time.zone.now.to_i)
       end
 
       it 'links to the invitation in the message' do

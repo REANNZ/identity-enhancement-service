@@ -145,10 +145,11 @@ RSpec.feature 'Providing attributes to subjects', js: true do
 
     within('form') do
       date = 1.year.from_now.xmlschema
+
       execute_script(
         "$('#provisioned_subject_expires_at').pickadate('picker')" \
         ".set('select', '#{date}', { format: 'yyyy-mm-dd' })")
-      save_screenshot('test.png')
+
       click_button('Save')
     end
 
