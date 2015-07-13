@@ -1,4 +1,6 @@
 class ProvisionedSubject < ActiveRecord::Base
+  audited
+
   belongs_to :subject
   belongs_to :provider
 
