@@ -123,7 +123,7 @@ module Authentication
           end
 
           it 'fails to provision the subject' do
-            expect { run }.to raise_error
+            expect { run }.to raise_error(/Unable to update Subject/)
           end
         end
 
@@ -144,7 +144,7 @@ module Authentication
           end
 
           it 'fails to provision the subject' do
-            expect { run }.to raise_error
+            expect { run }.to raise_error(/Unable to update Subject/)
           end
         end
       end

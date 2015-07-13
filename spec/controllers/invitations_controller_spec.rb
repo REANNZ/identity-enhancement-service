@@ -118,11 +118,11 @@ RSpec.describe InvitationsController, type: :controller do
         before { expect(Mail).to receive(:deliver) { fail('Nope') } }
 
         it 'does not create a subject' do
-          expect { run }.to raise_error.and not_change(Subject, :count)
+          expect { run }.to raise_error(/Nope/).and not_change(Subject, :count)
         end
 
         it 'does not create a invitation' do
-          expect { run }.to raise_error.and not_change(Invitation, :count)
+          expect { run }.to raise_error(/Nope/).and not_change(Invitation, :count)
         end
       end
 

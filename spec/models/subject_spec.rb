@@ -95,7 +95,7 @@ RSpec.describe Subject, type: :model do
       it 'merges the subjects' do
         expect(subject).to receive(:merge).with(other).and_call_original
         run
-        expect { other.reload }.to raise_error
+        expect { other.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -211,7 +211,7 @@ RSpec.describe Subject, type: :model do
 
     it 'removes the other subject' do
       expect { object.merge(other) }.to change(Subject, :count).by(-1)
-      expect { other.reload }.to raise_error
+      expect { other.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end
