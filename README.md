@@ -1,5 +1,19 @@
 # Identity Enhancement Service (IdE)
 
+[![Build Status][BS img]][Build Status]
+[![Dependency Status][DS img]][Dependency Status]
+[![Code Climate][CC img]][Code Climate]
+[![Coverage Status][CS img]][Code Climate]
+
+[Build Status]: https://travis-ci.org/ausaccessfed/identity-enhancement-service
+[Dependency Status]: https://gemnasium.com/ausaccessfed/identity-enhancement-service
+[Code Climate]: https://codeclimate.com/github/ausaccessfed/identity-enhancement-service
+
+[BS img]: https://img.shields.io/codeship/df5b4950-08d1-0133-a2f5-52c6dae51101/develop.svg
+[DS img]: https://img.shields.io/gemnasium/ausaccessfed/identity-enhancement-service/develop.svg
+[CC img]: https://img.shields.io/codeclimate/github/ausaccessfed/identity-enhancement-service.svg
+[CS img]: https://img.shields.io/codeclimate/coverage/github/ausaccessfed/identity-enhancement-service.svg
+
 ```
 Copyright 2014-2015, Australian Access Federation
 

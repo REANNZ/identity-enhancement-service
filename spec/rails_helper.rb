@@ -26,17 +26,10 @@ module AliasedMatchers
   end
 end
 
-module NoTransactionalFixtures
-  def self.included(base)
-    base.class_eval { self.use_transactional_fixtures = false }
-  end
-end
-
 RSpec.configure do |config|
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
   config.include ControllerMatchers, type: :controller
   config.include AliasedMatchers
-  config.include NoTransactionalFixtures, type: :feature
   config.include DeleteButton, type: :feature, js: true
 
   config.around(:example, :debug) do |example|
@@ -49,15 +42,21 @@ RSpec.configure do |config|
     end
   end
 
-  Capybara.javascript_driver = :poltergeist
+  Capybara.register_driver :poltergeist do |app|
+    Capybara::Poltergeist::Driver.new(app, timeout: 1.minute,
+                                           phantomjs: Phantomjs.path)
+  end
 
-  config.before(:suite) { DatabaseCleaner.strategy = :truncation }
+  Capybara.default_driver = Capybara.javascript_driver = :poltergeist
 
   config.before(:each, type: :feature) do
-    DatabaseCleaner.start
     page.driver.reset!
     page.driver.browser.url_blacklist = %w(https://fonts.googleapis.com)
   end
 
-  config.after(:each, type: :feature) { DatabaseCleaner.clean }
+  config.verbose_retry = true
+  config.default_retry_count = 1
+  config.default_retry_count = 3 if ENV['CI']
+
+  config.exceptions_to_retry = [Capybara::Poltergeist::TimeoutError]
 end

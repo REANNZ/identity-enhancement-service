@@ -20,19 +20,21 @@ gem 'unicorn', require: false
 gem 'god', require: false
 
 source 'https://rails-assets.org' do
-  gem 'rails-assets-semantic-ui', '~> 1.0'
+  gem 'rails-assets-semantic-ui', '1.12.1'
   gem 'rails-assets-jquery', '~> 1.11'
   gem 'rails-assets-pickadate', '3.5.4'
 end
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
+  gem 'rspec-retry'
   gem 'factory_girl_rails'
   gem 'faker'
   gem 'shoulda-matchers'
   gem 'timecop'
   gem 'capybara'
   gem 'poltergeist'
+  gem 'phantomjs', require: 'phantomjs/poltergeist'
   gem 'database_cleaner'
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
                      branch: 'develop'
@@ -40,6 +42,7 @@ group :development, :test do
   gem 'pry', require: false
   gem 'brakeman', '~> 2.6', require: false
   gem 'simplecov', require: false
+  gem 'codeclimate-test-reporter', require: false
 
   gem 'guard', require: false
   gem 'guard-rubocop', require: false
