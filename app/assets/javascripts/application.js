@@ -1,8 +1,5 @@
-//= require jquery
+//= require aaf-lipstick
 //= require jquery_ujs
-//= require semantic-ui
-//= require pickadate
-//= require aaf-layout
 
 jQuery(function($) {
   $('.popup').popup({ inline: true, position: 'right center' });

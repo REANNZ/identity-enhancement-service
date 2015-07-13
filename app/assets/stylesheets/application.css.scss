@@ -10,10 +10,7 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require semantic-ui
- *= require pickadate/lib/themes/classic
- *= require pickadate/lib/themes/classic.date
- *= require aaf-layout
+ *= require aaf-lipstick
  *= require_tree .
  *= require_self
  */
