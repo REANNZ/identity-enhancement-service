@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.0'
-gem 'sass-rails', '~> 4.0.3'
+gem 'rails', '~> 4.2.2'
+gem 'sass-rails', '~> 5.0'
 gem 'uglifier'
 gem 'therubyracer'
 gem 'jbuilder'
@@ -20,9 +20,9 @@ gem 'unicorn', require: false
 gem 'god', require: false
 
 source 'https://rails-assets.org' do
-  gem 'rails-assets-semantic-ui', '1.12.1'
+  gem 'rails-assets-semantic-ui', '~> 2.0'
   gem 'rails-assets-jquery', '~> 1.11'
-  gem 'rails-assets-pickadate', '3.5.4'
+  gem 'rails-assets-pickadate', '3.5.6'
 end
 
 group :development, :test do

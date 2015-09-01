@@ -1,4 +1,6 @@
 class ProvisionedSubject < ActiveRecord::Base
+  audited
+
   belongs_to :subject
   belongs_to :provider
 
@@ -6,5 +8,5 @@ class ProvisionedSubject < ActiveRecord::Base
 
   validates :provider, uniqueness: { scope: :subject }
 
-  scope :expired, -> { where(arel_table[:expires_at].lt(Time.now.utc)) }
+  scope :expired, -> { where(arel_table[:expires_at].lt(Time.zone.now.utc)) }
 end

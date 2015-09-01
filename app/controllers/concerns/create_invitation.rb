@@ -21,7 +21,7 @@ module CreateInvitation
                  body: email_message(invitation).render,
                  content_type: 'text/html; charset=UTF-8')
 
-    invitation.update_attributes!(last_sent_at: Time.now,
+    invitation.update_attributes!(last_sent_at: Time.zone.now,
                                   audit_comment: 'Redelivered invitation')
 
     self

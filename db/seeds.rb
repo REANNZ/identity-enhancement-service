@@ -71,7 +71,7 @@ ActiveRecord::Base.transaction do
     end
 
     while rand < 0.7
-      role = providers.shuffle.first.roles.to_a.shuffle.first
+      role = providers.sample.roles.to_a.sample
       next if role.nil? || subject.roles.include?(role)
       create(:subject_role_assignment, subject: subject, role: role)
     end

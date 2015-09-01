@@ -32,7 +32,7 @@ RSpec.describe ProvisionedSubjectsController, type: :controller do
   end
 
   context 'patch :update' do
-    let(:new_expires) { Time.at(1.year.from_now.to_i) }
+    let(:new_expires) { Time.zone.at(1.year.from_now.to_i) }
 
     def run
       patch :update, provider_id: object.provider_id, id: object.id,

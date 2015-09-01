@@ -7,6 +7,6 @@ FactoryGirl.define do
     name { subject.name }
     mail { subject.mail }
     expires { 1.year.from_now.to_s(:db) }
-    last_sent_at { Time.now.to_s(:db) }
+    last_sent_at { Time.zone.now.to_s(:db) }
   end
 end

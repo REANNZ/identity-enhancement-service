@@ -39,20 +39,25 @@ RSpec.shared_examples 'an audited model' do
     let(:attrs) { base_attrs.except(:audit_comment) }
 
     it 'fails creation' do
-      expect { tx { described_class.create!(attrs) } }.to raise_error
+      expect { tx { described_class.create!(attrs) } }
+        .to raise_error(ActiveRecord::RecordInvalid,
+                        /Audit comment can't be blank/)
         .and not_change(described_class, :count)
     end
 
     it 'fails an edit' do
       initial = subject.attributes.dup.except(*%w(created_at updated_at))
-      expect { tx { subject.update_attributes!(attrs) } }.to raise_error
+      expect { tx { subject.update_attributes!(attrs) } }
+        .to raise_error(ActiveRecord::RecordInvalid,
+                        /Audit comment can't be blank/)
       expect(subject.reload).to have_attributes(initial)
     end
 
     it 'fails deletion' do
       obj = described_class.find(subject.id)
 
-      expect { tx { obj.destroy! } }.to raise_error
+      expect { tx { obj.destroy! } }
+        .to raise_error(ActiveRecord::RecordNotDestroyed)
         .and not_change(described_class, :count)
     end
   end

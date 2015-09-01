@@ -17,3 +17,7 @@ Metrics/AbcSize:
 Rails/Output:
   Exclude:
     - db/seeds.rb
+
+Rails/TimeZone:
+  Exclude:
+    - config/dev_unicorn.rb
