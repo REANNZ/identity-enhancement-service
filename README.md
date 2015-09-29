@@ -10,7 +10,7 @@
 [Code Climate]: https://codeclimate.com/github/ausaccessfed/identity-enhancement-service
 
 [BS img]: https://img.shields.io/codeship/df5b4950-08d1-0133-a2f5-52c6dae51101/develop.svg
-[DS img]: https://img.shields.io/gemnasium/ausaccessfed/identity-enhancement-service/develop.svg
+[DS img]: https://img.shields.io/gemnasium/ausaccessfed/identity-enhancement-service.svg
 [CC img]: https://img.shields.io/codeclimate/github/ausaccessfed/identity-enhancement-service.svg
 [CS img]: https://img.shields.io/codeclimate/coverage/github/ausaccessfed/identity-enhancement-service.svg
 
