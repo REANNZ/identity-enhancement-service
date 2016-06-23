@@ -14,9 +14,7 @@ class RequestedEnhancementsController < ApplicationController
     check_access!("providers:#{@provider.id}:attributes:list")
     @requested_enhancement = @provider.requested_enhancements.find(params[:id])
     @provided_attributes =
-      @requested_enhancement.subject.provided_attributes
-                            .joins(:permitted_attribute)
-                            .where(permitted_attributes: { provider_id: @provider.id })
+      @requested_enhancement.subject.provided_attributes.for_provider(@provider)
   end
 
   def new
@@ -84,11 +82,12 @@ class RequestedEnhancementsController < ApplicationController
   end
 
   def email_recipients
-    Subject.joins(:roles)
-           .where(roles: { provider_id: @provider.id })
-           .includes(roles: :permissions)
-           .select { |u| u.permits?("providers:#{@provider.id}:attributes:list") }
-           .map(&:mail)
+    Subject
+      .joins(:roles)
+      .where(roles: { provider_id: @provider.id })
+      .includes(roles: :permissions)
+      .select { |u| u.permits?("providers:#{@provider.id}:attributes:list") }
+      .map(&:mail)
   end
 
   EMAIL_BODY = File.read(Rails.root.join('config/enhancement_request.md'))

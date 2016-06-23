@@ -8,9 +8,7 @@ class ProvidedAttributesController < ApplicationController
   def index
     check_access!("providers:#{@provider.id}:attributes:list")
     @objects = Subject.all
-    @provided_attributes =
-      ProvidedAttribute.joins(:permitted_attribute)
-                       .where('permitted_attributes.provider_id' => @provider.id)
+    @provided_attributes = ProvidedAttribute.for_provider(@provider)
   end
 
   def select_subject
@@ -87,10 +85,9 @@ class ProvidedAttributesController < ApplicationController
 
   def create_provided_attribute
     ProvidedAttribute.transaction do
-      enhancement_attrs = {
-        actioned: true, actioned_by: subject,
-        audit_comment: 'Automatically actioned by providing an attribute'
-      }
+      enhancement_attrs = { actioned: true, actioned_by: subject }
+      enhancement_attrs[:audit_comment] =
+        'Automatically actioned by providing an attribute'
 
       requested_enhancement.try(:update_attributes!, enhancement_attrs)
 
@@ -102,8 +99,7 @@ class ProvidedAttributesController < ApplicationController
   end
 
   def delete_provided_attribute
-    scope = ProvidedAttribute.joins(:permitted_attribute)
-                             .where('permitted_attributes.provider_id' => @provider.id)
+    scope = ProvidedAttribute.for_provider(@provider)
 
     scope.find(params[:id]).tap do |provided_attribute|
       provided_attribute.audit_comment = 'Revoked attribute via web interface'
