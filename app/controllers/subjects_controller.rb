@@ -5,7 +5,7 @@ class SubjectsController < ApplicationController
     check_access!('admin:subjects:list')
     @filter = params[:filter]
     @objects = Subject.filter(@filter).order(:name)
-               .paginate(page: params[:page])
+                      .paginate(page: params[:page])
   end
 
   def show

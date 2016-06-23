@@ -148,7 +148,8 @@ RSpec.feature 'Providing attributes to subjects', js: true do
 
       execute_script(
         "$('#provisioned_subject_expires_at').pickadate('picker')" \
-        ".set('select', '#{date}', { format: 'yyyy-mm-dd' })")
+        ".set('select', '#{date}', { format: 'yyyy-mm-dd' })"
+      )
 
       click_button('Save')
     end

@@ -8,7 +8,7 @@ class SubjectRoleAssignmentsController < ApplicationController
     check_access!("providers:#{@provider.id}:roles:grant")
     @filter = params[:filter]
     @subjects = Subject.where.not(id: current_member_ids).filter(@filter)
-                .order(:name).paginate(page: params[:page])
+                       .order(:name).paginate(page: params[:page])
     @assoc = @role.subject_role_assignments.new
   end
 
@@ -16,7 +16,7 @@ class SubjectRoleAssignmentsController < ApplicationController
     check_access!("providers:#{@provider.id}:roles:grant")
     audit_attrs = { audit_comment: 'Granted role from providers interface' }
     @assoc = @role.subject_role_assignments
-             .create!(assoc_params.merge(audit_attrs))
+                  .create!(assoc_params.merge(audit_attrs))
 
     flash[:success] = creation_message(@assoc)
 

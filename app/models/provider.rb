@@ -91,7 +91,7 @@ class Provider < ActiveRecord::Base
     'Administrator' => %w(
       providers:PROVIDER_ID:*
     )
-  }
+  }.freeze
 
   private_constant :DEFAULT_ROLES
 

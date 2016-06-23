@@ -76,11 +76,11 @@ class Subject < ActiveRecord::Base
   def merge_attributes(other)
     other.provided_attributes.each do |other_attr|
       attrs = other_attr.attributes
-              .slice(*%w(name value permitted_attribute_id))
+                        .slice(*%w(name value permitted_attribute_id))
 
       next if provided_attributes.where(attrs).any?
 
-      attrs.merge!(audit_comment: "Merged attribute from Subject #{other.id}")
+      attrs[:audit_comment] = "Merged attribute from Subject #{other.id}"
       provided_attributes.create!(attrs)
     end
   end

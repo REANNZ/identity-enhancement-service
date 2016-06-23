@@ -16,7 +16,7 @@ module API
       controller(APIController) do
         def bad
           public_action
-          fail(APIController::BadRequest, 'Test Exception')
+          raise(APIController::BadRequest, 'Test Exception')
         end
       end
 

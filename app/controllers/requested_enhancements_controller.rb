@@ -15,8 +15,8 @@ class RequestedEnhancementsController < ApplicationController
     @requested_enhancement = @provider.requested_enhancements.find(params[:id])
     @provided_attributes =
       @requested_enhancement.subject.provided_attributes
-      .joins(:permitted_attribute)
-      .where(permitted_attributes: { provider_id: @provider.id })
+                            .joins(:permitted_attribute)
+                            .where(permitted_attributes: { provider_id: @provider.id })
   end
 
   def new
@@ -45,7 +45,8 @@ class RequestedEnhancementsController < ApplicationController
 
     @requested_enhancement.update_attributes!(
       actioned: true, actioned_by: subject,
-      audit_comment: 'Actioned enhancement request via web')
+      audit_comment: 'Actioned enhancement request via web'
+    )
 
     flash[:success] = "Request from #{@requested_enhancement.subject.name} " \
                       'has been dismissed.'
@@ -56,7 +57,7 @@ class RequestedEnhancementsController < ApplicationController
     public_action
     @filter = params[:filter]
     @providers = Provider.visible_to(subject).filter(@filter).order(:name)
-                 .paginate(page: params[:page])
+                         .paginate(page: params[:page])
   end
 
   private
@@ -84,14 +85,14 @@ class RequestedEnhancementsController < ApplicationController
 
   def email_recipients
     Subject.joins(:roles)
-      .where(roles: { provider_id: @provider.id })
-      .includes(roles: :permissions)
-      .select { |u| u.permits?("providers:#{@provider.id}:attributes:list") }
-      .map(&:mail)
+           .where(roles: { provider_id: @provider.id })
+           .includes(roles: :permissions)
+           .select { |u| u.permits?("providers:#{@provider.id}:attributes:list") }
+           .map(&:mail)
   end
 
   EMAIL_BODY = File.read(Rails.root.join('config/enhancement_request.md'))
-               .freeze
+                   .freeze
 
   def email_body(req)
     format(EMAIL_BODY,
