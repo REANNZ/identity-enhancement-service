@@ -180,8 +180,8 @@ RSpec.describe InvitationsController, type: :controller do
       end
 
       it 'gives the provider details in the message' do
-        expected = /#{provider.name}/
-        expect(subject).to have_sent_email.matching_body(expected)
+        name_pattern = Regexp.new(provider.name.tr("'", '.'))
+        expect(subject).to have_sent_email.matching_body(name_pattern)
       end
 
       it 'gives the contact details of the provider admin who invited' do
