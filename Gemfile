@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 4.2.2'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails'
 gem 'uglifier'
 gem 'therubyracer'
 gem 'jbuilder'
@@ -13,7 +13,7 @@ gem 'audited-activerecord'
 gem 'rapid-rack'
 gem 'accession'
 gem 'aaf-lipstick', git: 'https://github.com/ausaccessfed/aaf-lipstick',
-                    branch: 'develop'
+                    branch: 'b9533adbe0ee5623ebe890a1ecbd429751c24a2d'
 gem 'valhammer'
 
 gem 'unicorn', require: false
@@ -34,10 +34,9 @@ group :development, :test do
   gem 'timecop'
   gem 'capybara'
   gem 'poltergeist'
-  gem 'phantomjs', require: 'phantomjs/poltergeist'
   gem 'database_cleaner'
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
-                     branch: 'develop'
+                     branch: '9fdbc36b7f8b9b699e28a4941a8fda767369b00a'
 
   gem 'pry', require: false
   gem 'brakeman', '~> 2.6', require: false
