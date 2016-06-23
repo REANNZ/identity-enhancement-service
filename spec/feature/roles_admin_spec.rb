@@ -149,8 +149,9 @@ RSpec.feature 'Roles Admin', js: true do
   end
 
   scenario 'revoking a role from a subject' do
-    other_subject.subject_role_assignments
-                 .create!(role: role, audit_comment: 'Granted role for test case')
+    other_subject
+      .subject_role_assignments
+      .create!(role: role, audit_comment: 'Granted role for test case')
 
     within('tr', text: role.name) do
       click_link('Members')

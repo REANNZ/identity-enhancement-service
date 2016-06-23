@@ -129,8 +129,9 @@ RSpec.describe InvitationsController, type: :controller do
 
       context 'when subject with provided email already exists' do
         let(:attrs) do
-          attributes_for(:subject, mail: user.mail).slice(:name, :mail)
-                                                   .merge(provider_id: provider.id)
+          attributes_for(:subject, mail: user.mail)
+            .slice(:name, :mail)
+            .merge(provider_id: provider.id)
         end
 
         it 'does not create a subject' do
