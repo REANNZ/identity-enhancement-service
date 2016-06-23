@@ -34,6 +34,16 @@ RSpec.describe Authentication::SubjectReceiver do
       end
     end
 
+    context 'with a return url' do
+      let(:url) { "/#{Faker::Lorem.word}" }
+      let(:env) { { 'rack.session' => { return_url: url } } }
+
+      it 'redirects to the return url' do
+        response = [302, { 'Location' => url }, []]
+        expect(subject.finish(env)).to eq(response)
+      end
+    end
+
     it 'redirects to the dashboard' do
       response = [302, { 'Location' => '/dashboard' }, []]
       expect(subject.finish(env)).to eq(response)

@@ -23,10 +23,11 @@ module Authentication
     end
 
     def finish(env)
-      if env['rack.session'].try(:delete, :invite)
+      session = env['rack.session']
+      if session&.delete(:invite)
         redirect_to('/invitations/complete')
       else
-        redirect_to('/dashboard')
+        redirect_to(session&.delete(:return_url) || '/dashboard')
       end
     end
 
