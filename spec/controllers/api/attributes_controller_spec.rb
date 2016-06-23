@@ -17,7 +17,7 @@ RSpec.describe API::AttributesController, type: :controller do
 
   let(:prefix) { Rails.application.config.ide_service.provider_prefix }
   let(:provider) { create(:provider) }
-  before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}" }
+  before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}".dup }
   subject { response }
 
   context 'get :show' do
