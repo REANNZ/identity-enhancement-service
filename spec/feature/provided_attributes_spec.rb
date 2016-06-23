@@ -154,6 +154,6 @@ RSpec.feature 'Providing attributes to subjects', js: true do
       click_button('Save')
     end
 
-    expect(page).to have_content('in about 1 year')
+    expect(page).to have_content('in 12 months')
   end
 end

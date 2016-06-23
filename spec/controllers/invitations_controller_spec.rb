@@ -184,7 +184,8 @@ RSpec.describe InvitationsController, type: :controller do
       end
 
       it 'gives the contact details of the provider admin who invited' do
-        expect(subject).to have_sent_email.matching_body(/#{user.name}/)
+        name_pattern = Regexp.new(user.name.tr("'", '.'))
+        expect(subject).to have_sent_email.matching_body(name_pattern)
       end
 
       it 'redirects back to the Identities page' do
