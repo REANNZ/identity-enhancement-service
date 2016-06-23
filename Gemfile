@@ -36,7 +36,7 @@ group :development, :test do
   gem 'poltergeist'
   gem 'database_cleaner'
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
-                     branch: '9fdbc36b7f8b9b699e28a4941a8fda767369b00a'
+                     branch: 'develop'
 
   gem 'pry', require: false
   gem 'brakeman', '~> 2.6', require: false
