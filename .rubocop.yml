@@ -1,5 +1,6 @@
 ---
 AllCops:
+  TargetRubyVersion: 2.3
   Exclude:
     - db/schema.rb
 
@@ -24,3 +25,6 @@ Rails/Output:
 Rails/TimeZone:
   Exclude:
     - config/dev_unicorn.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
