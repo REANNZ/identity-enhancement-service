@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 json.subject do
   json.call(@object, :shared_token, :name, :mail)
 end

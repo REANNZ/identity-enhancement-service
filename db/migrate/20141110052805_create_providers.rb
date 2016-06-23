@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateProviders < ActiveRecord::Migration
   def change
     create_table :providers do |t|

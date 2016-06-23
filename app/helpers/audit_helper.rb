@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module AuditHelper
   include Lipstick::Helpers::LayoutHelper
 

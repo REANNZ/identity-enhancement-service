@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class RenameProviderDefaultRoles < ActiveRecord::Migration
   class Role < ActiveRecord::Base
   end

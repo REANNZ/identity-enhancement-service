@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module API
   class AttributesController < APIController
     include CreateInvitation

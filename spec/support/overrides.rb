@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ActionController
   module TestResponseStringOverride
     def to_s

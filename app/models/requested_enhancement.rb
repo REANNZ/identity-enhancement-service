@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class RequestedEnhancement < ActiveRecord::Base
   include Lipstick::AutoValidation
 
