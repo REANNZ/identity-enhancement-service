@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "contact_mail", limit: 255,                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "enabled",      limit: 1,   default: true, null: false
+    t.boolean  "enabled",                  default: true, null: false
   end
 
   add_index "api_subjects", ["x509_cn"], name: "index_api_subjects_on_x509_cn", unique: true, using: :btree
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "identifier",   limit: 255,                 null: false
     t.string   "name",         limit: 255,                 null: false
     t.string   "mail",         limit: 255,                 null: false
-    t.boolean  "used",         limit: 1,   default: false, null: false
+    t.boolean  "used",                     default: false, null: false
     t.datetime "expires",                                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -109,7 +109,7 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "value",                  limit: 255,                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "public",                 limit: 1,   default: true, null: false
+    t.boolean  "public",                             default: true, null: false
   end
 
   add_index "provided_attributes", ["subject_id", "permitted_attribute_id"], name: "provided_attributes_unique_attribute", unique: true, using: :btree
@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "identifier",  limit: 255,                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "public",      limit: 1,   default: true, null: false
+    t.boolean  "public",                  default: true, null: false
   end
 
   add_index "providers", ["identifier"], name: "index_providers_on_identifier", unique: true, using: :btree
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "message",        limit: 4096,                 null: false
     t.datetime "created_at",                                  null: false
     t.datetime "updated_at",                                  null: false
-    t.boolean  "actioned",       limit: 1,    default: false, null: false
+    t.boolean  "actioned",                    default: false, null: false
     t.integer  "actioned_by_id", limit: 4
   end
 
@@ -168,10 +168,10 @@ ActiveRecord::Schema.define(version: 20150429202326) do
     t.string   "mail",         limit: 255,                 null: false
     t.string   "targeted_id",  limit: 255
     t.string   "shared_token", limit: 255
-    t.boolean  "complete",     limit: 1,   default: false, null: false
+    t.boolean  "complete",                 default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "enabled",      limit: 1,   default: true,  null: false
+    t.boolean  "enabled",                  default: true,  null: false
   end
 
   add_index "subjects", ["mail"], name: "index_subjects_on_mail", unique: true, using: :btree
