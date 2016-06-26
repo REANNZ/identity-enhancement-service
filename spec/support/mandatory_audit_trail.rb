@@ -5,7 +5,7 @@ RSpec.shared_examples 'an audited model' do
   # FactoryGirl doesn't include associated objects in `attributes_for`
   let(:base_attrs) do
     build(factory).attributes.merge(audit_comment: 'test')
-      .symbolize_keys.except(:created_at, :updated_at, :id)
+                  .symbolize_keys.except(:created_at, :updated_at, :id)
   end
 
   context 'with an audit message' do

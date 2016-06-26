@@ -42,11 +42,6 @@ RSpec.configure do |config|
     end
   end
 
-  Capybara.register_driver :poltergeist do |app|
-    Capybara::Poltergeist::Driver.new(app, timeout: 1.minute,
-                                           phantomjs: Phantomjs.path)
-  end
-
   Capybara.default_driver = Capybara.javascript_driver = :poltergeist
 
   config.before(:each, type: :feature) do
@@ -59,4 +54,11 @@ RSpec.configure do |config|
   config.default_retry_count = 3 if ENV['CI']
 
   config.exceptions_to_retry = [Capybara::Poltergeist::TimeoutError]
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end

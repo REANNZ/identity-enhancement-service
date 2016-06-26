@@ -8,7 +8,7 @@ unless ENV['AAF_DEV'].to_i == 1
   attempting to seed your database.
 
   EOF
-  fail('Not proceeding, missing AAF_DEV=1 environment variable')
+  raise('Not proceeding, missing AAF_DEV=1 environment variable')
 end
 
 require 'faker'
@@ -16,7 +16,7 @@ require 'factory_girl'
 
 ActiveRecord::Base.transaction do
   FactoryGirl.lint
-  fail(ActiveRecord::Rollback)
+  raise(ActiveRecord::Rollback)
 end
 
 include FactoryGirl::Syntax::Methods

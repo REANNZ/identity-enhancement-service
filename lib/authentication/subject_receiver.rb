@@ -23,10 +23,11 @@ module Authentication
     end
 
     def finish(env)
-      if env['rack.session'].try(:delete, :invite)
+      session = env['rack.session']
+      if session&.delete(:invite)
         redirect_to('/invitations/complete')
       else
-        redirect_to('/dashboard')
+        redirect_to(session&.delete(:return_url) || '/dashboard')
       end
     end
 
@@ -34,7 +35,7 @@ module Authentication
 
     def accept_invitation(session, attrs)
       invitation = Invitation.where(identifier: session[:invite])
-                   .available.first!
+                             .available.first!
 
       subject = subject_scope(attrs).first || invitation.subject
       Audited.audit_class.as_user(subject) do
@@ -71,7 +72,7 @@ module Authentication
 
     def require_nil_or_equal(actual, expected)
       return if actual.nil? || actual == expected
-      fail("Unable to update Subject, incoming value `#{expected}` did not " \
+      raise("Unable to update Subject, incoming value `#{expected}` did not " \
            "match existing value `#{actual}`")
     end
   end

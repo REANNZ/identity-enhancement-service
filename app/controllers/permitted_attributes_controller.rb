@@ -12,7 +12,7 @@ class PermittedAttributesController < ApplicationController
     check_access!('admin:permitted_attributes:create')
     audit_attrs = { audit_comment: 'Added via admin interface' }
     record = @provider.permitted_attributes
-             .create!(permitted_attribute_params.merge(audit_attrs))
+                      .create!(permitted_attribute_params.merge(audit_attrs))
 
     flash[:success] = creation_message(record)
 

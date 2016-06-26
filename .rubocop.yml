@@ -1,8 +1,12 @@
 ---
 AllCops:
-  RunRailsCops: true
+  TargetRubyVersion: 2.3
   Exclude:
     - db/schema.rb
+
+Rails:
+  Enabled: true
+
 Documentation:
   Enabled: false
 
@@ -21,3 +25,6 @@ Rails/Output:
 Rails/TimeZone:
   Exclude:
     - config/dev_unicorn.rb
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

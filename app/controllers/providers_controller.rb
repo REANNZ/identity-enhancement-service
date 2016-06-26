@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
     public_action
     @filter = params[:filter]
     @providers = Provider.visible_to(subject).filter(@filter).order(:name)
-                 .paginate(page: params[:page])
+                         .paginate(page: params[:page])
   end
 
   def new
@@ -28,7 +28,7 @@ class ProvidersController < ApplicationController
     check_access!("providers:#{params[:id]}:read")
     @provider = Provider.find(params[:id])
     @request_count = RequestedEnhancement.where(provider_id: @provider.id)
-                     .pending.count
+                                         .pending.count
   end
 
   def edit

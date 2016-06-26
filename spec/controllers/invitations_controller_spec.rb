@@ -66,8 +66,8 @@ RSpec.describe InvitationsController, type: :controller do
 
     let(:attrs) do
       attributes_for(:subject).slice(:name, :mail)
-        .merge(provider_id: provider.id,
-               expires: 1.week.from_now.to_date.xmlschema)
+                              .merge(provider_id: provider.id,
+                                     expires: 1.week.from_now.to_date.xmlschema)
     end
 
     def run
@@ -115,7 +115,7 @@ RSpec.describe InvitationsController, type: :controller do
       end
 
       context 'email failure' do
-        before { expect(Mail).to receive(:deliver) { fail('Nope') } }
+        before { expect(Mail).to receive(:deliver) { raise('Nope') } }
 
         it 'does not create a subject' do
           expect { run }.to raise_error(/Nope/).and not_change(Subject, :count)
@@ -129,7 +129,8 @@ RSpec.describe InvitationsController, type: :controller do
 
       context 'when subject with provided email already exists' do
         let(:attrs) do
-          attributes_for(:subject, mail: user.mail).slice(:name, :mail)
+          attributes_for(:subject, mail: user.mail)
+            .slice(:name, :mail)
             .merge(provider_id: provider.id)
         end
 
@@ -183,7 +184,8 @@ RSpec.describe InvitationsController, type: :controller do
       end
 
       it 'gives the contact details of the provider admin who invited' do
-        expect(subject).to have_sent_email.matching_body(/#{user.name}/)
+        name_pattern = Regexp.new(user.name.tr("'", '.'))
+        expect(subject).to have_sent_email.matching_body(name_pattern)
       end
 
       it 'redirects back to the Identities page' do

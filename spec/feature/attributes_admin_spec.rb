@@ -4,7 +4,7 @@ RSpec.feature 'Modifying Available Attributes', js: true do
   def create_attribute
     Audited.audit_class.as_user(user) do
       AvailableAttribute.create_with(attrs.slice(:audit_comment))
-        .find_or_create_by(attrs.except(:audit_comment))
+                        .find_or_create_by(attrs.except(:audit_comment))
     end
   end
 

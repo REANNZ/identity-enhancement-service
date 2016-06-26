@@ -17,7 +17,8 @@ class APISubjectsController < ApplicationController
     check_access!("providers:#{@provider.id}:api_subjects:create")
     audit_attrs = { audit_comment: 'Created from providers interface' }
     @api_subject = @provider.api_subjects.build(
-      api_subject_params.merge(audit_attrs))
+      api_subject_params.merge(audit_attrs)
+    )
 
     unless @api_subject.save
       return form_error('new', 'Unable to create API Subject', @api_subject)
@@ -69,7 +70,7 @@ class APISubjectsController < ApplicationController
 
   def api_subject_params
     params.require(:api_subject)
-      .permit(:x509_cn, :name, :description, :contact_name, :contact_mail,
-              :enabled)
+          .permit(:x509_cn, :name, :description, :contact_name, :contact_mail,
+                  :enabled)
   end
 end

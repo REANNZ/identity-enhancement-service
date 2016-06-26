@@ -12,8 +12,8 @@ class AvailableAttributesController < ApplicationController
   def create
     check_access!('admin:attributes:create')
     audit_attrs = { audit_comment: 'Created attribute from admin interface' }
-    @attribute = AvailableAttribute.new(
-      audit_attrs.merge(available_attribute_params))
+    @attribute =
+      AvailableAttribute.new(audit_attrs.merge(available_attribute_params))
 
     unless @attribute.save
       return form_error('new', 'Unable to create attribute', @attribute)
