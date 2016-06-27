@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class SubjectRoleAssignmentsController < ApplicationController
   before_action do
     @provider = Provider.find(params[:provider_id])

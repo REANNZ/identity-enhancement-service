@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 module API
   RSpec.describe ProvidersController, type: :controller do
     let(:api_subject) { create(:api_subject) }
-    before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}" }
+    before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}".dup }
 
     context 'get :index' do
       let!(:provider) { create(:provider) }

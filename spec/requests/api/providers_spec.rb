@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 module API
   RSpec.describe ProvidersController, type: :request do
     let(:api_subject) { create(:api_subject, :authorized) }
-    let(:headers) { { 'HTTP_X509_DN' => "CN=#{api_subject.x509_cn}" } }
+    let(:headers) { { 'HTTP_X509_DN' => "CN=#{api_subject.x509_cn}".dup } }
     let(:json) { JSON.parse(response.body, symbolize_names: true) }
 
     context 'get /api/providers' do

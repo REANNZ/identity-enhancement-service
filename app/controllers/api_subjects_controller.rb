@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class APISubjectsController < ApplicationController
   before_action { @provider = Provider.find(params[:provider_id]) }
 

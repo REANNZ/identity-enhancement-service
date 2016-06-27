@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreatePermittedAttributes < ActiveRecord::Migration
   def change
     create_table :permitted_attributes do |t|

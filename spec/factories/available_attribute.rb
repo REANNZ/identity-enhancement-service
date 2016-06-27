@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryGirl.define do
   factory :available_attribute, traits: %i(audited) do
     name 'eduPersonEntitlement'

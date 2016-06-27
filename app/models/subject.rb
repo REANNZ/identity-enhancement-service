@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Subject < ActiveRecord::Base
   audited comment_required: true
   has_associated_audits

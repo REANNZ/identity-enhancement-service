@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.shared_examples 'an audited model' do
   subject { create(factory).reload }
   let(:factory) { described_class.name.underscore.to_sym }

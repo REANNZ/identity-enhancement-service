@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddUniqueIndexOnPermissionsValue < ActiveRecord::Migration
   def change
     remove_index :permissions, :role_id

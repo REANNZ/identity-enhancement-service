@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe API::AttributesController, type: :request do
   let(:api_subject) { create(:api_subject, :authorized) }
-  let(:headers) { { 'HTTP_X509_DN' => "CN=#{api_subject.x509_cn}" } }
+  let(:headers) { { 'HTTP_X509_DN' => "CN=#{api_subject.x509_cn}".dup } }
 
   subject { response }
 

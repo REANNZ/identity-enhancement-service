@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Provider < ActiveRecord::Base
   include Lipstick::AutoValidation
   include Lipstick::Filterable

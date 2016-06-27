@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateProvidedAttributes < ActiveRecord::Migration
   def change
     create_table :provided_attributes do |t|
