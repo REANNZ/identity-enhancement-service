@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 module AuditHelper
   include Lipstick::Helpers::LayoutHelper
 
   def audit_table(audits)
-    content_tag('table', class: 'ui very basic compact audit table') do
+    content_tag('table', class: 'ui striped compact audit table') do
       concat(audit_header)
       concat(audit_body(audits.sort_by { |a| -1 * a.created_at.to_i }))
     end
@@ -11,14 +12,12 @@ module AuditHelper
   private
 
   def audit_header
-    content_tag('thead') do
-      content_tag('tr') do
-        concat(content_tag('th', 'Record'))
-        concat(content_tag('th', 'Subject'))
-        concat(content_tag('th', 'Action'))
-        concat(content_tag('th', 'Changes'))
-      end
+    tr = content_tag('tr') do
+      headings = %w(Record Subject Action Changes)
+      headings.each { |h| concat(content_tag('th', h)) }
     end
+
+    content_tag('thead', tr)
   end
 
   def audit_body(audits)
@@ -78,14 +77,9 @@ module AuditHelper
   end
 
   def audit_changes_cell(audit)
-    case audit.action
-    when 'create'
-      audit_creation_cell(audit)
-    when 'destroy'
-      audit_deletion_cell(audit)
-    else
-      audit_update_cell(audit)
-    end
+    return audit_creation_cell(audit) if audit.action == 'create'
+    return audit_deletion_cell(audit) if audit.action == 'destroy'
+    audit_update_cell(audit)
   end
 
   def audit_creation_cell(audit)

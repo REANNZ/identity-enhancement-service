@@ -10,35 +10,55 @@
 
 <%= page_header(@provider.name, 'Grant Role to Subject') %>
 
+<%= search_form_tag(@filter) %>
+
 <h3 class="ui header"><%= @role.name %></h3>
 
-<table class="ui basic compact table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th/>
-    </tr>
-  </thead>
-  <tbody>
-    <%- @subjects.each do |subject| -%>
+<%- if @subjects.present? %>
+  <table class="ui striped compact table">
+    <thead>
       <tr>
-        <td><%= subject.name %></td>
-        <td><%= subject.mail %></td>
-        <td>
-          <%- if permitted?("providers:#{@provider.id}:roles:grant") -%>
-            <%= form_for([@provider, @role, @assoc], url: provider_role_members_path(@provider, @role),
-                                                     html: { class: 'inline' }) do |f| -%>
+        <th>Name</th>
+        <th>Email</th>
+        <th/>
+      </tr>
+    </thead>
+    <tbody>
+      <%- @subjects.each do |subject| -%>
+        <tr>
+          <td><%= subject.name %></td>
+          <td><%= subject.mail %></td>
+          <td class="right aligned">
+            <%- if permitted?("providers:#{@provider.id}:roles:grant") -%>
+              <%= form_for([@provider, @role, @assoc], url: provider_role_members_path(@provider, @role),
+                                                       html: { class: 'inline' }) do |f| -%>
 
-              <%= button_tag(name: 'subject_role_assignment[subject_id]',
-                             value: subject.id, class: 'tiny green icon') do -%>
-                <%= icon_tag('checkmark') %>
-                Grant
+                <%= button_tag(name: 'subject_role_assignment[subject_id]',
+                               value: subject.id, class: 'tiny green icon') do -%>
+                  <%= icon_tag('checkmark') %>
+                  Grant
+                <%- end -%>
               <%- end -%>
             <%- end -%>
-          <%- end -%>
-        </td>
-      </tr>
+          </td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
+
+  <%= will_paginate(@subjects) %>
+<%- else %>
+  <%- if @filter.blank? -%>
+    <%= info_message('No Subjects') do -%>
+      <p>All available Subjects are already a member of this role.</p>
     <%- end -%>
-  </tbody>
-</table>
+  <%- else -%>
+    <%= info_message('No Subjects') do -%>
+      <p>
+        All available Subjects are already a member of this role, or have been
+        excluded by your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- end %>

@@ -1,10 +1,14 @@
+# frozen_string_literal: true
 require 'simplecov'
 
 require 'factory_girl_rails'
 require 'faker'
 require 'mail'
+require 'timecop'
 
 Dir['./spec/support/*.rb'].each { |f| require f }
+
+Timecop.safe_mode = true
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

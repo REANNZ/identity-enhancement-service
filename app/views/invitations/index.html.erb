@@ -7,12 +7,12 @@
 
 <%= page_header('Invitations') %>
 
-<table class="ui basic compact table">
-  <thead>
+<table class="ui striped compact table">
+  <thead class="stack-disappear">
     <tr>
-      <th>Identifier</th>
       <th>Name</th>
       <th>Email</th>
+      <th>Identifier</th>
       <th>Used</th>
       <th>Expires</th>
     </tr>
@@ -21,15 +21,28 @@
   <tbody>
     <%- @invitations.each do |invitation| -%>
       <tr>
-        <td><%= invitation.identifier %></td>
         <td><%= invitation.name %></td>
         <td><%= invitation.mail %></td>
-        <td><%= yes_no_string invitation.used? %></td>
+        <td><%= invitation.identifier %></td>
+        <td>
+          <%- if invitation.used? -%>
+            <%= icon_tag('green checkmark') %>
+            Used
+          <%- else -%>
+            <%= icon_tag('yellow warning sign') %>
+            Pending
+          <%- end -%>
+        </td>
         <%- time_string = invitation.expires.strftime('%d/%m/%Y') -%>
         <%- if invitation.expired? -%>
-          <td class="negative"><%= time_string %></td>
+          <td class="negative">
+            <span class="stack-appear">Expired</span>
+            <%= time_string %></td>
         <%- else -%>
-          <td class="positive"><%= time_string %></td>
+          <td class="positive">
+            <span class="stack-appear">Expires</span>
+            <%= time_string %>
+          </td>
         <%- end -%>
       </tr>
     <%- end -%>

@@ -2,7 +2,7 @@
 
 ## List Attributes
 
-List all attributes and providers associated with the specified identity.
+List all attributes and enhancement providers associated with the specified identity.
 
 ```
 GET /api/subjects/:shared_token/attributes
@@ -30,10 +30,15 @@ Status: 200 OK
   "attributes": [{
     "name":      "eduPersonEntitlement",
     "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
-    "providers": [
-      "urn:mace:aaf.edu.au:ide:providers:provider1",
-      "urn:mace:aaf.edu.au:ide:providers:provider2"
-    ]
+    "provider":  "urn:mace:aaf.edu.au:ide:providers:provider1"
+    "created":   "2015-01-01T00:00:00Z",
+    "expires":   "2016-01-01T00:00:00Z"
+  }, {
+    "name":      "eduPersonEntitlement",
+    "value":     "urn:mace:aaf.edu.au:ide:researcher:1",
+    "provider":  "urn:mace:aaf.edu.au:ide:providers:provider2"
+    "created":   "2015-01-01T00:00:00Z",
+    "expires":   null
   }]
 }
 ```
@@ -53,7 +58,8 @@ POST /api/subjects/attributes
 | Name | Type | Description | Optional |
 |---|---|---|---|
 | subject | object | An object specifying the identity which will be modified by the request | No |
-| provider | string | URN of the provider who will assert or modify attributes for the identity in this request | No |
+| provider | string | URN of the enhancement provider who will assert or modify attributes for the identity in this request | No |
+| expires | timestamp | The expiry time of the described Subject's relationship with the described Provider. If the option is present and has a `null` value, the expiry time will be removed. If the option is missing, the existing expiry time will be preserved. An ISO8601 formatted timestamp, in the `YYYY-MM-DD` or `YYYY-MM-DDThh:mm:ssZ` format. | Yes |
 | attributes | array | An array of *attribute* objects specifying the attributes which will be modified by the request | No |
 
 #### subject
@@ -74,6 +80,7 @@ There are 3 keys way to identify a subject within an API request:
 | shared_token | string  | auEduPersonSharedToken for the identity whose attributes the client wishes to modify | Yes |
 | name | string | The name for the target identity whose attributes the client wishes to modify | Yes |
 | mail | string | The email address for the target identity whose attributes the client wishes to modify | Yes |
+| expires | string | The expiry date of the invitation, as a YYYY-mm-dd formatted date. |
 | allow_create | boolean | If a shared_token, name and mail attribute is provided in the request and an existing identity for the shared_token is not present within IdE should a full record (including attribute manipulation for this request) be created | Yes |
 
 #### attribute
@@ -121,7 +128,27 @@ Specification via mail and name:
   {
     "name":      "eduPersonEntitlement",
     "value":      "urn:mace:aaf.edu.au:ide:researcher:2",
-    "_destroy": true  }]
+    "_destroy":   true
+  }]
+}
+```
+
+Specification with invitation expiry time:
+
+```
+{
+  "subject": {
+    "mail": "john.doe@example.com",
+    "name": "John Doe",
+    "expires": "2018-01-01'
+  },
+  "provider": {
+    "identifier": "urn:mace:aaf.edu.au:ide:providers:provider1"
+  },
+  "attributes": [{
+    "name":      "eduPersonEntitlement",
+    "value":      "urn:mace:aaf.edu.au:ide:researcher:1"
+  }]
 }
 ```
 

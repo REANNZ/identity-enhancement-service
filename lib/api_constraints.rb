@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class APIConstraints
   def initialize(version:, default: false)
     @version = version
@@ -7,8 +8,6 @@ class APIConstraints
   def matches?(req)
     @default || req.headers['Accept'].include?(version_string)
   end
-
-  private
 
   def version_string
     "application/vnd.aaf.ide.v#{@version}+json"

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PermissionsController < ApplicationController
   before_action do
     @provider = Provider.find(params[:provider_id])
@@ -14,9 +15,15 @@ class PermissionsController < ApplicationController
     check_access!('admin:roles:update')
 
     audit_attrs = { audit_comment: 'Added permission via admin interface' }
-    permission = @role.permissions.create!(permission_params.merge(audit_attrs))
+    permission = @role.permissions.new(permission_params.merge(audit_attrs))
 
-    flash[:success] = "Added permission: #{permission.value}"
+    if permission.save
+      flash[:success] = "Added permission: #{permission.value}"
+    else
+      flash[:error] = "Unable to add permission: #{permission.value}\n\n" \
+                      "Please check the permission isn't already in this role."
+    end
+
     redirect_to(provider_role_permissions_path(@provider, @role))
   end
 

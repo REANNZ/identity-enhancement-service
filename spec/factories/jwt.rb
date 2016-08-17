@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryGirl.define do
   factory :aaf_attributes, class: 'Hash' do
     displayname { Faker::Name.name }
@@ -21,7 +22,7 @@ FactoryGirl.define do
   end
 
   factory :jwt, class: 'JSON::JWT' do
-    iat { Time.now.to_i }
+    iat { Time.zone.now.to_i }
     nbf { 30.seconds.ago.to_i }
     exp { 30.seconds.from_now.to_i }
     typ 'authnresponse'

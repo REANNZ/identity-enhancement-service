@@ -1,9 +1,10 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.feature 'Roles Admin', js: true do
   given(:user) { create(:subject, :authorized) }
 
-  given!(:permission) { create(:permission) }
+  given!(:permission) { create(:permission, value: 'a:*') }
   given!(:role) { permission.role }
   given!(:provider) { role.provider }
   given!(:other_role) { create(:role) }
@@ -101,7 +102,7 @@ RSpec.feature 'Roles Admin', js: true do
     end
 
     expect(current_path).to eq("#{base_path}/roles/#{role.id}/permissions")
-    attrs = attributes_for(:permission)
+    attrs = attributes_for(:permission, value: 'b:*')
 
     within('form') do
       fill_in 'Permission', with: attrs[:value]
@@ -149,7 +150,8 @@ RSpec.feature 'Roles Admin', js: true do
   end
 
   scenario 'revoking a role from a subject' do
-    other_subject.subject_role_assignments
+    other_subject
+      .subject_role_assignments
       .create!(role: role, audit_comment: 'Granted role for test case')
 
     within('tr', text: role.name) do
@@ -186,7 +188,7 @@ RSpec.feature 'Roles Admin', js: true do
 
   scenario 'revoking a role from an api subject' do
     api_subject.api_subject_role_assignments
-      .create!(role: role, audit_comment: 'Granted role for test case')
+               .create!(role: role, audit_comment: 'Granted role for test case')
 
     within('tr', text: role.name) do
       click_link('Members')

@@ -1,14 +1,13 @@
+# frozen_string_literal: true
 class Permission < ActiveRecord::Base
+  include Lipstick::AutoValidation
+
   audited comment_required: true, associated_with: :provider
 
   belongs_to :role
   delegate :provider, to: :role
 
-  validates :role, presence: true
+  valhammer
 
-  # "word" in the url-safe base64 alphabet, or single '*'
-  SEGMENT = /([\w-]+|\*)/
-  private_constant :SEGMENT
-  validates :value, presence: true,
-                    format: { with: /\A(#{SEGMENT}:)*#{SEGMENT}\z/ }
+  validates :value, format: Accession::Permission.regexp
 end

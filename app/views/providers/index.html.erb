@@ -1,7 +1,21 @@
 <%= page_header('Providers') %>
 
+<%= search_form_tag(@filter) %>
+
+<%- if @providers.empty? -%>
+  <%= info_message('No Providers') do -%>
+    <%- if @filter.blank? -%>
+      <p>There are no Providers in the system.</p>
+    <%- else -%>
+      <p>
+        No Providers match your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- else -%>
 <table class="ui basic compact table">
-  <thead>
+  <thead class="stack-disappear">
     <tr>
       <th>Name</th>
       <th>Identifier</th>
@@ -13,7 +27,7 @@
       <tr>
         <td><%= provider.name %></td>
         <td><%= provider.identifier %></td>
-        <td class="action-buttons">
+        <td class="action-buttons right aligned">
           <%- if permitted?("providers:#{provider.id}:read") -%>
             <%= button_link_to(provider, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>
@@ -25,6 +39,9 @@
     <%- end -%>
   </tbody>
 </table>
+<%- end -%>
+
+<%= will_paginate %>
 
 <%- if permitted?('providers:create') -%>
   <div class="line-of-buttons">

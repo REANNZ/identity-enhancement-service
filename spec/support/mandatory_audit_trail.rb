@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.shared_examples 'an audited model' do
   subject { create(factory).reload }
   let(:factory) { described_class.name.underscore.to_sym }
@@ -5,7 +6,7 @@ RSpec.shared_examples 'an audited model' do
   # FactoryGirl doesn't include associated objects in `attributes_for`
   let(:base_attrs) do
     build(factory).attributes.merge(audit_comment: 'test')
-      .symbolize_keys.except(:created_at, :updated_at, :id)
+                  .symbolize_keys.except(:created_at, :updated_at, :id)
   end
 
   context 'with an audit message' do
@@ -39,20 +40,25 @@ RSpec.shared_examples 'an audited model' do
     let(:attrs) { base_attrs.except(:audit_comment) }
 
     it 'fails creation' do
-      expect { tx { described_class.create!(attrs) } }.to raise_error
+      expect { tx { described_class.create!(attrs) } }
+        .to raise_error(ActiveRecord::RecordInvalid,
+                        /Audit comment can't be blank/)
         .and not_change(described_class, :count)
     end
 
     it 'fails an edit' do
       initial = subject.attributes.dup.except(*%w(created_at updated_at))
-      expect { tx { subject.update_attributes!(attrs) } }.to raise_error
+      expect { tx { subject.update_attributes!(attrs) } }
+        .to raise_error(ActiveRecord::RecordInvalid,
+                        /Audit comment can't be blank/)
       expect(subject.reload).to have_attributes(initial)
     end
 
     it 'fails deletion' do
       obj = described_class.find(subject.id)
 
-      expect { tx { obj.destroy! } }.to raise_error
+      expect { tx { obj.destroy! } }
+        .to raise_error(ActiveRecord::RecordNotDestroyed)
         .and not_change(described_class, :count)
     end
   end

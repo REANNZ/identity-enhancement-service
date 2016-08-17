@@ -1,16 +1,24 @@
+# frozen_string_literal: true
 class Provider < ActiveRecord::Base
+  include Lipstick::AutoValidation
+  include Lipstick::Filterable
+
   audited comment_required: true
   has_associated_audits
 
   has_many :roles, dependent: :destroy
   has_many :permitted_attributes, dependent: :destroy
   has_many :api_subjects, dependent: :destroy
+  has_many :requested_enhancements, dependent: :destroy
+  has_many :provisioned_subjects, dependent: :destroy
 
-  validates :name, :description, presence: true
-  validates :identifier, presence: true, uniqueness: true,
-                         format: { with: /\A[\w-]{1,40}\z/ }
+  valhammer
+
+  validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
   has_many :invitations
+
+  filterable_by :name, :identifier
 
   def self.identifier_prefix
     Rails.application.config.ide_service.provider_prefix
@@ -21,42 +29,70 @@ class Provider < ActiveRecord::Base
     find_by_identifier(Regexp.last_match[1]) if re.match(identifier)
   end
 
+  def self.visible_to(user)
+    return all if user.permits?('admin:providers:list')
+    return visible_to_api_subject(user) if user.is_a?(APISubject)
+    visible_to_subject(user)
+  end
+
+  def self.visible_to_subject(user)
+    distinct
+      .joins('left outer join roles on providers.id = roles.provider_id')
+      .joins('left outer join subject_role_assignments ' \
+             'on roles.id = subject_role_assignments.role_id ' \
+             "and subject_role_assignments.subject_id = #{user.id}")
+      .where('providers.public = 1 or subject_role_assignments.id is not null')
+  end
+
+  def self.visible_to_api_subject(user)
+    distinct
+      .joins('left outer join roles on providers.id = roles.provider_id')
+      .joins('left outer join api_subject_role_assignments ' \
+             'on roles.id = api_subject_role_assignments.role_id ' \
+             "and api_subject_role_assignments.api_subject_id = #{user.id}")
+      .where('providers.public = 1 ' \
+             'or api_subject_role_assignments.id is not null')
+  end
+
   def full_identifier
     [Provider.identifier_prefix, identifier].join(':')
   end
 
-  def invite(subject)
+  def invite(subject, expires)
     identifier = SecureRandom.urlsafe_base64(19)
 
     message = "Created invitation for #{subject.name}"
 
     attrs = { subject_id: subject.id, identifier: identifier,
-              name: subject.name, mail: subject.mail,
-              expires: 1.month.from_now, audit_comment: message }
+              name: subject.name, mail: subject.mail, expires: expires,
+              last_sent_at: Time.zone.now, audit_comment: message }
 
     invitations.create!(attrs)
   end
 
   DEFAULT_ROLES = {
-    api_ro: %w(api:attributes:read),
-    api_rw: %w(
-      api:attributes:*
-      providers:PROVIDER_ID:attributes:create
+    'API Read Only' => %w(
+      api:attributes:read
+      providers:PROVIDER_ID:attributes:read
     ),
-    web_ro: %w(
+    'API Read/Write' => %w(
+      api:attributes:*
+      providers:PROVIDER_ID:attributes:*
+    ),
+    'Web UI Read Only' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
     ),
-    web_rw: %w(
+    'Web UI Read/Write' => %w(
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
       providers:PROVIDER_ID:invitations:*
       providers:PROVIDER_ID:attributes:*
     ),
-    admin: %w(
+    'Administrator' => %w(
       providers:PROVIDER_ID:*
     )
-  }
+  }.freeze
 
   private_constant :DEFAULT_ROLES
 

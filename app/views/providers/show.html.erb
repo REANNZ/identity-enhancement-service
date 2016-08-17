@@ -17,10 +17,41 @@
       <td>Identifier</td>
       <td><%= @provider.identifier %></td>
     </tr>
+    <tr>
+      <td>Visibility</td>
+      <%- if @provider.public? -%>
+        <td class="positive">Public</td>
+      <%- else -%>
+        <td class="warning">
+          <p>Private</p>
+          <p>
+            <strong>Note:</strong> Users will not be able to request enhancement
+            from this provider, and may not be aware that it exists in the
+            system.
+          </p>
+        </td>
+      <%- end -%>
+    </tr>
   </tbody>
 </table>
 
 <div class="line-of-buttons">
+  <%- if permitted?("providers:#{@provider.id}:attributes:list") -%>
+    <%= button_link_to([@provider, :provided_attributes], class: 'large primary icon') do -%>
+      <%= icon_tag('users') %>
+      Identities
+    <%- end -%>
+
+    <%= button_link_to([@provider, :requested_enhancements], class: 'large icon with-attached-label') do -%>
+      <%= icon_tag('comments') %>
+      Requests
+
+      <%- if @request_count > 0 -%>
+        <div class="ui tiny circular red label"><%= @request_count %></div>
+      <%- end -%>
+    <%- end -%>
+  <%- end -%>
+
   <%- if permitted?("providers:#{@provider.id}:update") -%>
     <%= button_link_to([:edit, @provider], class: 'large icon') do -%>
       <%= icon_tag('edit') %>
@@ -39,13 +70,6 @@
     <%= button_link_to([@provider, :permitted_attributes], class: 'large icon') do -%>
       <%= icon_tag('tags') %>
       Permitted Attributes
-    <%- end -%>
-  <%- end -%>
-
-  <%- if permitted?("providers:#{@provider.id}:attributes:list") -%>
-    <%= button_link_to([@provider, :provided_attributes], class: 'large icon') do -%>
-      <%= icon_tag('users') %>
-      Provided Attributes
     <%- end -%>
   <%- end -%>
 

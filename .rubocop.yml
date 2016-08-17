@@ -1,8 +1,12 @@
 ---
 AllCops:
-  RunRailsCops: true
+  TargetRubyVersion: 2.3
   Exclude:
     - db/schema.rb
+
+Rails:
+  Enabled: true
+
 Documentation:
   Enabled: false
 
@@ -13,3 +17,7 @@ Metrics/MethodLength:
 Metrics/AbcSize:
   Exclude:
     - db/migrate/*.rb
+
+Rails/Output:
+  Exclude:
+    - db/seeds.rb

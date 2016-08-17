@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe SubjectsController, type: :controller do
@@ -9,8 +10,10 @@ RSpec.describe SubjectsController, type: :controller do
 
   context 'get :index' do
     let!(:object) { create(:subject) }
+    let(:filter) { nil }
+    let(:page) { nil }
 
-    before { get :index }
+    before { get :index, filter: filter, page: page }
 
     it { is_expected.to have_http_status(:ok) }
     it { is_expected.to render_template('subjects/index') }
@@ -25,6 +28,46 @@ RSpec.describe SubjectsController, type: :controller do
       let(:user) { nil }
       it { is_expected.to redirect_to('/auth/login') }
     end
+
+    context 'with a filter' do
+      let!(:matching_subject) do
+        create(:subject, name: 'NOTHING ELSE MATCHES')
+      end
+
+      let(:filter) { 'NOTHING*ELSE*MATCHES' }
+
+      it 'only includes the matching subject' do
+        expect(assigns[:objects]).to contain_exactly(matching_subject)
+      end
+
+      it 'sets the filter' do
+        expect(assigns[:filter]).to eq(filter)
+      end
+    end
+
+    context 'pagination' do
+      let!(:enough_subjects_to_make_a_second_page) { create_list(:subject, 21) }
+
+      let!(:first_subject) do
+        create(:subject, name: 'aaaaaaaaaaa first subject')
+      end
+
+      context 'on the first page' do
+        let(:page) { '1' }
+
+        it 'includes the first subject' do
+          expect(assigns[:objects]).to include(first_subject)
+        end
+      end
+
+      context 'on the second page' do
+        let(:page) { '2' }
+
+        it 'excludes the first subject' do
+          expect(assigns[:objects]).not_to include(first_subject)
+        end
+      end
+    end
   end
 
   context 'get :show' do
@@ -37,6 +80,70 @@ RSpec.describe SubjectsController, type: :controller do
     context 'as a non-admin' do
       let(:user) { create(:subject) }
       it { is_expected.to have_http_status(:forbidden) }
+    end
+  end
+
+  context 'patch :update' do
+    def run
+      patch :update, id: object.id, subject: subject_attrs
+    end
+
+    shared_context 'subjects update response' do
+      it 'redirects to the subject' do
+        run
+        expect(response).to redirect_to(object)
+      end
+
+      context 'with no user' do
+        let(:user) { nil }
+
+        it 'redirects to login' do
+          run
+          expect(response).to redirect_to('/auth/login')
+        end
+      end
+
+      context 'with no permissions' do
+        let(:user) { create(:subject) }
+
+        it 'is forbidden' do
+          run
+          expect(response).to have_http_status(:forbidden)
+            .and render_template('errors/forbidden')
+        end
+      end
+    end
+
+    context 'disabling subject' do
+      let(:subject_attrs) { { enabled: false } }
+      let(:object) { create(:subject, enabled: true) }
+
+      it 'sets the enabled flag' do
+        expect { run }.to change { object.reload.enabled? }.to be_falsey
+      end
+
+      it 'sets the flash message' do
+        run
+        expect(flash[:success]).to match(/#{object.name} has been disabled/)
+      end
+
+      include_context 'subjects update response'
+    end
+
+    context 'enabling subject' do
+      let(:subject_attrs) { { enabled: true } }
+      let(:object) { create(:subject, enabled: false) }
+
+      it 'sets the enabled flag' do
+        expect { run }.to change { object.reload.enabled? }.to be_truthy
+      end
+
+      it 'sets the flash message' do
+        run
+        expect(flash[:success]).to match(/#{object.name} has been enabled/)
+      end
+
+      include_context 'subjects update response'
     end
   end
 

@@ -10,24 +10,22 @@
 
 <%= page_header(@provider.name, 'Edit Role Permissions') %>
 
-<table class="ui very basic compact table">
+<table class="ui striped compact table">
   <thead>
     <tr>
       <th>Permission String</th>
-      <th>Actions</th>
+      <th/>
     </tr>
   </thead>
   <tbody>
     <%- @permissions.each do |permission| -%>
       <tr>
         <td><code><%= permission.value %></code></td>
-        <td><%= delete_button_tag(url_for([@provider, @role, permission])) %></td>
+        <td class="right aligned"><%= delete_button_tag(url_for([@provider, @role, permission])) %></td>
       </tr>
     <%- end -%>
   </tbody>
 </table>
-
-<div class="ui section divider"></div>
 
 <h3 class="ui header">Add New Permission</h3>
 
@@ -43,4 +41,11 @@
     <%= icon_tag('add') %>
     Add
   <%- end -%>
+
+  <%= error_messages_tag %>
+<%- end -%>
+
+<%= validate_form('#new-permission', :permission) do -%>
+  <%= auto_validate(@new_permission, :value) %>
+  <%= validate_field(:value, accession_permission_value: 'Please enter a valid permission value') %>
 <%- end -%>

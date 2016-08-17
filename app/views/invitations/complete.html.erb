@@ -1,0 +1,13 @@
+<%= page_header('Welcome to AAF Identity Enhancement') %>
+
+<%= message_block('Invitation Accepted', 'success', 'checkmark') do -%>
+  <p>You have accepted your invitation, and can now use the Identity Enhancement service.</p>
+
+  <p>Please continue to the Dashboard for information about your current enhancements.</p>
+
+  <p>
+    <%= button_link_to('/dashboard', class: 'large green icon') do -%>
+      Continue to Dashboard
+    <%- end -%>
+  </p>
+<%- end -%>

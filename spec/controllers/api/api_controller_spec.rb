@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 require 'gumboot/shared_examples/api_controller'
@@ -11,12 +12,12 @@ module API
         create(:api_subject, :authorized, permission: 'api:attributes:read')
       end
 
-      before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}" }
+      before { request.env['HTTP_X509_DN'] = "CN=#{api_subject.x509_cn}".dup }
 
       controller(APIController) do
         def bad
           public_action
-          fail(APIController::BadRequest, 'Test Exception')
+          raise(APIController::BadRequest, 'Test Exception')
         end
       end
 

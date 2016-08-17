@@ -1,6 +1,10 @@
+# frozen_string_literal: true
 listen 8080
 preload_app false
 stdout_path '/dev/null'
+
+root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+pid File.join(root, 'tmp', 'pids', 'unicorn.pid')
 
 class DevWorker
   class <<self

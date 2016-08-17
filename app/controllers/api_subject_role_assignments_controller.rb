@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class APISubjectRoleAssignmentsController < ApplicationController
   before_action do
     @provider = Provider.find(params[:provider_id])
@@ -6,7 +7,9 @@ class APISubjectRoleAssignmentsController < ApplicationController
 
   def new
     check_access!("providers:#{@provider.id}:roles:grant")
-    @api_subjects = APISubject.all
+    @filter = params[:filter]
+    @api_subjects = APISubject.where.not(id: current_member_ids).filter(@filter)
+                              .order(:x509_cn).paginate(page: params[:page])
     @assoc = @role.api_subject_role_assignments.new
   end
 
@@ -14,7 +17,7 @@ class APISubjectRoleAssignmentsController < ApplicationController
     check_access!("providers:#{@provider.id}:roles:grant")
     audit_attrs = { audit_comment: 'Granted role from providers interface' }
     @assoc = @role.api_subject_role_assignments
-             .create!(assoc_params.merge(audit_attrs))
+                  .create!(assoc_params.merge(audit_attrs))
 
     flash[:success] = creation_message(@assoc)
 
@@ -41,6 +44,10 @@ class APISubjectRoleAssignmentsController < ApplicationController
   def creation_message(assoc)
     "Granted #{@role.name} at #{@provider.name} to API Account: " \
       "#{assoc.api_subject.x509_cn}"
+  end
+
+  def current_member_ids
+    @role.api_subject_role_assignments.map { |ra| ra.api_subject.id }
   end
 
   def deletion_message(assoc)

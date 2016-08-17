@@ -1,15 +1,25 @@
 <%=
-  breadcrumbs(
-    { 'Providers' => providers_path },
-    { @provider.name => provider_path(@provider) },
-    { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
-    @object.name
-  )
+  if @requested_enhancement
+    breadcrumbs(
+      { 'Providers' => providers_path },
+      { @provider.name => provider_path(@provider) },
+      { 'Requests' => provider_requested_enhancements_path(@provider) },
+      { @requested_enhancement.subject.name => provider_requested_enhancement_path(@provider, @requested_enhancement) },
+      'Enhance Identity'
+    )
+  else
+    breadcrumbs(
+      { 'Providers' => providers_path },
+      { @provider.name => provider_path(@provider) },
+      { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
+      @object.name
+    )
+  end
 %>
 
-<%= page_header(@provider.name, 'New Provided Attribute') %>
+<%= page_header(@provider.name, 'Enhance an Identity') %>
 
-<h3 class="ui header">Subject</h3>
+<h3 class="ui header">Identity</h3>
 
 <table class="ui definition table">
   <tbody>
@@ -21,6 +31,21 @@
       <td>Email</td>
       <td><%= @object.mail %></td>
     </tr>
+    <tr>
+      <td>Relationship with <%= @provider.name %> Expires</td>
+      <td>
+        <%- if @provisioned_subject.expires_at %>
+          <%= date_string @provisioned_subject.expires_at %>
+          (in <%= distance_of_time_in_words(@provisioned_subject.expires_at.to_i - Time.now.to_i) %>)
+        <%- else -%>
+          Never
+        <%- end -%>
+        &nbsp;&nbsp;&nbsp;
+        <%= button_link_to([:edit, @provider, @provisioned_subject], class: 'mini icon') do -%>
+          <%= icon_tag('edit') -%>
+          Edit
+        <%- end -%>
+      </td>
   </tbody>
 </table>
 
@@ -32,11 +57,12 @@
     identity of <strong><%= @object.name %></strong>
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact table" id="provided-attributes">
-    <thead>
+  <table class="ui striped compact table" id="provided-attributes">
+    <thead class="stack-disappear">
       <tr>
         <th>Name</th>
         <th>Value</th>
+        <th>Visibility</th>
         <th/>
       </tr>
     </thead>
@@ -45,9 +71,10 @@
         <tr>
           <td><%= provided_attribute.name %></td>
           <td><%= provided_attribute.value %></td>
-          <td>
+          <td><%= render partial: 'attribute_visibility', locals: { attribute: provided_attribute } %></td>
+          <td class="right aligned">
             <%- if permitted?("providers:#{@provider.id}:attributes:delete") -%>
-              <%= delete_button_tag(provider_provided_attribute_path(@provider, provided_attribute)) %>
+              <%= delete_button_tag(url_for([@provider, @requested_enhancement, provided_attribute].compact)) %>
             <%- end -%>
           </td>
         </tr>
@@ -58,44 +85,94 @@
 
 <h3 class="ui header">Permitted Attributes</h3>
 
-<%- if @permitted_attributes.empty? -%>
-  <%= info_message('No Attributes Available') do -%>
-    <strong><%= @provider.name %></strong> is not able to
-    <%- if @provided_attributes.any? -%>further<%- end %> enhance the identity
-    of <strong><%= @object.name %></strong>
-  <%- end -%>
-<%- else -%>
-  <table class="ui basic compact table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Value</th>
-        <th/>
-      </tr>
-    </thead>
-    <tbody>
-      <%- @permitted_attributes.each do |permitted_attribute| -%>
-        <%- attribute = permitted_attribute.available_attribute -%>
-        <tr>
-          <td><%= attribute.name %></td>
-          <td><%= attribute.value %></td>
-          <td>
-            <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
-              <%= form_tag(provider_provided_attributes_path(@provider)) do -%>
-                <%= hidden_fields do -%>
-                  <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
-                  <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
-                <%- end -%>
+<%- if @invitation -%>
+  <%- if @invitation.expired? -%>
+    <%= error_message('Expired Invitation') do -%>
+      <p>
+        <strong><%= @object.name %></strong> has not accepted the invitation
+        delivered on <strong><%= date_string(@invitation.created_at) %></strong>
+      </p>
 
-                <%= button_tag(type: 'submit', class: 'tiny green icon') do -%>
-                  <%= icon_tag('add') %>
-                  Add
+      <p>
+        The invitation has expired, and this Subject is pending removal from
+        the system. The Subject must be invited again before any attributes can
+        be provided.
+      </p>
+    <%- end -%>
+  <%- else -%>
+    <%= warning_message('Pending Subject') do -%>
+      <p>
+        <strong><%= @object.name %></strong> has not accepted the invitation
+        delivered on <strong><%= date_string(@invitation.created_at) %></strong>
+      </p>
+
+      <p>
+        Attributes provided to this Subject will be removed on
+        <strong>
+          <%= date_string(@invitation.expires) %>
+          (in <%= distance_of_time_in_words(@invitation.expires - Time.now) %>)
+        </strong>
+        unless the invitation is accepted.
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+
+<%- if @invitation.nil? || !@invitation.expired? -%>
+  <%- if @permitted_attributes.empty? -%>
+    <%= info_message('No Attributes Available') do -%>
+      <strong><%= @provider.name %></strong> is not able to
+      <%- if @provided_attributes.any? -%>further<%- end %> enhance the identity
+      of <strong><%= @object.name %></strong>
+    <%- end -%>
+  <%- else -%>
+    <table class="ui striped compact table">
+      <thead class="stack-disappear">
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+          <th/>
+        </tr>
+      </thead>
+      <tbody>
+        <%- @permitted_attributes.each do |permitted_attribute| -%>
+          <%- attribute = permitted_attribute.available_attribute -%>
+          <tr>
+            <td><%= attribute.name %></td>
+            <td><%= attribute.value %></td>
+            <td class="right aligned">
+              <%- if permitted?("providers:#{@provider.id}:attributes:create") -%>
+                <%= inline_form_tag([@provider, @requested_enhancement, :provided_attributes].compact) do -%>
+                  <%= hidden_fields do -%>
+                    <%= hidden_field_tag(:'provided_attribute[subject_id]', @object.id) %>
+                    <%= hidden_field_tag(:'provided_attribute[permitted_attribute_id]', permitted_attribute.id) %>
+                  <%- end -%>
+
+                  <%- if @provider.public? -%>
+                    <%= button_tag(name: 'provided_attribute[public]', value: 'true',
+                                   type: 'submit', class: 'tiny green icon') do -%>
+                      <%= icon_tag('add') %>
+                      Add as Public Attribute
+                    <%- end -%>
+                  <%- else -%>
+                    <%= button_tag(type: 'button', class: 'tiny disabled icon',
+                                   :'data-content' => 'This is a private Enhancement Provider, and cannot add a public attribute') do -%>
+                      <%= icon_tag('add') %>
+                      Can't Add Public Attribute
+                    <%- end -%>
+                  <%- end -%>
+
+                  <%= button_tag(name: 'provided_attribute[public]', value: 'false',
+                                 type: 'submit', class: 'tiny green icon') do -%>
+                    <%= icon_tag('add') %>
+                    Add as Private Attribute
+                  <%- end -%>
                 <%- end -%>
               <%- end -%>
-            <%- end -%>
-          </td>
-        </tr>
-      <%- end -%>
-    </tbody>
-  </table>
+            </td>
+          </tr>
+        <%- end -%>
+      </tbody>
+    </table>
+  <%- end -%>
 <%- end -%>

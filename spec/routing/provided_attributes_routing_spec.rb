@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe ProvidedAttributesController, type: :routing do
@@ -8,6 +9,11 @@ RSpec.describe ProvidedAttributesController, type: :routing do
   context 'get /providers/:id/provided_attributes' do
     subject { { get: '/providers/1/provided_attributes' } }
     it { is_expected.to route_to(action('index'), provider_id: '1') }
+  end
+
+  context 'get /providers/:id/provided_attributes/select_subject' do
+    subject { { get: '/providers/1/provided_attributes/select_subject' } }
+    it { is_expected.to route_to(action('select_subject'), provider_id: '1') }
   end
 
   context 'get /providers/:id/provided_attributes/new' do

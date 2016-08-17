@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../config/environment.rb'
+
+class RemoveExpiredData
+  def self.perform
+    transaction { clean_invitations }
+    transaction { clean_provisioned_subjects }
+  end
+
+  def self.transaction(&bl)
+    ActiveRecord::Base.transaction(&bl)
+  end
+
+  def self.clean_provisioned_subjects
+    ProvisionedSubject.expired.find_each do |provisioned_subject|
+      subject = provisioned_subject.subject
+      provider = provisioned_subject.provider
+      subject.provided_attributes.for_provider(provider).find_each do |attr|
+        attr.audit_comment =
+          'Removed attribute relating to expired relationship'
+        attr.destroy!
+      end
+
+      provisioned_subject.destroy!
+    end
+  end
+
+  def self.clean_invitations
+    Invitation.available.find_each do |invitation|
+      next unless invitation.expired?
+
+      subject = invitation.subject
+      next unless subject
+
+      $stderr.puts("Removing placeholder Subject #{subject.id} " \
+                   "(name=`#{subject.name}` mail=`#{subject.mail}`)")
+
+      subject.audit_comment =
+        'Removed placeholder subject for expired invitation'
+      subject.destroy!
+    end
+  end
+end
+
+RemoveExpiredData.perform if $PROGRAM_NAME == __FILE__

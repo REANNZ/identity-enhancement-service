@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateAdminInvitation < ActiveRecord::Migration
   class Provider < ActiveRecord::Base
     has_many :invitations

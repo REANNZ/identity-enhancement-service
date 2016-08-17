@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
-RSpec.feature 'Visiting the invitation page', type: :feature do
+RSpec.feature 'Visiting the invitation page', js: true do
   given(:invitation) { create(:invitation) }
 
   background do
@@ -17,8 +18,8 @@ RSpec.feature 'Visiting the invitation page', type: :feature do
     expect(current_path).to eq('/auth/login')
     click_button 'Login'
 
-    expect(current_path).to eq('/dashboard')
-    expect(page).to have_content("Logged in as: #{invitation.name}")
+    expect(current_path).to eq('/invitations/complete')
+    expect(page).to have_content('You have accepted your invitation')
   end
 
   context 'with a used invitation' do
@@ -31,11 +32,13 @@ RSpec.feature 'Visiting the invitation page', type: :feature do
   end
 
   context 'with an expired invitation' do
-    given(:invitation) { create(:invitation, expires: 1.day.ago) }
+    given!(:invitation) { create(:invitation, expires: 30.seconds.from_now) }
 
     scenario 'attempting to accept the invitation' do
-      visit "/invitations/#{invitation.identifier}"
-      expect(page).to have_content('invitation expired')
+      Timecop.travel(1.minute) do
+        visit "/invitations/#{invitation.identifier}"
+        expect(page).to have_content('invitation expired')
+      end
     end
   end
 end

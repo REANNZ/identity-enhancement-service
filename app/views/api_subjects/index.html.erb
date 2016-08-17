@@ -14,8 +14,8 @@
     created.
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact table">
-    <thead>
+  <table class="ui striped compact table">
+    <thead class="stack-disappear">
       <tr>
         <th>X.509 CN</th>
         <th>Description</th>
@@ -30,12 +30,12 @@
           <td><%= api_subject.description %></td>
           <td>
             <%- if api_subject.functioning? -%>
-              <%= icon_tag('green checkmark') %> Yes
+              <%= icon_tag('green checkmark') %> Functioning
             <%- else -%>
-              <%= icon_tag('yellow warning sign') %> No
+              <%= icon_tag('yellow warning sign') %> Not Functioning
             <%- end -%>
           </td>
-          <td>
+          <td class="right aligned">
             <%= button_link_to([:edit, @provider, api_subject], class: 'tiny icon') do -%>
               <%= icon_tag('edit') %>
               Edit

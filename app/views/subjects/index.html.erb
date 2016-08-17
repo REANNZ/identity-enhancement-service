@@ -7,8 +7,22 @@
 
 <%= page_header('Subjects') %>
 
-<table class="ui basic compact table">
-  <thead>
+<%= search_form_tag(@filter) %>
+
+<%- if @objects.empty? -%>
+  <%= info_message('No Subjects') do -%>
+    <%- if @filter.blank? -%>
+      <p>There are no Subjects in the system.</p>
+    <%- else -%>
+      <p>
+        No Subjects match your search filter:
+        <strong><%= @filter %></strong>
+      </p>
+    <%- end -%>
+  <%- end -%>
+<%- else -%>
+<table class="ui striped compact table">
+  <thead class="stack-disappear">
     <tr>
       <th>Name</th>
       <th>Email Address</th>
@@ -32,12 +46,12 @@
         </td>
         <td>
           <%- if object.functioning? -%>
-            <%= icon_tag('green checkmark') %> Yes
+            <%= icon_tag('green checkmark') %> Functioning
           <%- else -%>
-            <%= icon_tag('yellow warning sign') %> No
+            <%= icon_tag('yellow warning sign') %> Not Functioning
           <%- end -%>
         </td>
-        <td class="action-buttons">
+        <td class="action-buttons right aligned">
           <%- if permitted?('admin:subjects:read') -%>
             <%= button_link_to(object, class: 'tiny icon') do -%>
               <%= icon_tag('content') %>
@@ -53,3 +67,6 @@
     <%- end -%>
   </tbody>
 </table>
+<%- end -%>
+
+<%= will_paginate(@objects) %>

@@ -3,11 +3,11 @@
     { 'Providers' => providers_path },
     { @provider.name => provider_path(@provider) },
     { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
-    'Invite New User'
+    'Invite a User'
   )
 %>
 
-<%= page_header(@provider.name, 'Invite New User') %>
+<%= page_header(@provider.name, 'Invite a User') %>
 
 <%= form_for([@provider, @invitation]) do |f| -%>
   <%= field_block do -%>
@@ -20,8 +20,13 @@
     <%= f.text_field(:mail) %>
   <%- end -%>
 
+  <%= field_block do -%>
+    <%= f.label(:expires) %>
+    <%= f.date_field(:expires) %>
+  <%- end -%>
+
   <div class="line-of-buttons">
-    <%- if permitted?("providers:#{@provider.name}:invitations:create") -%>
+    <%- if permitted?("providers:#{@provider.id}:invitations:create") -%>
       <%= button_tag(type: 'submit', class: 'large green icon') do -%>
         <%= icon_tag('checkmark') %>
         Send Invitation
@@ -33,4 +38,11 @@
       Cancel
     <%- end -%>
   </div>
+
+  <%= error_messages_tag %>
+<%- end -%>
+
+<%= validate_form('#new_invitation', :invitation) do -%>
+  <%= auto_validate(@invitation, :name, :mail, :expires) %>
+  <%= validate_field(:expires, future_date: 'Please enter an expiry date in the future') %>
 <%- end -%>

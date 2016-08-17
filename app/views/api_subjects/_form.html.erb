@@ -31,6 +31,14 @@
     <%= f.text_field :contact_mail %>
   <%- end -%>
 
+  <%= field_block(class: 'inline') do -%>
+    <%= f.check_box(:enabled) %>
+    <%= f.label(:enabled) do -%>
+      Enabled
+      <%= field_help_text('An API Subject can be disabled without deleting it') %>
+    <%- end -%>
+  <%- end -%>
+
   <div class="line-of-buttons">
     <%= button_tag(type: 'submit', class: 'large green icon') do -%>
       <%= icon_tag('checkmark') %>
@@ -47,9 +55,6 @@
 <%- end -%>
 
 <%= validate_form('#api-subject', :api_subject) do -%>
-  <%= validate_field(:description, empty: 'Please enter a description') %>
-  <%= validate_field(:x509_cn, empty: 'Please enter an X.509 CN',
-                               urlsafe_base64: 'Please enter a valid X.509 CN') %>
-  <%= validate_field(:contact_name, empty: 'Please enter a contact name') %>
-  <%= validate_field(:contact_mail, empty: 'Please enter a contact email address') %>
+  <%= auto_validate(@api_subject, :description, :x509_cn, :contact_name, :contact_mail) %>
+  <%= validate_field(:x509_cn, urlsafe_base64: 'Please enter the CN of your API certificate supplied by AAF') %>
 <%- end -%>

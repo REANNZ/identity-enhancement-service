@@ -1,7 +1,10 @@
+# frozen_string_literal: true
 class ProvidersController < ApplicationController
   def index
-    check_access!('providers:list')
-    @providers = Provider.all
+    public_action
+    @filter = params[:filter]
+    @providers = Provider.visible_to(subject).filter(@filter).order(:name)
+                         .paginate(page: params[:page])
   end
 
   def new
@@ -19,12 +22,14 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Created provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def show
     check_access!("providers:#{params[:id]}:read")
     @provider = Provider.find(params[:id])
+    @request_count = RequestedEnhancement.where(provider_id: @provider.id)
+                                         .pending.count
   end
 
   def edit
@@ -41,7 +46,7 @@ class ProvidersController < ApplicationController
     end
 
     flash[:success] = "Updated provider: #{@provider.name}"
-    redirect_to providers_path
+    redirect_to @provider
   end
 
   def destroy
@@ -58,7 +63,7 @@ class ProvidersController < ApplicationController
   private
 
   def provider_params
-    params.require(:provider).permit(:name, :description, :identifier)
+    params.require(:provider).permit(:name, :description, :identifier, :public)
   end
 
   def create_provider

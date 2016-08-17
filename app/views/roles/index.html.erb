@@ -8,10 +8,12 @@
 
 <%= page_header(@provider.name, 'Roles') %>
 
-<table class="ui basic compact table">
-  <thead>
+<table class="ui striped compact table">
+  <thead class="stack-disappear">
     <tr>
       <th>Name</th>
+      <th>Users</th>
+      <th>API Accounts</th>
       <th/>
     </tr>
   </thead>
@@ -20,6 +22,14 @@
       <tr>
         <td><%= role.name %></td>
         <td>
+          <%= role.subjects.count %>
+          <span class="stack-appear">Users</span>
+        </td>
+        <td>
+          <%= role.api_subjects.count %>
+          <span class="stack-appear">API Accounts</span>
+        </td>
+        <td class="right aligned">
           <%- if permitted?("providers:#{@provider.id}:read") -%>
             <%= button_link_to([@provider, role], class: 'tiny icon') do -%>
               <%= icon_tag('users') %>

@@ -1,0 +1,35 @@
+<%=
+  breadcrumbs(
+    { 'Providers' => providers_path },
+    { @provider.name => provider_path(@provider) },
+    { 'Provided Attributes' => url_for([@provider, :provided_attributes]) },
+    { @provisioned_subject.subject.name => url_for([:new, @provider, :provided_attribute, subject_id: @provisioned_subject.subject_id]) },
+    'Provisioned Subject'
+  )
+%>
+
+<%= page_header(@provider.name, 'Edit Provisioned Subject') %>
+
+<%= info_message('Relationship Expiry') do -%>
+  <p>
+    When a Subject's relationship with an Enhancement Provider expires, all
+    attributes from that provider are removed.
+  </p>
+
+  <p>
+    To remove the expiration date, click the "Clear" button in the calendar
+    dropdown.
+  </p>
+<%- end -%>
+
+<%= form_for([@provider, @provisioned_subject]) do |f| -%>
+  <%= field_block do -%>
+    <%= f.label(:expires_at, 'Relationship Expires') %>
+    <%= f.date_field(:expires_at) %>
+  <%- end -%>
+
+  <%= button_tag(type: 'submit', class: 'large green icon') do -%>
+    <%= icon_tag('checkmark') %>
+    Save
+  <%- end -%>
+<%- end -%>

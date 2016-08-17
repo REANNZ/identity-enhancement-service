@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddMoreUniqueIndexes < ActiveRecord::Migration
   def change
     add_index :api_subjects, :x509_cn, unique: true

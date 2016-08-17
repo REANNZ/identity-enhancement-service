@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'api_constraints'
 
 Rails.application.routes.draw do
@@ -15,17 +16,40 @@ Rails.application.routes.draw do
       resources :permissions, only: %i(index create destroy)
     end
 
-    resources :provided_attributes
-    resources :invitations, only: %i(new create)
+    resources :provided_attributes do
+      get :select_subject, on: :collection
+    end
+
+    resources :invitations, only: %i(new create) do
+      get :redeliver, on: :member
+    end
+
     resources :api_subjects do
       member do
         get 'audits' => 'api_subjects#audits', as: 'audit'
       end
     end
+
+    resources :requested_enhancements, except: %i(edit update) do
+      collection do
+        get 'select' => 'requested_enhancements#select', as: 'select'
+      end
+      member do
+        post 'dismiss' => 'requested_enhancements#dismiss', as: 'dismiss'
+      end
+
+      resources :provided_attributes, only: %i(new create destroy)
+    end
+
+    resources :provisioned_subjects, only: %i(edit update)
   end
+
+  get 'request_enhancement' => 'requested_enhancements#select_provider',
+      as: 'request_enhancement'
 
   resources :invitations, only: [] do
     collection do
+      get 'complete' => 'invitations#complete'
       get ':identifier' => 'invitations#show', as: 'show'
       post ':identifier' => 'invitations#accept', as: 'accept'
     end
@@ -43,7 +67,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :subjects, only: %i(index show destroy) do
+    resources :subjects, only: %i(index show update destroy) do
       member do
         get 'audits' => 'subjects#audits', as: 'audit'
       end
@@ -62,5 +86,7 @@ Rails.application.routes.draw do
 
       post 'attributes' => 'attributes#create'
     end
+
+    get 'providers' => 'providers#index'
   end
 end

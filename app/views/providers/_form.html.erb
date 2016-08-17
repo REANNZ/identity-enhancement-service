@@ -28,13 +28,22 @@
     <%= f.text_field :description %>
   <%- end -%>
 
+  <%= field_block(class: 'inline') do -%>
+    <%= f.check_box(:public) %>
+    <%= f.label(:public) do -%>
+      Public
+      <%= field_help_text('A private Enhancement Provider is only visible to ' \
+                          'users who have been given access') %>
+    <%- end -%>
+  <%- end -%>
+
   <div class="line-of-buttons">
     <%= f.button(class: 'large green icon') do -%>
       <%= icon_tag('checkmark') %>
       <%= submit_label %>
     <%- end -%>
 
-    <%= button_link_to(providers_path, class: 'large icon') do -%>
+    <%= button_link_to(@provider, class: 'large icon') do -%>
       <%= icon_tag('cancel') %>
       Cancel
     <%- end -%>
@@ -44,11 +53,7 @@
 <%- end -%>
 
 <%= validate_form('#provider-form', :provider) do -%>
-  <%= validate_field(:name, empty: 'Please enter a name') -%>
-  <%= validate_field(:identifier,
-        empty: 'Please enter an identifier',
-        'maxLength[40]' => 'The identifier must be 40 characters maximum',
-        'urlsafe_base64' => 'Valid characters for an identifier are ' \
-                            'letters, numbers, underscore and hyphen.') -%>
-  <%= validate_field(:description, empty: 'Please enter a description') -%>
+  <%= auto_validate(@provider, :name, :identifier, :description) %>
+  <%- message = 'Valid characters for an identifier are letters, numbers, underscore and hyphen.' -%>
+  <%= validate_field(:identifier, urlsafe_base64: message) -%>
 <%- end -%>

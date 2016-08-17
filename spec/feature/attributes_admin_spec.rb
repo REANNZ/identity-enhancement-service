@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.feature 'Modifying Available Attributes', js: true do
   def create_attribute
     Audited.audit_class.as_user(user) do
       AvailableAttribute.create_with(attrs.slice(:audit_comment))
-        .find_or_create_by(attrs.except(:audit_comment))
+                        .find_or_create_by(attrs.except(:audit_comment))
     end
   end
 
@@ -82,7 +83,8 @@ RSpec.feature 'Modifying Available Attributes', js: true do
         click_button button
       end
 
-      expect(page).to have_css('.ui.error.message', text: 'Please enter a name')
+      expect(page).to have_css('.ui.error.message',
+                               text: 'Please enter a value for name')
     end
 
     scenario 'rejects an invalid name' do
@@ -102,7 +104,7 @@ RSpec.feature 'Modifying Available Attributes', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a value')
+                               text: 'Please enter a value for value')
     end
 
     scenario 'rejects an invalid value' do
@@ -122,7 +124,7 @@ RSpec.feature 'Modifying Available Attributes', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a description')
+                               text: 'Please enter a value for description')
     end
   end
 

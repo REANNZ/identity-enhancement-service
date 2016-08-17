@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 require 'gumboot/shared_examples/subjects'
@@ -10,7 +11,7 @@ RSpec.describe Subject, type: :model do
     subject { build(:subject, complete: false) }
 
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name) }
+    it { is_expected.not_to validate_uniqueness_of(:name) }
     it { is_expected.to validate_presence_of(:mail) }
     it { is_expected.to validate_uniqueness_of(:mail) }
     it { is_expected.not_to validate_presence_of(:targeted_id) }
@@ -59,6 +60,8 @@ RSpec.describe Subject, type: :model do
   end
 
   context '#accept' do
+    subject { create(:subject, :incomplete) }
+
     let(:attrs) do
       attributes_for(:subject).slice(:name, :mail, :targeted_id, :shared_token)
     end
@@ -80,6 +83,21 @@ RSpec.describe Subject, type: :model do
 
     it 'marks the subject as complete' do
       expect { run }.to change { subject.reload.complete? }.to be_truthy
+    end
+
+    context 'when a merge is required' do
+      let(:other) { create(:subject) }
+      let(:invitation) { create(:invitation, subject: other).reload }
+
+      it 'reassigns the invitation' do
+        expect { run }.to change { invitation.reload.subject }.to(subject)
+      end
+
+      it 'merges the subjects' do
+        expect(subject).to receive(:merge).with(other).and_call_original
+        run
+        expect { other.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -103,6 +121,98 @@ RSpec.describe Subject, type: :model do
       let!(:child) { create(:provided_attribute) }
       subject { child.subject }
       it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'requested_enhancements' do
+      let!(:child) { create(:requested_enhancement) }
+      subject { child.subject }
+      it_behaves_like 'an association which cascades delete'
+    end
+
+    context 'provisioned_subjects' do
+      let!(:child) { create(:provisioned_subject) }
+      subject { child.subject }
+      it_behaves_like 'an association which cascades delete'
+    end
+  end
+
+  context '#merge' do
+    RSpec::Matchers.define_negated_matcher(:not_include, :include)
+
+    let!(:object) { create(:subject) }
+    let!(:other) { create(:subject) }
+
+    context 'with a role' do
+      let(:role) { create(:role) }
+      let!(:role_assoc) do
+        create(:subject_role_assignment, subject: other, role: role)
+      end
+
+      it 'moves the roles' do
+        expect { object.merge(other) }.to change { object.roles(true).to_a }
+          .to include(role)
+      end
+
+      it 'removes the existing role assignment' do
+        expect { object.merge(other) }.to change { other.roles(true).to_a }
+          .to not_include(role)
+      end
+
+      context 'when the target already has the role' do
+        let!(:existing) do
+          create(:subject_role_assignment, subject: object, role: role)
+        end
+
+        it 'creates no extra records' do
+          expect { object.merge(other) }
+            .not_to change { object.subject_role_assignments.count }
+        end
+
+        it 'still removes the existing role assignment' do
+          expect { object.merge(other) }.to change { other.roles(true).to_a }
+            .to not_include(role)
+        end
+      end
+    end
+
+    context 'with an attribute' do
+      let!(:attr) { create(:provided_attribute, subject: other) }
+
+      it 'moves the provided attributes' do
+        expect { object.merge(other) }
+          .to change { object.provided_attributes(true).to_a }
+          .to include(have_attributes(name: attr.name, value: attr.value))
+      end
+
+      it 'removes the existing provided attribute' do
+        expect { object.merge(other) }
+          .to change { other.provided_attributes(true).to_a }
+          .to not_include(have_attributes(name: attr.name, value: attr.value))
+      end
+
+      context 'when the target already has the attribute' do
+        let!(:existing) do
+          create(:provided_attribute,
+                 name: attr.name, value: attr.value, subject: object,
+                 permitted_attribute: attr.permitted_attribute)
+        end
+
+        it 'creates no extra records' do
+          expect { object.merge(other) }
+            .not_to change { object.provided_attributes.count }
+        end
+
+        it 'still removes the existing provided attribute' do
+          expect { object.merge(other) }
+            .to change { other.provided_attributes(true).to_a }
+            .to not_include(have_attributes(name: attr.name, value: attr.value))
+        end
+      end
+    end
+
+    it 'removes the other subject' do
+      expect { object.merge(other) }.to change(Subject, :count).by(-1)
+      expect { other.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end

@@ -1,4 +1,7 @@
+# frozen_string_literal: true
 class Role < ActiveRecord::Base
+  include Lipstick::AutoValidation
+
   audited comment_required: true, associated_with: :provider
   has_associated_audits
 
@@ -11,5 +14,5 @@ class Role < ActiveRecord::Base
   has_many :subjects, through: :subject_role_assignments
   has_many :api_subjects, through: :api_subject_role_assignments
 
-  validates :provider, :name, presence: true
+  valhammer
 end

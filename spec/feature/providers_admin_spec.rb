@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.feature 'Modifying Providers', js: true do
@@ -42,7 +43,7 @@ RSpec.feature 'Modifying Providers', js: true do
       click_button 'Create'
     end
 
-    expect(current_path).to eq(providers_path)
+    expect(current_path).to match(%r{/providers/\d+})
     expect(page).to have_css('table tr td', text: attrs[:name])
   end
 
@@ -63,7 +64,7 @@ RSpec.feature 'Modifying Providers', js: true do
       click_button 'Save'
     end
 
-    expect(current_path).to eq(providers_path)
+    expect(current_path).to match(%r{/providers/\d+})
     expect(page).to have_css('table tr td', text: new_name)
   end
 
@@ -74,7 +75,8 @@ RSpec.feature 'Modifying Providers', js: true do
         click_button button
       end
 
-      expect(page).to have_css('.ui.error.message', text: 'Please enter a name')
+      expect(page).to have_css('.ui.error.message',
+                               text: 'Please enter a value for name')
     end
 
     scenario 'rejects a blank identifier' do
@@ -84,7 +86,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter an identifier')
+                               text: 'Please enter a value for identifier')
     end
 
     scenario 'rejects a long identifier' do
@@ -94,7 +96,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'identifier must be 40 characters maximum')
+                               text: 'enter a shorter value for identifier')
     end
 
     scenario 'rejects an invalid identifier' do
@@ -114,7 +116,7 @@ RSpec.feature 'Modifying Providers', js: true do
       end
 
       expect(page).to have_css('.ui.error.message',
-                               text: 'Please enter a description')
+                               text: 'Please enter a value for description')
     end
   end
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe SubjectsController, type: :routing do
@@ -34,7 +35,7 @@ RSpec.describe SubjectsController, type: :routing do
 
   context 'patch /admin/subjects/:id' do
     subject { { patch: '/admin/subjects/1' } }
-    it { is_expected.not_to be_routable }
+    it { is_expected.to route_to('subjects#update', id: '1') }
   end
 
   context 'delete /admin/subjects/:id' do

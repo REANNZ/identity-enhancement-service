@@ -16,11 +16,12 @@
     </p>
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact three column table" id="permitted">
-    <thead>
+  <table class="ui striped compact table" id="permitted">
+    <thead class="stack-disappear">
       <tr>
-        <th class="">Name</th>
+        <th>Name</th>
         <th>Value</th>
+        <th>Description</th>
         <th/>
       </tr>
     </thead>
@@ -30,7 +31,8 @@
         <tr>
           <td><%= attribute.name %></td>
           <td><%= attribute.value %></td>
-          <td>
+          <td><%= attribute.description %></td>
+          <td class="right aligned">
             <%- if permitted?('admin:permitted_attributes:delete') -%>
               <%= delete_button_tag([@provider, permitted_attribute], text: 'Remove') %>
             <%- end -%>
@@ -51,11 +53,12 @@
     </p>
   <%- end -%>
 <%- else -%>
-  <table class="ui basic compact three column table" id="available">
-    <thead>
+  <table class="ui striped compact table" id="available">
+    <thead class="stack-disappear">
       <tr>
         <th>Name</th>
         <th>Value</th>
+        <th>Description</th>
         <th/>
       </tr>
     </thead>
@@ -64,7 +67,8 @@
         <tr>
           <td><%= attribute.name %></td>
           <td><%= attribute.value %></td>
-          <td>
+          <td><%= attribute.description %></td>
+          <td class="right aligned">
             <%- if permitted?('admin:permitted_attributes:create') -%>
               <%= form_tag(provider_permitted_attributes_path(@provider), method: 'post') do |f| -%>
                 <%= hidden_fields do -%>

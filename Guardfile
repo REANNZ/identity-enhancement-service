@@ -1,16 +1,18 @@
+# frozen_string_literal: true
 guard :bundler do
   watch('Gemfile')
 end
 
 guard :rspec, cmd: 'bundle exec rspec' do
-  watch(/^spec\/.+_spec\.rb$/)
-  watch(/^lib\/(.+)\.rb$/) { |m| "spec/lib/#{m[1]}_spec.rb" }
+  watch(%r{^spec/.+_spec\.rb$})
+  watch(%r{^lib/(.+)\.rb$}) { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb') { 'spec' }
   watch('spec/rails_helper.rb') { 'spec' }
-  watch(%r{spec/factories(/.+)\.rb})  { 'spec' }
+  watch(%r{spec/factories(/.+)\.rb}) { 'spec' }
 
-  watch(/^app\/(.+)\.rb$/) { |m| "spec/#{m[1]}_spec.rb" }
-  watch(/^app\/(.*)(\.erb|\.haml|\.slim)$/) do |m|
+  watch(%r{^bin/(.+)(\.rb)?$}) { |m| "spec/bin/#{m[1]}_spec.rb" }
+  watch(%r{^app/(.+)\.rb$}) { |m| "spec/#{m[1]}_spec.rb" }
+  watch(%r{^app/(.*)(\.erb|\.haml|\.slim)$}) do |m|
     "spec/#{m[1]}#{m[2]}_spec.rb"
   end
   watch(%r{^app/controllers/(.+)_(controller)\.rb$}) do |m|
@@ -29,17 +31,17 @@ guard :rubocop, cli: '-R -D' do
   watch(/(Gemfile|Guardfile|Rakefile)$/)
   watch(/.+\.rb$/)
   watch(/.+\.rake$/)
-  watch(/(?:.+\/)?\.rubocop\.yml$/) { |m| File.dirname(m[0]) }
+  watch(%r{(?:.+/)?\.rubocop\.yml$}) { |m| File.dirname(m[0]) }
 end
 
 guard 'brakeman', run_on_start: true, quiet: true do
-  watch(/^app\/.+\.(erb|rb)$/)
-  watch(/^config\/.+\.rb$/)
-  watch(/^lib\/.+\.rb$/)
+  watch(%r{^app/.+\.(erb|rb)$})
+  watch(%r{^config/.+\.rb$})
+  watch(%r{^lib/.+\.rb$})
   watch('Gemfile')
 end
 
 guard 'unicorn', daemonized: true, config_file: 'config/dev_unicorn.rb' do
   watch('Gemfile.lock')
-  watch(/^config\/.+\.rb$/)
+  watch(%r{^config/.+\.rb$})
 end

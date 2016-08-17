@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 require 'gumboot/shared_examples/application_controller'
@@ -42,53 +43,55 @@ RSpec.describe ApplicationController, type: :controller do
     end
   end
 
-  before { session[:subject_id] = user.id }
-  let(:user) { create(:subject, :authorized, permission: 'permit') }
+  context 'when authenticated' do
+    before { session[:subject_id] = user.id }
+    let(:user) { create(:subject, :authorized, permission: 'permit') }
 
-  context 'after_action hook' do
-    it 'allows an action with access control' do
-      expect { get :good }.not_to raise_error
+    context 'after_action hook' do
+      it 'allows an action with access control' do
+        expect { get :good }.not_to raise_error
+      end
+
+      it 'fails without access control' do
+        msg = 'No access control performed by AnonymousController#bad'
+        expect { get :bad }.to raise_error(msg)
+      end
+
+      it 'allows a public action' do
+        expect { get :public }.not_to raise_error
+      end
     end
 
-    it 'fails without access control' do
-      msg = 'No access control performed by AnonymousController#bad'
-      expect { get :bad }.to raise_error(msg)
+    context '#check_access!' do
+      it 'allows a permitted action' do
+        get :good
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'rejects a denied action' do
+        get :failed
+        expect(response).to have_http_status(:forbidden)
+      end
     end
 
-    it 'allows a public action' do
-      expect { get :public }.not_to raise_error
-    end
-  end
+    context '#require_subject' do
+      it 'forces authentication' do
+        session[:subject_id] = nil
+        get :force_authn
+        expect(response).to redirect_to('/auth/login')
+      end
 
-  context '#check_access!' do
-    it 'allows a permitted action' do
-      get :good
-      expect(response).to have_http_status(:ok)
-    end
+      it 'allows an authenticated session through' do
+        get :force_authn
+        expect(response).to have_http_status(:ok)
+      end
 
-    it 'rejects a denied action' do
-      get :failed
-      expect(response).to have_http_status(:forbidden)
-    end
-  end
-
-  context '#require_subject' do
-    it 'forces authentication' do
-      session[:subject_id] = nil
-      get :force_authn
-      expect(response).to redirect_to('/auth/login')
-    end
-
-    it 'allows an authenticated session through' do
-      get :force_authn
-      expect(response).to have_http_status(:ok)
-    end
-
-    it 'shows the unauthorized page when a subject is deleted' do
-      user.audit_comment = 'Deleted for test case'
-      user.destroy!
-      get :force_authn
-      expect(response).to have_http_status(:unauthorized)
+      it 'shows the unauthorized page when a subject is deleted' do
+        user.audit_comment = 'Deleted for test case'
+        user.destroy!
+        get :force_authn
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end

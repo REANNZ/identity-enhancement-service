@@ -15,4 +15,10 @@
       Cancel
     <%- end -%>
   </div>
+
+  <%= error_messages_tag %>
+<%- end -%>
+
+<%= validate_form('#role-form', :role) do -%>
+  <%= auto_validate(@role, :name) %>
 <%- end -%>

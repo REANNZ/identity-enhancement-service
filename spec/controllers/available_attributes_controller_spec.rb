@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rails_helper'
 
 RSpec.describe AvailableAttributesController, type: :controller do
@@ -7,7 +8,7 @@ RSpec.describe AvailableAttributesController, type: :controller do
   def create_attribute
     attrs = attributes_for(:available_attribute)
     AvailableAttribute.create_with(audit_comment: 'test')
-      .find_or_create_by!(attrs.except(:audit_comment))
+                      .find_or_create_by!(attrs.except(:audit_comment))
   end
 
   before { session[:subject_id] = user.try(:id) }
