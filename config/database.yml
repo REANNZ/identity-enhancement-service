@@ -21,3 +21,5 @@ production:
   username: <%= ENV['IDE_DB_USERNAME'] %>
   password: <%= ENV['IDE_DB_PASSWORD'] %>
   database: <%= ENV['IDE_DB_NAME'] %>
+  host: <%= ENV['IDE_DB_HOST'] %>
+  port: <%= ENV['IDE_DB_PORT'] %>
