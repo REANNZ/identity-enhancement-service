@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/ausaccessfed/aaf-gumboot
-  revision: 392fd892e2aebfe0e7efd4d46a2539408427c903
-  branch: develop
+  revision: e9234c2da441b5e24a6c05339b9161dbe41485af
+  branch: feature/update-rubocop-config
   specs:
-    aaf-gumboot (0.0.1)
+    aaf-gumboot (1.0.0.pre.alpha.2)
       accession (~> 1.0)
 
 GIT
