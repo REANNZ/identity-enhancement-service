@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 FactoryGirl.define do
   factory :api_subject, traits: %i(audited) do
     association :provider

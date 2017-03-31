@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class RequestedEnhancementsController < ApplicationController
   delegate :image_url, to: :view_context
 

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Allow Capybara tests to properly interact with aaf-lipstick's
 # `delete_button_tag`
 module DeleteButton

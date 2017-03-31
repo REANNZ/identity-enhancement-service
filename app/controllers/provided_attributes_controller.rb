@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class ProvidedAttributesController < ApplicationController
   NotPermitted = Class.new(StandardError)
   private_constant :NotPermitted

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 load Rails.root.join('bin/remove_expired_data')
 

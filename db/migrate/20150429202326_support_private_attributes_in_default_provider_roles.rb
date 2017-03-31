@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class SupportPrivateAttributesInDefaultProviderRoles < ActiveRecord::Migration
   def change
     transaction do

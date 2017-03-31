@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 FactoryGirl.define do
   factory :subject, traits: %i(audited) do
     name { Faker::Name.name }

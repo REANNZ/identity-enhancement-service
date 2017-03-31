@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module CreateInvitation
   delegate :image_url, to: :view_context
 

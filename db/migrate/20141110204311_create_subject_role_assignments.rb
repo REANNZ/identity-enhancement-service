@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class CreateSubjectRoleAssignments < ActiveRecord::Migration
   def change
     create_table :subject_role_assignments do |t|
