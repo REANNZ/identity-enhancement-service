@@ -116,7 +116,7 @@ RSpec.describe Provider, type: :model do
 
     it 'replaces PROVIDER_ID with the actual id' do
       run
-      role = provider.roles.find_by_name('API Read/Write')
+      role = provider.roles.find_by(name: 'API Read/Write')
       expect(role.permissions.map(&:value))
         .to include("providers:#{provider.id}:attributes:*")
     end

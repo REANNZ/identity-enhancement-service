@@ -27,7 +27,7 @@ class Provider < ActiveRecord::Base
 
   def self.lookup(identifier)
     re = /\A#{identifier_prefix}:(.*)\z/
-    find_by_identifier(Regexp.last_match[1]) if re.match(identifier)
+    find_by(identifier: Regexp.last_match[1]) if re.match(identifier)
   end
 
   def self.visible_to(user)

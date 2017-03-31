@@ -9,7 +9,7 @@ module API
                   "#{@subject.provider_id}, API Subject #{@subject.x509_cn}")
 
       check_access!('api:attributes:read')
-      @object = Subject.find_by_shared_token!(params[:shared_token])
+      @object = Subject.find_by!(shared_token: params[:shared_token])
 
       @provided_attributes = filter_attributes(
         @object.provided_attributes.includes(permitted_attribute: :provider)
@@ -23,8 +23,8 @@ module API
         @object = provision_subject(@provider, params[:subject])
 
         params[:attributes].each do |attribute|
-          update_attribute(@provider, @object,
-                           attribute.permit(:name, :value, :public, :_destroy))
+          update_attr(@provider, @object,
+                      attribute.permit(:name, :value, :public, :_destroy))
         end
 
         render status: :no_content, nothing: true
@@ -51,22 +51,22 @@ module API
       subject
     end
 
-    def update_attribute(provider, subject, opts)
-      return destroy_attribute(provider, subject, opts) if opts[:_destroy]
-      create_attribute(provider, subject, opts)
+    def update_attr(provider, subject, opts)
+      return destroy_attr(provider, subject, opts) if opts[:_destroy]
+      create_attr(provider, subject, opts)
     end
 
-    def create_attribute(provider, subject, opts)
-      permitted_attribute = lookup_permitted_attribute(provider, opts)
+    def create_attr(provider, subject, opts)
+      permitted_attribute = lookup_permitted_attr(provider, opts)
 
       audit_attrs = { audit_comment: 'Provided attribute via API call' }
       subject.provided_attributes.create_with(opts.merge(audit_attrs))
              .find_or_create_by!(permitted_attribute: permitted_attribute)
     end
 
-    def destroy_attribute(provider, subject, opts)
-      permitted_attribute = lookup_permitted_attribute(provider,
-                                                       opts.except(:_destroy))
+    def destroy_attr(provider, subject, opts)
+      permitted_attribute = lookup_permitted_attr(provider,
+                                                  opts.except(:_destroy))
 
       attribute = subject.provided_attributes
                          .find_by(permitted_attribute: permitted_attribute)
@@ -76,7 +76,7 @@ module API
       attribute.destroy!
     end
 
-    def lookup_permitted_attribute(provider, opts)
+    def lookup_permitted_attr(provider, opts)
       permitted_attribute =
         provider.permitted_attributes.joins(:available_attribute)
                 .find_by(available_attributes: opts.slice(:name, :value))
@@ -102,7 +102,7 @@ module API
     end
 
     def find_or_create_by_shared_token(attrs)
-      subject = Subject.find_by_shared_token(attrs[:shared_token])
+      subject = Subject.find_by(shared_token: attrs[:shared_token])
 
       return subject if subject
       return create_by_shared_token(attrs) if attrs[:allow_create]
@@ -122,7 +122,7 @@ module API
       raise(BadRequest, 'The Subject name is required') if name.nil?
       raise(BadRequest, 'The Subject email address is required') if mail.nil?
 
-      Subject.find_by_mail(mail) || invite_subject(provider, attrs)
+      Subject.find_by(mail: mail) || invite_subject(provider, attrs)
     end
 
     def invite_subject(provider, attrs)

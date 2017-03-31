@@ -10,7 +10,9 @@ module ApplicationHelper
   end
 
   def markdown_to_html(input)
+    # rubocop:disable Rails/OutputSafety
     Kramdown::Document.new(input).to_html.html_safe
+    # rubocop:enable Rails/OutputSafety
   end
 
   def date_string(timestamp)

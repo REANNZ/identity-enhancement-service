@@ -222,7 +222,7 @@ RSpec.describe Authentication::SubjectReceiver do
         it 'preserves the subject' do
           expect { subject.subject(env, attrs) }
             .to raise_error(/an failure/)
-            .and not_change { invitation.subject.reload.attributes }
+            .and(not_change { invitation.subject.reload.attributes })
         end
       end
 
@@ -235,7 +235,7 @@ RSpec.describe Authentication::SubjectReceiver do
         it 'preserves the invite' do
           expect { subject.subject(env, attrs) }
             .to raise_error(/an failure/)
-            .and not_change { invitation.reload.attributes }
+            .and(not_change { invitation.reload.attributes })
         end
       end
     end
