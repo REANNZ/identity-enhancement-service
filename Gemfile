@@ -29,7 +29,7 @@ end
 
 group :development, :test do
   gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
-                     branch: 'feature/update-rubocop-config'
+                     branch: 'develop'
   gem 'capybara'
   gem 'database_cleaner'
   gem 'factory_girl_rails'
