@@ -2,14 +2,14 @@
 
 source 'https://rubygems.org'
 
+gem 'rails', '~> 4.2.2'
+
 gem 'aaf-lipstick', git: 'https://github.com/ausaccessfed/aaf-lipstick',
                     branch: 'b9533adbe0ee5623ebe890a1ecbd429751c24a2d'
 gem 'accession'
-gem 'audited-activerecord'
 gem 'jbuilder'
 gem 'jquery-rails'
 gem 'mysql2'
-gem 'rails', '~> 4.2.2'
 gem 'rapid-rack'
 gem 'redis'
 gem 'redis-rails'
@@ -17,6 +17,8 @@ gem 'sass-rails'
 gem 'therubyracer'
 gem 'uglifier'
 gem 'valhammer'
+
+gem 'audited-activerecord'
 
 gem 'god', require: false
 gem 'unicorn', require: false
