@@ -36,6 +36,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'factory_girl_rails'
   gem 'faker'
+  gem 'nokogiri', '~> 1.7.1'
   gem 'poltergeist'
   gem 'rspec-rails', '~> 3.1'
   gem 'rspec-retry'
