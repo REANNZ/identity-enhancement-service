@@ -1,11 +1,12 @@
 # frozen_string_literal: true
+
 class DashboardController < ApplicationController
   def index
     public_action
     @provider_roles = filter_dashboard_roles
     @provided_attributes =
       @subject.provided_attributes.includes(
-        permitted_attribute: [:provider, :available_attribute]
+        permitted_attribute: %i(provider available_attribute)
       )
   end
 

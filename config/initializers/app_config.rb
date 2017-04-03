@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 require 'mail'
 
 Rails.application.configure do
-  app_config = YAML.load_file(Rails.root.join('config/ide_service.yml'))
+  app_config = YAML.load_file(Rails.root.join('config', 'ide_service.yml'))
   config.ide_service = OpenStruct.new(app_config).tap do |c|
     c.mail.symbolize_keys!
   end

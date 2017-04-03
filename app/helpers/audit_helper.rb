@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module AuditHelper
   include Lipstick::Helpers::LayoutHelper
 
@@ -68,7 +69,7 @@ module AuditHelper
   def audit_comment_cell(audit)
     content_tag('td') do
       concat(audit.comment)
-      concat('<br/>'.html_safe)
+      concat(tag('br'))
       ts = content_tag('time', datetime: audit.created_at.xmlschema) do
         "#{time_ago_in_words(audit.created_at)} ago"
       end

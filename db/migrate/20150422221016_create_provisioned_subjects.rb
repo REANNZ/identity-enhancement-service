@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class CreateProvisionedSubjects < ActiveRecord::Migration
   def change
     create_table :provisioned_subjects do |t|
@@ -9,7 +10,7 @@ class CreateProvisionedSubjects < ActiveRecord::Migration
 
       t.timestamps null: false
 
-      t.index [:subject_id, :provider_id], unique: true
+      t.index %i(subject_id provider_id), unique: true
     end
   end
 end

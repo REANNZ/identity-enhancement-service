@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class AvailableAttributesController < ApplicationController
   def index
     check_access!('admin:attributes:list')

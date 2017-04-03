@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.shared_examples 'an audited model' do
   subject { create(factory).reload }
   let(:factory) { described_class.name.underscore.to_sym }
@@ -47,7 +48,7 @@ RSpec.shared_examples 'an audited model' do
     end
 
     it 'fails an edit' do
-      initial = subject.attributes.dup.except(*%w(created_at updated_at))
+      initial = subject.attributes.dup.except('created_at', 'updated_at')
       expect { tx { subject.update_attributes!(attrs) } }
         .to raise_error(ActiveRecord::RecordInvalid,
                         /Audit comment can't be blank/)

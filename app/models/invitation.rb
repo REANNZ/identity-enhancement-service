@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Invitation < ActiveRecord::Base
   include Lipstick::AutoValidation
 

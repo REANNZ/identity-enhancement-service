@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require File.expand_path('../../config/environment', __FILE__)
@@ -29,9 +30,14 @@ end
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
+
+  # Rubocop (0.48.0) detects conditional mixins as if they were multiple mixins.
+  #
+  # rubocop:disable Style/MixinGrouping
   config.include ControllerMatchers, type: :controller
   config.include AliasedMatchers
   config.include DeleteButton, type: :feature, js: true
+  # rubocop:enable Style/MixinGrouping
 
   config.around(:example, :debug) do |example|
     old = ActiveRecord::Base.logger

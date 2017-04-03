@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class APISubjectRoleAssignment < ActiveRecord::Base
   audited comment_required: true, associated_with: :api_subject
 

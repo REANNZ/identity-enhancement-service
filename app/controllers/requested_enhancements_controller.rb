@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class RequestedEnhancementsController < ApplicationController
   delegate :image_url, to: :view_context
 
@@ -91,7 +92,7 @@ class RequestedEnhancementsController < ApplicationController
       .map(&:mail)
   end
 
-  EMAIL_BODY = File.read(Rails.root.join('config/enhancement_request.md'))
+  EMAIL_BODY = File.read(Rails.root.join('config', 'enhancement_request.md'))
                    .freeze
 
   def email_body(req)

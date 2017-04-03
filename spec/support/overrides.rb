@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module ActionController
   module TestResponseStringOverride
     def to_s
       status, headers, body = to_a
-      body = ''.tap { |out| body.each { |s| out << s } }
+      body = ''.dup.tap { |out| body.each { |s| out << s } }
       "#<#{self.class.name} #{request.method} #{request.fullpath} => " \
         "[#{status}, #{body.inspect}, #{headers.inspect}]>"
     end

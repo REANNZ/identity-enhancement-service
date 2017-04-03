@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 require 'gumboot/shared_examples/subjects'
@@ -165,7 +166,7 @@ RSpec.describe Subject, type: :model do
 
         it 'creates no extra records' do
           expect { object.merge(other) }
-            .not_to change { object.subject_role_assignments.count }
+            .not_to(change { object.subject_role_assignments.count })
         end
 
         it 'still removes the existing role assignment' do
@@ -199,7 +200,7 @@ RSpec.describe Subject, type: :model do
 
         it 'creates no extra records' do
           expect { object.merge(other) }
-            .not_to change { object.provided_attributes.count }
+            .not_to(change { object.provided_attributes.count })
         end
 
         it 'still removes the existing provided attribute' do

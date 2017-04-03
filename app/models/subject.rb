@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Subject < ActiveRecord::Base
   audited comment_required: true
   has_associated_audits
@@ -77,7 +78,7 @@ class Subject < ActiveRecord::Base
   def merge_attributes(other)
     other.provided_attributes.each do |other_attr|
       attrs = other_attr.attributes
-                        .slice(*%w(name value permitted_attribute_id))
+                        .slice('name', 'value', 'permitted_attribute_id')
 
       next if provided_attributes.where(attrs).any?
 

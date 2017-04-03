@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class CreateAPISubjectRoleAssignments < ActiveRecord::Migration
   def change
     create_table :api_subject_role_assignments do |t|

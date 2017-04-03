@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module CreateInvitation
   delegate :image_url, to: :view_context
 
@@ -36,7 +37,7 @@ module CreateInvitation
                                content: email_body(invitation))
   end
 
-  EMAIL_BODY = File.read(Rails.root.join('config/invitation.md')).freeze
+  EMAIL_BODY = File.read(Rails.root.join('config', 'invitation.md')).freeze
 
   def email_body(invitation)
     opts = subject.contact_details.merge(

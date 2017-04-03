@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class PermittedAttributesController < ApplicationController
   before_action { @provider = Provider.find(params[:provider_id]) }
 
