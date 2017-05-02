@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class CreateRequestedEnhancements < ActiveRecord::Migration
   def change
     create_table :requested_enhancements do |t|

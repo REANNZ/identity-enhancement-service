@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 v1 = APIConstraints.new(version: 1)
 Mime::Type.register v1.version_string, :ide_v1
 

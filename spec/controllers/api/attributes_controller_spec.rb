@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe API::AttributesController, type: :controller do
@@ -77,7 +78,7 @@ RSpec.describe API::AttributesController, type: :controller do
       it { is_expected.to have_http_status(:forbidden) }
 
       it 'responds with a message' do
-        data = JSON.load(response.body)
+        data = JSON.parse(response.body)
         expect(data['message']).to match(/explicitly denied/)
       end
     end
@@ -177,7 +178,7 @@ RSpec.describe API::AttributesController, type: :controller do
           provisioned_subject.update_attributes!(expires_at: 2.years.from_now)
 
           expect { run }
-            .not_to change { provisioned_subject.reload.expires_at }
+            .not_to(change { provisioned_subject.reload.expires_at })
         end
       end
 

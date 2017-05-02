@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class AddPublicFieldToProviders < ActiveRecord::Migration
   def change
     change_table :providers do |t|

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class SubjectsController < ApplicationController
   # @subject is the current user. We use @objects and @object to sidestep that.
 
