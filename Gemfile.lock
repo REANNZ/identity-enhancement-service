@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/ausaccessfed/aaf-gumboot
-  revision: bfdba6d0156d5a4248fe366f144a10f405d858ad
-  branch: develop
-  specs:
-    aaf-gumboot (1.1.0)
-      accession (~> 1.0)
-
-GIT
   remote: https://github.com/ausaccessfed/aaf-lipstick
   revision: b9533adbe0ee5623ebe890a1ecbd429751c24a2d
   branch: b9533adbe0ee5623ebe890a1ecbd429751c24a2d
@@ -25,6 +17,8 @@ GEM
   remote: https://rubygems.org/
   remote: https://rails-assets.org/
   specs:
+    aaf-gumboot (1.1.0)
+      accession (~> 1.0)
     accession (1.0.0)
     actionmailer (4.2.9)
       actionpack (= 4.2.9)
@@ -362,7 +356,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aaf-gumboot!
+  aaf-gumboot
   aaf-lipstick!
   accession
   audited-activerecord
@@ -405,4 +399,4 @@ DEPENDENCIES
   valhammer
 
 BUNDLED WITH
-   1.15.2
+   1.15.3
