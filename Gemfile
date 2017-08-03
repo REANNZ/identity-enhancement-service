@@ -30,8 +30,7 @@ source 'https://rails-assets.org' do
 end
 
 group :development, :test do
-  gem 'aaf-gumboot', git: 'https://github.com/ausaccessfed/aaf-gumboot',
-                     branch: 'develop'
+  gem 'aaf-gumboot'
   gem 'capybara'
   gem 'database_cleaner'
   gem 'factory_girl_rails'
