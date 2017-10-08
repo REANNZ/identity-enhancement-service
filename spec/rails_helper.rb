@@ -4,8 +4,6 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
-require 'capybara/rspec'
-require 'capybara/poltergeist'
 
 ActiveRecord::Migration.maintain_test_schema!
 
@@ -29,14 +27,13 @@ module AliasedMatchers
 end
 
 RSpec.configure do |config|
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # Rubocop (0.48.0) detects conditional mixins as if they were multiple mixins.
   #
   # rubocop:disable Style/MixinGrouping
   config.include ControllerMatchers, type: :controller
   config.include AliasedMatchers
-  config.include DeleteButton, type: :feature, js: true
   # rubocop:enable Style/MixinGrouping
 
   config.around(:example, :debug) do |example|
@@ -48,19 +45,6 @@ RSpec.configure do |config|
       ActiveRecord::Base.logger = old
     end
   end
-
-  Capybara.default_driver = Capybara.javascript_driver = :poltergeist
-
-  config.before(:each, type: :feature) do
-    page.driver.reset!
-    page.driver.browser.url_blacklist = %w(https://fonts.googleapis.com)
-  end
-
-  config.verbose_retry = true
-  config.default_retry_count = 1
-  config.default_retry_count = 3 if ENV['CI']
-
-  config.exceptions_to_retry = [Capybara::Poltergeist::TimeoutError]
 end
 
 Shoulda::Matchers.configure do |config|
