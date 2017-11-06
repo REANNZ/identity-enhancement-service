@@ -5,8 +5,22 @@ require 'rails_helper'
 RSpec.describe AuditHelper, type: :helper do
   let(:user) { create(:subject) }
 
+  class Content
+    def initialize(content)
+      @html = Nokogiri::HTML.parse(content)
+    end
+
+    def has_css?(selector, text: nil)
+      if text
+        @html.css(selector).any? { |n| n.text.include?(text.to_s) }
+      else
+        @html.css(selector).present?
+      end
+    end
+  end
+
   around { |example| Audited.audit_class.as_user(user) { example.run } }
-  subject { Capybara.string(content) }
+  subject { Content.new(content) }
 
   context '#audit_table' do
     let(:attribute) { create(:available_attribute) }
