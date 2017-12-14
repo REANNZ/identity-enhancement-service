@@ -10,7 +10,7 @@ system 'bundle check || bundle install'
 require 'bundler/setup'
 require 'gumboot/strap'
 
-include Gumboot::Strap
+include Gumboot::Strap # rubocop:disable Style/MixinUsage
 
 puts "\n== Installing configuration files =="
 
