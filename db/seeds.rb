@@ -17,11 +17,11 @@ require 'faker'
 require 'factory_girl'
 
 ActiveRecord::Base.transaction do
-  FactoryGirl.lint
+  FactoryBot.lint
   raise(ActiveRecord::Rollback)
 end
 
-include FactoryGirl::Syntax::Methods
+include FactoryBot::Syntax::Methods
 
 invitation_code = SecureRandom.urlsafe_base64(19)
 ActiveRecord::Base.transaction do
@@ -39,7 +39,7 @@ ActiveRecord::Base.transaction do
     print("\rCreating Objects: #{i}\e[0K")
   end
 
-  FactoryGirl.define { after(:create) { count.call(1) } }
+  FactoryBot.define { after(:create) { count.call(1) } }
 
   aaf = create(:provider, name: 'Australian Access Federation')
   admin = create(:role, name: 'Super Administrator', provider: aaf)

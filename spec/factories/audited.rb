@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
+FactoryBot.define do
   trait :audited do
     audit_comment { Faker::Lorem.sentence }
   end
