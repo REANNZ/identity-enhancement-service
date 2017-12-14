@@ -16,7 +16,7 @@ module ApplicationHelper
   end
 
   def date_string(timestamp)
-    timestamp.strftime('%d/%m/%Y')
+    timestamp.strftime('%d/%m/%Y') # rubocop:disable Style/FormatStringToken
   end
 
   def application_version
