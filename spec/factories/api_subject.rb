@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
-  factory :api_subject, traits: %i(audited) do
+FactoryBot.define do
+  factory :api_subject, traits: %i[audited] do
     association :provider
     x509_cn { SecureRandom.urlsafe_base64 }
     description { Faker::Company.bs }

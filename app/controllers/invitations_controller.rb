@@ -3,7 +3,7 @@
 class InvitationsController < ApplicationController
   include CreateInvitation
 
-  before_action :ensure_authenticated, except: %i(show accept)
+  before_action :ensure_authenticated, except: %i[show accept]
 
   before_action do
     @provider = Provider.find(params[:provider_id]) if params[:provider_id]

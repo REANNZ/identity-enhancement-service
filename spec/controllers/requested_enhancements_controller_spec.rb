@@ -221,46 +221,6 @@ RSpec.describe RequestedEnhancementsController, type: :controller do
       expect(assigns[:providers]).to include(provider)
     end
 
-    context 'with a filter' do
-      let!(:matching_provider) do
-        create(:provider, name: 'NOTHING ELSE MATCHES')
-      end
-
-      let(:filter) { 'NOTHING*ELSE*MATCHES' }
-
-      it 'only includes the matching provider' do
-        expect(assigns[:providers]).to contain_exactly(matching_provider)
-      end
-
-      it 'sets the filter' do
-        expect(assigns[:filter]).to eq(filter)
-      end
-    end
-
-    context 'pagination' do
-      let!(:enough_providers_for_a_second_page) { create_list(:provider, 21) }
-
-      let!(:first_provider) do
-        create(:provider, name: 'aaaaaaaaaaa first provider')
-      end
-
-      context 'on the first page' do
-        let(:page) { '1' }
-
-        it 'includes the first provider' do
-          expect(assigns[:providers]).to include(first_provider)
-        end
-      end
-
-      context 'on the second page' do
-        let(:page) { '2' }
-
-        it 'excludes the first provider' do
-          expect(assigns[:providers]).not_to include(first_provider)
-        end
-      end
-    end
-
     context 'with a private provider' do
       let(:secret_squirrel) { create(:provider, public: false) }
 

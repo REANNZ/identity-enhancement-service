@@ -14,7 +14,7 @@ module AuditHelper
 
   def audit_header
     tr = content_tag('tr') do
-      headings = %w(Record Subject Action Changes)
+      headings = %w[Record Subject Action Changes]
       headings.each { |h| concat(content_tag('th', h)) }
     end
 
@@ -106,7 +106,7 @@ module AuditHelper
   def audit_update_cell(audit)
     content_tag('td') do
       audit.audited_changes.each do |k, v|
-        v.zip(%w(Old New)).each do |(value, caption)|
+        v.zip(%w[Old New]).each do |(value, caption)|
           concat(audit_update_line(k, value, caption))
         end
       end

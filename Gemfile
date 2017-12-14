@@ -31,7 +31,7 @@ end
 
 group :development, :test do
   gem 'aaf-gumboot'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'faker'
   gem 'nokogiri', '~> 1.7.1'
   gem 'rspec-rails', '~> 3.1'

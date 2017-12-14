@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-FactoryGirl.define do
-  factory :invitation, traits: %i(audited) do
+FactoryBot.define do
+  factory :invitation, traits: %i[audited] do
     association :provider
     association :subject, :incomplete
 
