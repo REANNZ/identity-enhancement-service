@@ -17,7 +17,7 @@ class Provider < ActiveRecord::Base
 
   validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
-  has_many :invitations
+  has_many :invitations, dependent: :destroy
 
   filterable_by :name, :identifier
 
