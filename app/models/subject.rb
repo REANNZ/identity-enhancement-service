@@ -8,7 +8,7 @@ class Subject < ActiveRecord::Base
   include Lipstick::Filterable
 
   has_many :subject_role_assignments, dependent: :destroy
-  has_many :roles, through: :subject_role_assignments
+  has_many :roles, through: :subject_role_assignments, inverse_of: false
   has_many :provided_attributes, dependent: :destroy
   has_many :requested_enhancements, dependent: :destroy
   has_many :provisioned_subjects, dependent: :destroy

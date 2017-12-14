@@ -11,7 +11,7 @@ class APISubject < ActiveRecord::Base
   belongs_to :provider
 
   has_many :api_subject_role_assignments, dependent: :destroy
-  has_many :roles, through: :api_subject_role_assignments
+  has_many :roles, through: :api_subject_role_assignments, inverse_of: false
 
   valhammer
 
