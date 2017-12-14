@@ -33,7 +33,7 @@ group :development, :test do
   gem 'aaf-gumboot'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'nokogiri', '~> 1.7.1'
+  gem 'nokogiri'
   gem 'rspec-rails', '~> 3.1'
   gem 'shoulda-matchers'
   gem 'timecop'
