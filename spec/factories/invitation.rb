@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :invitation, traits: %i(audited) do
+  factory :invitation, traits: %i[audited] do
     association :provider
     association :subject, :incomplete
 

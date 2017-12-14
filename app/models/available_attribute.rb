@@ -9,7 +9,7 @@ class AvailableAttribute < ActiveRecord::Base
 
   valhammer
 
-  validates :name, inclusion: { in: %w(eduPersonEntitlement) }
+  validates :name, inclusion: { in: %w[eduPersonEntitlement] }
   validates :value, format: /\Aurn:mace:aaf\.edu\.au:ide:([\w\.-]+:)*[\w\.-]+\z/
 
   def initialize(*)

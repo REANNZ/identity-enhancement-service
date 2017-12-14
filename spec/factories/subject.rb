@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :subject, traits: %i(audited) do
+  factory :subject, traits: %i[audited] do
     name { Faker::Name.name }
     mail { Faker::Internet.email(name) }
     shared_token { SecureRandom.urlsafe_base64(16) }

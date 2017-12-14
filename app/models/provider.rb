@@ -72,27 +72,27 @@ class Provider < ActiveRecord::Base
   end
 
   DEFAULT_ROLES = {
-    'API Read Only' => %w(
+    'API Read Only' => %w[
       api:attributes:read
       providers:PROVIDER_ID:attributes:read
-    ),
-    'API Read/Write' => %w(
+    ],
+    'API Read/Write' => %w[
       api:attributes:*
       providers:PROVIDER_ID:attributes:*
-    ),
-    'Web UI Read Only' => %w(
+    ],
+    'Web UI Read Only' => %w[
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
-    ),
-    'Web UI Read/Write' => %w(
+    ],
+    'Web UI Read/Write' => %w[
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
       providers:PROVIDER_ID:invitations:*
       providers:PROVIDER_ID:attributes:*
-    ),
-    'Administrator' => %w(
+    ],
+    'Administrator' => %w[
       providers:PROVIDER_ID:*
-    )
+    ]
   }.freeze
 
   private_constant :DEFAULT_ROLES

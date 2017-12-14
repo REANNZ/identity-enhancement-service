@@ -3,3 +3,6 @@ inherit_gem:
 
 AllCops:
   TargetRailsVersion: 4.2
+
+  Exclude:
+    - 'db/**/*'
