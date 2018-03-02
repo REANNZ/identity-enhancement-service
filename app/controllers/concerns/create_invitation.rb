@@ -43,7 +43,6 @@ module CreateInvitation
     opts = subject.contact_details.merge(
       provider: invitation.provider.name,
       url: accept_invitations_url(identifier: invitation.identifier),
-
       # rubocop:disable Style/FormatStringToken
       expires: invitation.expires.strftime('%d/%m/%Y')
       # rubocop:enable Style/FormatStringToken
