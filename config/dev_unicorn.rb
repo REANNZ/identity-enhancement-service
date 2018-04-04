@@ -21,7 +21,7 @@ before_fork do |_, _|
   if attempts.length > 2 && (attempts.last - attempts.first) < 10
     $stderr.print('Sleeping before next restart...')
     sleep(10)
-    $stderr.puts
+    $stderr.puts # rubocop:disable Style/StderrPuts
   end
 end
 

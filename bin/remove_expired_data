@@ -34,8 +34,10 @@ class RemoveExpiredData
       subject = invitation.subject
       next unless subject
 
+      # rubocop:disable Style/StderrPuts
       $stderr.puts("Removing placeholder Subject #{subject.id} " \
                    "(name=`#{subject.name}` mail=`#{subject.mail}`)")
+      # rubocop:enable Style/StderrPuts
 
       subject.audit_comment =
         'Removed placeholder subject for expired invitation'

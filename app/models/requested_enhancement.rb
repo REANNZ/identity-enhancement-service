@@ -8,7 +8,10 @@ class RequestedEnhancement < ActiveRecord::Base
 
   belongs_to :subject
   belongs_to :provider
+
+  # rubocop:disable Rails/InverseOf
   belongs_to :actioned_by, class_name: 'Subject'
+  # rubocop:enable Rails/InverseOf
 
   scope :pending, -> { where(actioned: false) }
 

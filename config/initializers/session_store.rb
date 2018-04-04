@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 redis_namespace = "ide-service:#{Rails.env}:session"
+session_cookie_secure = Rails.env.production?
+
 session_store_opts = {
   redis_server: "redis://127.0.0.1:6379/0/#{redis_namespace}",
   expire_in: 3600,
-  secure: true,
+  secure: session_cookie_secure,
   key: '_ide-service_session'
 }
 

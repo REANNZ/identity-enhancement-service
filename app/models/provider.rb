@@ -17,7 +17,7 @@ class Provider < ActiveRecord::Base
 
   validates :identifier, format: /\A[\w-]{1,40}\z/, length: { maximum: 40 }
 
-  has_many :invitations
+  has_many :invitations, dependent: :destroy
 
   filterable_by :name, :identifier
 
@@ -27,7 +27,7 @@ class Provider < ActiveRecord::Base
 
   def self.lookup(identifier)
     re = /\A#{identifier_prefix}:(.*)\z/
-    find_by(identifier: Regexp.last_match[1]) if re.match(identifier)
+    re.match(identifier) { |m| find_by(identifier: m[1]) }
   end
 
   def self.visible_to(user)
@@ -72,27 +72,27 @@ class Provider < ActiveRecord::Base
   end
 
   DEFAULT_ROLES = {
-    'API Read Only' => %w(
+    'API Read Only' => %w[
       api:attributes:read
       providers:PROVIDER_ID:attributes:read
-    ),
-    'API Read/Write' => %w(
+    ],
+    'API Read/Write' => %w[
       api:attributes:*
       providers:PROVIDER_ID:attributes:*
-    ),
-    'Web UI Read Only' => %w(
+    ],
+    'Web UI Read Only' => %w[
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
-    ),
-    'Web UI Read/Write' => %w(
+    ],
+    'Web UI Read/Write' => %w[
       providers:PROVIDER_ID:list
       providers:PROVIDER_ID:read
       providers:PROVIDER_ID:invitations:*
       providers:PROVIDER_ID:attributes:*
-    ),
-    'Administrator' => %w(
+    ],
+    'Administrator' => %w[
       providers:PROVIDER_ID:*
-    )
+    ]
   }.freeze
 
   private_constant :DEFAULT_ROLES

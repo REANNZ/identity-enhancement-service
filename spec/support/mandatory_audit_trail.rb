@@ -4,7 +4,7 @@ RSpec.shared_examples 'an audited model' do
   subject { create(factory).reload }
   let(:factory) { described_class.name.underscore.to_sym }
 
-  # FactoryGirl doesn't include associated objects in `attributes_for`
+  # FactoryBot doesn't include associated objects in `attributes_for`
   let(:base_attrs) do
     build(factory).attributes.merge(audit_comment: 'test')
                   .symbolize_keys.except(:created_at, :updated_at, :id)
